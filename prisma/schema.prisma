@@ -1,0 +1,475 @@
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis, btree_gist, uuidOssp(map: "uuid-ossp")]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+// ----------------------------------------------------------------------------
+// Enums
+// ----------------------------------------------------------------------------
+
+enum UserRole {
+  CUSTOMER
+  PROFESSIONAL
+  VENDOR
+  ADMIN
+
+  @@map("user_role")
+}
+
+enum KycStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SUSPENDED
+
+  @@map("kyc_status")
+}
+
+enum LocationType {
+  HOME_VISIT
+  STUDIO
+  VENUE
+
+  @@map("location_type")
+}
+
+enum ServiceLocationMode {
+  AT_VENUE
+  IN_STUDIO
+  BOTH
+
+  @@map("service_location_mode")
+}
+
+enum BookingStatus {
+  LOCKED_PENDING_PAYMENT
+  CONFIRMED
+  ARTIST_EN_ROUTE
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED_BY_CUSTOMER
+  CANCELLED_BY_PRO
+  DISPUTED
+  EXPIRED
+
+  @@map("booking_status")
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURN_REQUESTED
+  REFUNDED
+
+  @@map("order_status")
+}
+
+enum EscrowStatus {
+  HELD
+  ELIGIBLE_FOR_PAYOUT
+  SETTLED
+  REFUNDED
+  ON_HOLD_DISPUTE
+
+  @@map("escrow_status")
+}
+
+enum PaymentGateway {
+  RAZORPAY
+  STRIPE
+
+  @@map("payment_gateway")
+}
+
+enum PaymentStatus {
+  INITIATED
+  CAPTURED
+  FAILED
+  REFUNDED
+
+  @@map("payment_status")
+}
+
+// ----------------------------------------------------------------------------
+// Core Models
+// ----------------------------------------------------------------------------
+
+model User {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  phone      String     @unique @db.VarChar(20)
+  email      String?    @unique @db.VarChar(255)
+  fullName   String     @map("full_name") @db.VarChar(150)
+  avatarUrl  String?    @map("avatar_url") @db.Text
+  roles      UserRole[] @default([CUSTOMER])
+  isActive   Boolean    @default(true) @map("is_active")
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  addresses            UserAddress[]
+  professionalProfile  ProfessionalProfile?
+  vendorProfile        VendorProfile?
+  bookings             Booking[]
+  orders               Order[]
+  paymentTransactions  PaymentTransaction[]
+  escrowLedgers        EscrowLedgerEntry[]
+
+  @@map("users")
+}
+
+model UserAddress {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String       @map("user_id") @db.Uuid
+  addressType  LocationType @default(HOME_VISIT) @map("address_type")
+  title        String?      @db.VarChar(100)
+  streetLine1  String       @map("street_line1") @db.VarChar(255)
+  streetLine2  String?      @map("street_line2") @db.VarChar(255)
+  landmark     String?      @db.VarChar(150)
+  city         String       @db.VarChar(100)
+  state        String       @db.VarChar(100)
+  postalCode   String       @map("postal_code") @db.VarChar(20)
+  countryCode  String       @default("IN") @map("country_code") @db.Char(2)
+  location     Unsupported("geography(Point, 4326)")
+  isDefault    Boolean      @default(false) @map("is_default")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proStudios           ProfessionalProfile[] @relation("StudioAddress")
+  vendorWarehouses     VendorProfile[]       @relation("WarehouseAddress")
+  venueBookings        Booking[]             @relation("VenueAddress")
+  shippingOrders       Order[]               @relation("ShippingAddress")
+
+  @@index([userId], map: "idx_user_addresses_user_id")
+  @@map("user_addresses")
+}
+
+model ProfessionalProfile {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String              @unique @map("user_id") @db.Uuid
+  slug                String              @unique @db.VarChar(180)
+  businessName        String              @map("business_name") @db.VarChar(200)
+  bio                 String?             @db.Text
+  experienceYears     Int                 @default(0) @map("experience_years")
+  specialties         String[]            @default([])
+  serviceMode         ServiceLocationMode @default(BOTH) @map("service_mode")
+  studioAddressId     String?             @map("studio_address_id") @db.Uuid
+  studioLocation      Unsupported("geography(Point, 4326)")? @map("studio_location")
+  maxTravelRadiusKm   Decimal             @default(25.00) @map("max_travel_radius_km") @db.Decimal(5, 2)
+  travelFeePerKm      Decimal             @default(45.00) @map("travel_fee_per_km") @db.Decimal(10, 2)
+  kycStatus           KycStatus           @default(PENDING) @map("kyc_status")
+  hygieneScore        Decimal             @default(99.4) @map("hygiene_score") @db.Decimal(4, 1)
+  ratingAvg           Decimal             @default(0.00) @map("rating_avg") @db.Decimal(3, 2)
+  reviewCount         Int                 @default(0) @map("review_count")
+  commissionRatePct   Decimal             @default(15.00) @map("commission_rate_pct") @db.Decimal(5, 2)
+  coverImageUrl       String?             @map("cover_image_url") @db.Text
+  instagramHandle     String?             @map("instagram_handle") @db.VarChar(100)
+  isInstantBookable   Boolean             @default(true) @map("is_instant_bookable")
+  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user                User                           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studioAddress       UserAddress?                   @relation("StudioAddress", fields: [studioAddressId], references: [id])
+  services            ServiceOffering[]
+  availabilityRules   ProfessionalAvailabilityRule[]
+  portfolioMedia      PortfolioMedia[]
+  bookings            Booking[]
+
+  @@map("professional_profiles")
+}
+
+model ServiceOffering {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  professionalId  String   @map("professional_id") @db.Uuid
+  category        String   @db.VarChar(100)
+  tier            String   @default("Signature") @db.VarChar(50)
+  title           String   @db.VarChar(200)
+  description     String   @db.Text
+  productsUsed    String[] @default([]) @map("products_used")
+  inclusions      String[] @default([])
+  durationMinutes Int      @map("duration_minutes")
+  bufferMinutes   Int      @default(30) @map("buffer_minutes")
+  basePrice       Decimal  @map("base_price") @db.Decimal(12, 2)
+  depositPct      Decimal  @default(30.00) @map("deposit_pct") @db.Decimal(5, 2)
+  isAddon         Boolean  @default(false) @map("is_addon")
+  isPopular       Boolean  @default(false) @map("is_popular")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  professional    ProfessionalProfile @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  bookingItems    BookingItem[]
+
+  @@index([professionalId], map: "idx_services_professional_id")
+  @@map("service_offerings")
+}
+
+model ProfessionalAvailabilityRule {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  professionalId  String   @map("professional_id") @db.Uuid
+  dayOfWeek       Int      @map("day_of_week") @db.SmallInt
+  startTime       DateTime @map("start_time") @db.Time(6)
+  endTime         DateTime @map("end_time") @db.Time(6)
+  isDayOff        Boolean  @default(false) @map("is_day_off")
+
+  // Relations
+  professional    ProfessionalProfile @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+
+  @@unique([professionalId, dayOfWeek], map: "uq_pro_day")
+  @@map("professional_availability_rules")
+}
+
+model PortfolioMedia {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  professionalId      String   @map("professional_id") @db.Uuid
+  mediaType           String   @map("media_type") @db.VarChar(20)
+  mediaUrl            String   @map("media_url") @db.Text
+  thumbnailUrl        String?  @map("thumbnail_url") @db.Text
+  occasionTag         String?  @map("occasion_tag") @db.VarChar(80)
+  isBeforeAfter       Boolean  @default(false) @map("is_before_after")
+  beforeImageUrl      String?  @map("before_image_url") @db.Text
+  afterImageUrl       String?  @map("after_image_url") @db.Text
+  transformationTitle String?  @map("transformation_title") @db.VarChar(200)
+  skinType            String?  @map("skin_type") @db.VarChar(100)
+  displayOrder        Int      @default(0) @map("display_order")
+  taggedSkuIds        String[] @default([]) @map("tagged_sku_ids") @db.Uuid
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  professional        ProfessionalProfile @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+
+  @@index([professionalId], map: "idx_portfolio_pro_id")
+  @@map("portfolio_media")
+}
+
+model VendorProfile {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String   @unique @map("user_id") @db.Uuid
+  brandName           String   @map("brand_name") @db.VarChar(200)
+  slug                String   @unique @db.VarChar(180)
+  gstinOrTaxId        String   @unique @map("gstin_or_tax_id") @db.VarChar(50)
+  warehouseAddressId  String?  @map("warehouse_address_id") @db.Uuid
+  kycStatus           KycStatus @default(APPROVED) @map("kyc_status")
+  commissionRatePct   Decimal  @default(12.00) @map("commission_rate_pct") @db.Decimal(5, 2)
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  warehouseAddress    UserAddress? @relation("WarehouseAddress", fields: [warehouseAddressId], references: [id])
+  products            Product[]
+  orderItems          OrderItem[]
+
+  @@map("vendor_profiles")
+}
+
+model Product {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vendorId        String   @map("vendor_id") @db.Uuid
+  slug            String   @unique @db.VarChar(220)
+  title           String   @db.VarChar(250)
+  brandName       String   @map("brand_name") @db.VarChar(150)
+  categoryPath    String   @map("category_path") @db.VarChar(255)
+  description     String   @db.Text
+  ingredients     String?  @db.Text
+  isProEquipment  Boolean  @default(false) @map("is_pro_equipment")
+  b2bOnly         Boolean  @default(false) @map("b2b_only")
+  ratingAvg       Decimal  @default(0.00) @map("rating_avg") @db.Decimal(3, 2)
+  reviewCount     Int      @default(0) @map("review_count")
+  isBestseller    Boolean  @default(false) @map("is_bestseller")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  vendor          VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  skus            ProductSku[]
+
+  @@index([vendorId], map: "idx_products_vendor_id")
+  @@map("products")
+}
+
+model ProductSku {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId         String    @map("product_id") @db.Uuid
+  sku               String    @unique @db.VarChar(100)
+  barcode           String?   @db.VarChar(100)
+  shadeName         String?   @map("shade_name") @db.VarChar(100)
+  shadeHex          String?   @map("shade_hex") @db.Char(7)
+  sizeLabel         String?   @map("size_label") @db.VarChar(50)
+  mrpPrice          Decimal   @map("mrp_price") @db.Decimal(12, 2)
+  retailPrice       Decimal   @map("retail_price") @db.Decimal(12, 2)
+  proWholesalePrice Decimal?  @map("pro_wholesale_price") @db.Decimal(12, 2)
+  stockQuantity     Int       @default(0) @map("stock_quantity")
+  reservedQuantity  Int       @default(0) @map("reserved_quantity")
+  batchNumber       String?   @map("batch_number") @db.VarChar(80)
+  expiryDate        DateTime? @map("expiry_date") @db.Date
+  images            String[]  @default([])
+  reorderThreshold  Int       @default(10) @map("reorder_threshold")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  product           Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems        OrderItem[]
+
+  @@index([productId], map: "idx_product_skus_product_id")
+  @@map("product_skus")
+}
+
+model Booking {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingNumber     String        @unique @map("booking_number") @db.VarChar(30)
+  customerId        String        @map("customer_id") @db.Uuid
+  professionalId    String        @map("professional_id") @db.Uuid
+  status            BookingStatus @default(LOCKED_PENDING_PAYMENT)
+  locationType      LocationType  @default(HOME_VISIT) @map("location_type")
+  venueAddressId    String?       @map("venue_address_id") @db.Uuid
+  venueLocation     Unsupported("geography(Point, 4326)")? @map("venue_location")
+  slotStart         DateTime      @map("slot_start") @db.Timestamptz(6)
+  slotEnd           DateTime      @map("slot_end") @db.Timestamptz(6)
+  // slot_range is handled in raw SQL migration via GENERATED ALWAYS AS (tstzrange(slot_start, slot_end, '[)'))
+  slotRange         Unsupported("tstzrange")? @map("slot_range")
+  lockExpiresAt     DateTime?     @map("lock_expires_at") @db.Timestamptz(6)
+  subtotalAmount    Decimal       @map("subtotal_amount") @db.Decimal(12, 2)
+  travelFee         Decimal       @default(0.00) @map("travel_fee") @db.Decimal(12, 2)
+  taxAmount         Decimal       @default(0.00) @map("tax_amount") @db.Decimal(12, 2)
+  totalAmount       Decimal       @map("total_amount") @db.Decimal(12, 2)
+  depositPaidAmount Decimal       @default(0.00) @map("deposit_paid_amount") @db.Decimal(12, 2)
+  balanceDueAmount  Decimal       @default(0.00) @map("balance_due_amount") @db.Decimal(12, 2)
+  startOtpHash      String?       @map("start_otp_hash") @db.VarChar(128)
+  completeOtpHash   String?       @map("complete_otp_hash") @db.VarChar(128)
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  customer          User                @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  professional      ProfessionalProfile @relation(fields: [professionalId], references: [id], onDelete: Restrict)
+  venueAddress      UserAddress?        @relation("VenueAddress", fields: [venueAddressId], references: [id])
+  bookingItems      BookingItem[]
+  transactions      PaymentTransaction[]
+  escrowEntries     EscrowLedgerEntry[]
+
+  @@map("bookings")
+}
+
+model BookingItem {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId         String          @map("booking_id") @db.Uuid
+  serviceOfferingId String          @map("service_offering_id") @db.Uuid
+  quantity          Int             @default(1)
+  unitPrice         Decimal         @map("unit_price") @db.Decimal(12, 2)
+  durationMinutes   Int             @map("duration_minutes")
+
+  // Relations
+  booking           Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceOffering   ServiceOffering @relation(fields: [serviceOfferingId], references: [id], onDelete: Restrict)
+
+  @@index([bookingId], map: "idx_booking_items_booking_id")
+  @@map("booking_items")
+}
+
+model Order {
+  id                 String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderNumber        String       @unique @map("order_number") @db.VarChar(30)
+  customerId         String       @map("customer_id") @db.Uuid
+  shippingAddressId  String       @map("shipping_address_id") @db.Uuid
+  totalAmount        Decimal      @map("total_amount") @db.Decimal(12, 2)
+  discountAmount     Decimal      @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  taxAmount          Decimal      @map("tax_amount") @db.Decimal(12, 2)
+  netPayable         Decimal      @map("net_payable") @db.Decimal(12, 2)
+  status             OrderStatus  @default(PENDING_PAYMENT)
+  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  customer           User                 @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  shippingAddress    UserAddress          @relation("ShippingAddress", fields: [shippingAddressId], references: [id], onDelete: Restrict)
+  orderItems         OrderItem[]
+  transactions       PaymentTransaction[]
+  escrowEntries      EscrowLedgerEntry[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId           String        @map("order_id") @db.Uuid
+  vendorId          String        @map("vendor_id") @db.Uuid
+  productSkuId      String        @map("product_sku_id") @db.Uuid
+  quantity          Int
+  unitPrice         Decimal       @map("unit_price") @db.Decimal(12, 2)
+  totalPrice        Decimal       @map("total_price") @db.Decimal(12, 2)
+  awbTrackingNumber String?       @map("awb_tracking_number") @db.VarChar(100)
+  courierPartner    String?       @map("courier_partner") @db.VarChar(100)
+  status            OrderStatus   @default(PENDING_PAYMENT)
+
+  // Relations
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  vendor            VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  productSku        ProductSku    @relation(fields: [productSkuId], references: [id], onDelete: Restrict)
+
+  @@index([orderId], map: "idx_order_items_order_id")
+  @@index([vendorId], map: "idx_order_items_vendor_id")
+  @@map("order_items")
+}
+
+model PaymentTransaction {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String         @map("user_id") @db.Uuid
+  bookingId        String?        @map("booking_id") @db.Uuid
+  orderId          String?        @map("order_id") @db.Uuid
+  gatewayProvider  PaymentGateway @default(RAZORPAY) @map("gateway_provider")
+  gatewayOrderId   String         @unique @map("gateway_order_id") @db.VarChar(150)
+  gatewayPaymentId String?        @unique @map("gateway_payment_id") @db.VarChar(150)
+  amount           Decimal        @db.Decimal(12, 2)
+  currency         String         @default("INR") @db.Char(3)
+  status           PaymentStatus  @default(INITIATED)
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  user             User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  booking          Booking?       @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  order            Order?         @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@map("payment_transactions")
+}
+
+model EscrowLedgerEntry {
+  id                      String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transactionReference    String       @map("transaction_reference") @db.VarChar(100)
+  beneficiaryUserId       String       @map("beneficiary_user_id") @db.Uuid
+  bookingId               String?      @map("booking_id") @db.Uuid
+  orderId                 String?      @map("order_id") @db.Uuid
+  grossAmount             Decimal      @map("gross_amount") @db.Decimal(12, 2)
+  platformCommission      Decimal      @map("platform_commission") @db.Decimal(12, 2)
+  escrowGuaranteeReserve  Decimal      @default(0.00) @map("escrow_guarantee_reserve") @db.Decimal(12, 2)
+  taxWithheld             Decimal      @default(0.00) @map("tax_withheld") @db.Decimal(12, 2)
+  netPayoutAmount         Decimal      @map("net_payout_amount") @db.Decimal(12, 2)
+  status                  EscrowStatus @default(HELD)
+  eligibleReleaseAt       DateTime?    @map("eligible_release_at") @db.Timestamptz(6)
+  settledAt               DateTime?    @map("settled_at") @db.Timestamptz(6)
+  createdAt               DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  beneficiaryUser         User         @relation(fields: [beneficiaryUserId], references: [id], onDelete: Restrict)
+  booking                 Booking?     @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  order                   Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([beneficiaryUserId, status], map: "idx_escrow_beneficiary_status")
+  @@index([bookingId], map: "idx_escrow_booking_id")
+  @@map("escrow_ledger_entries")
+}
