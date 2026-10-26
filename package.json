@@ -12,6 +12,7 @@
     "db:migrate": "npx prisma migrate dev",
     "db:seed": "npx tsx prisma/seed.ts",
     "server:dev": "npx tsx server/index.ts",
+    "verify:concurrency": "npx tsx scripts/verify-concurrency.ts",
     "dev:full": "concurrently -k -p \"[{name}]\" -n \"FRONTEND,BACKEND\" -c \"cyan.bold,magenta.bold\" \"npm run dev\" \"npm run server:dev\""
   },
   "dependencies": {

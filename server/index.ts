@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import Redis from 'ioredis';
 import pg from 'pg';
 import { mockDb } from '../src/services/mockDatabase';
+import { runConcurrencyDiagnostics } from './concurrencyDiagnostics';
 
 dotenv.config();
 
@@ -917,6 +918,26 @@ app.post('/api/v1/bookings/:id/cancel', async (req: Request, res: Response) => {
     },
     timestamp: new Date().toISOString(),
   });
+});
+
+// ----------------------------------------------------------------------------
+// 10. ADMIN CONCURRENCY & INTEGRITY DIAGNOSTICS
+// ----------------------------------------------------------------------------
+app.post('/api/v1/admin/diagnostics/concurrency-audit', async (_req: Request, res: Response) => {
+  try {
+    const report = await runConcurrencyDiagnostics();
+    return res.status(200).json({
+      success: true,
+      data: report,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    console.error('❌ [Diagnostics Failure]:', err.message);
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
 });
 
 // ----------------------------------------------------------------------------
