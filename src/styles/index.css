@@ -4,45 +4,51 @@
 
 @layer base {
   :root {
-    --bg-canvas: #FAF7F5;
-    --bg-surface: #F3ECE7;
-    --brand-rose: #C87D65;
-    --brand-velvet: #C84B6B;
-    --brand-gold: #D4AF37;
-    --text-obsidian: #181311;
+    --bg-canvas: #FAF7F5;          /* Alabaster Silk */
+    --bg-surface: #F3ECE7;         /* Pearl Cream */
+    --bg-surface-hover: #F7EAE4;   /* Warm Blush Tint */
+    --text-primary: #181311;       /* Obsidian Espresso */
+    --text-secondary: #6E5D54;     /* Muted Cocoa */
+    --brand-accent: #C87D65;       /* Editorial Rose Gold */
+    --accent-gold: #D4AF37;        /* Champagne Gold */
+    --status-sage: #2E6F40;        /* Botanical Sage */
+    --status-urgency: #B42318;     /* Velvet Crimson */
   }
 
   body {
-    background-color: #FAF7F5;
-    color: #181311;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Glassmorphism helpers */
+/* Glassmorphism Surface Token:
+   rgba(250, 247, 245, 0.80) with backdrop-filter: blur(16px) and 1px solid rgba(200, 125, 101, 0.16)
+*/
 .glass-panel {
-  background: rgba(250, 247, 245, 0.78);
+  background: rgba(250, 247, 245, 0.80);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(200, 125, 101, 0.16);
 }
 
 .glass-panel-dark {
-  background: rgba(24, 19, 17, 0.82);
+  background: rgba(24, 19, 17, 0.85);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(200, 125, 101, 0.22);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(200, 125, 101, 0.18);
   box-shadow: 0 4px 20px -2px rgba(24, 19, 17, 0.05);
 }
 
-/* Custom scrollbars */
+/* Custom Luxury Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -58,7 +64,7 @@
   background: rgba(200, 125, 101, 0.5);
 }
 
-/* Champagne Shimmer for Skeletons */
+/* Warm Champagne Shimmer for Skeletons */
 .champagne-shimmer {
   background: linear-gradient(
     90deg,

@@ -10,10 +10,12 @@ export default {
       colors: {
         canvas: {
           light: '#FAF7F5', // Alabaster Silk
+          DEFAULT: '#FAF7F5',
           dark: '#0E0C0D',  // Velvet Plum Obsidian
         },
         surface: {
           cream: '#F3ECE7',  // Pearl Cream
+          hover: '#F7EAE4',  // Warm Blush Tint
           white: '#FFFFFF',
           dark: '#181416',
           card: '#FCF9F7',
@@ -21,7 +23,8 @@ export default {
         obsidian: {
           DEFAULT: '#181311', // Obsidian Espresso
           deep: '#120E0D',
-          muted: '#524844',
+          cocoa: '#6E5D54',  // Muted Cocoa
+          muted: '#6E5D54',
           subtle: '#8C7E78',
         },
         champagne: {
@@ -33,7 +36,7 @@ export default {
         rose: {
           gold: '#C87D65',    // Editorial Rose Gold
           velvet: '#C84B6B',  // Velvet Rose
-          blush: '#F6E7E4',
+          blush: '#F7EAE4',   // Warm Blush Tint
           dark: '#A23B55',
         },
         sage: {
@@ -41,9 +44,14 @@ export default {
           light: '#E2EFE5',
           emerald: '#1F8A5B',
         },
+        crimson: {
+          DEFAULT: '#B42318', // Velvet Crimson
+          velvet: '#B42318',
+          light: '#FEE4E2',
+        },
       },
       fontFamily: {
-        serif: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
+        serif: ['"Playfair Display"', '"Cormorant Garamond"', 'Georgia', 'serif'],
         sans: ['"Plus Jakarta Sans"', 'Inter', '-apple-system', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },

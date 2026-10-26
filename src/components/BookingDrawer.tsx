@@ -278,7 +278,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                         cy="24"
                         r={radius}
                         fill="transparent"
-                        stroke={secondsRemaining < 120 ? '#C84B6B' : '#D4AF37'}
+                        stroke={secondsRemaining < 120 ? '#B42318' : '#D4AF37'}
                         strokeWidth="3"
                         strokeDasharray={circumference}
                         strokeDashoffset={strokeDashoffset}
@@ -286,7 +286,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                         className="transition-all duration-1000 ease-linear"
                       />
                     </svg>
-                    <Lock className="w-4 h-4 text-champagne absolute inset-auto" />
+                    <Lock className={`w-4 h-4 absolute inset-auto transition-colors ${secondsRemaining < 120 ? 'text-crimson' : 'text-champagne'}`} />
                   </div>
 
                   <div>
@@ -300,7 +300,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                     </div>
                     <p className="text-[11px] text-white/80">
                       Calendar held for you. Expires in{' '}
-                      <strong className="font-mono text-white tabular-nums">
+                      <strong className={`font-mono tabular-nums ${secondsRemaining < 120 ? 'text-crimson font-bold animate-pulse' : 'text-white'}`}>
                         {formatTimer(secondsRemaining)}
                       </strong>
                     </p>

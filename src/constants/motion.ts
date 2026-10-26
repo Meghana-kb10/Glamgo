@@ -1,25 +1,18 @@
 import { Transition } from 'framer-motion';
 
-export const snappySpring: Transition = {
-  type: 'spring',
-  stiffness: 400,
-  damping: 28,
-  mass: 0.8,
+/**
+ * Mandatory Glamgo Framer Motion Physics Presets (The 5 Pillars)
+ */
+export const SPRINGS = {
+  snappy: { type: 'spring', stiffness: 400, damping: 28, mass: 0.8 } as Transition,   // Buttons, heart pops, filter pills, toggles
+  spatial: { type: 'spring', stiffness: 260, damping: 30, mass: 1.0 } as Transition,  // Shared element layoutId transitions, drawers, expanding cards
+  gentle: { type: 'spring', stiffness: 140, damping: 22, mass: 1.1 } as Transition,   // Hero staggered entrance, scroll reveals, parallax
 };
 
-export const spatialSpring: Transition = {
-  type: 'spring',
-  stiffness: 260,
-  damping: 30,
-  mass: 1.0,
-};
-
-export const gentleFloat: Transition = {
-  type: 'spring',
-  stiffness: 140,
-  damping: 22,
-  mass: 1.2,
-};
+// Aliases for component convenience
+export const snappySpring = SPRINGS.snappy;
+export const spatialSpring = SPRINGS.spatial;
+export const gentleFloat = SPRINGS.gentle;
 
 export const bouncySpring: Transition = {
   type: 'spring',
@@ -30,12 +23,12 @@ export const bouncySpring: Transition = {
 
 export const tapScale = {
   scale: 0.96,
-  transition: snappySpring,
+  transition: SPRINGS.snappy,
 };
 
 export const hoverElevate = {
   y: -5,
-  transition: snappySpring,
+  transition: SPRINGS.snappy,
 };
 
 export const staggerContainer = (staggerChildren = 0.08, delayChildren = 0) => ({
@@ -54,7 +47,7 @@ export const fadeInUp = {
   show: {
     opacity: 1,
     y: 0,
-    transition: spatialSpring,
+    transition: SPRINGS.spatial,
   },
 };
 
@@ -63,7 +56,7 @@ export const scaleFade = {
   show: {
     opacity: 1,
     scale: 1,
-    transition: spatialSpring,
+    transition: SPRINGS.spatial,
   },
   exit: {
     opacity: 0,
