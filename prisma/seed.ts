@@ -14,10 +14,19 @@
  *   npx tsx prisma/seed.ts
  */
 
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Client } from 'pg';
+import dotenv from 'dotenv';
 import { SEED_MUAS, SEED_VENDORS } from './seedData';
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/glamgo?sslmode=disable';
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://glamgo_admin:glamgo_secret_pass@localhost:5434/glamgo_db?schema=public';
 
 export async function runSeed(client?: Client) {
   const shouldClose = !client;
@@ -29,6 +38,26 @@ export async function runSeed(client?: Client) {
       console.log('✨ Connected to PostgreSQL database for Glamgo seed execution.');
     } catch (err: any) {
       console.warn('⚠️ Direct PostgreSQL connection failed. Generating standalone seed statements and checking data integrity:', err.message);
+    }
+  }
+
+  // 0. Auto-apply DDL migration if users table does not exist
+  if (db._connected) {
+    try {
+      const tableCheck = await db.query(
+        "SELECT 1 FROM information_schema.tables WHERE table_name = 'users';"
+      );
+      if (tableCheck.rows.length === 0) {
+        console.log('📜 Initializing PostGIS & GiST Schema Migration...');
+        const migrationPath = path.resolve(__dirname, 'migrations/20261101000000_init_postgis_gist_schema/migration.sql');
+        if (fs.existsSync(migrationPath)) {
+          const migrationSql = fs.readFileSync(migrationPath, 'utf8');
+          await db.query(migrationSql);
+          console.log('✅ Schema migration applied successfully with PostGIS and GiST constraints!');
+        }
+      }
+    } catch (migErr: any) {
+      console.warn('⚠️ Migration step notice:', migErr.message);
     }
   }
 

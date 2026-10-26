@@ -284,6 +284,9 @@ export interface SearchProfessionalsParams {
   radius_km?: number;
   date?: string;
   category_id?: string;
+  category?: string;
+  instant_book?: boolean;
+  min_rating?: number;
   occasion?: string;
   service_mode?: ServiceLocationMode;
   min_price?: number;
