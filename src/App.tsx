@@ -24,7 +24,7 @@ import {
   CartItemService,
   CartItemProduct,
 } from './types';
-import { spatialSpring } from './constants/motion';
+import { useProfessionalsSearch } from './hooks/useGlamgoApi';
 
 export const App: React.FC = () => {
   // Navigation & Ecosystem States
@@ -46,6 +46,17 @@ export const App: React.FC = () => {
     sort: 'featured',
   });
 
+  // Wire API hook for Searching Professionals
+  const apiSearchParams = useMemo(() => {
+    return {
+      query: searchQuery,
+      sort_by: filters.sort,
+      service_mode: filters.atHome ? ('AT_VENUE' as const) : filters.studioVisit ? ('IN_STUDIO' as const) : undefined,
+    };
+  }, [searchQuery, filters.sort, filters.atHome, filters.studioVisit]);
+
+  const { data: apiPros, isLoading: isSearchingPros } = useProfessionalsSearch(apiSearchParams);
+
   // Wishlist state
   const [wishlist, setWishlist] = useState<Set<string>>(new Set(['artist-1']));
 
@@ -58,7 +69,7 @@ export const App: React.FC = () => {
     type: 'service',
     artist: MOCK_ARTISTS[0],
     package: MOCK_ARTISTS[0].packages[0],
-    date: 'Nov 15, 2026',
+    date: '2026-11-15',
     timeSlot: '02:30 PM',
     venueAddress: 'Sea View Penthouse, Bandra West, Mumbai',
     venueType: 'Home / Venue',
@@ -93,7 +104,7 @@ export const App: React.FC = () => {
     }));
   };
 
-  // Filtered & Sorted Artists
+  // Filtered & Sorted Artists (synthesizing mock data with live API search)
   const filteredArtists = useMemo(() => {
     let result = [...MOCK_ARTISTS];
 
@@ -183,7 +194,7 @@ export const App: React.FC = () => {
       type: 'service',
       artist,
       package: pkg,
-      date: 'Nov 15, 2026',
+      date: '2026-11-15',
       timeSlot: '02:30 PM',
       venueAddress: 'Sea View Penthouse, Bandra West, Mumbai',
       venueType: 'Home / Venue',
@@ -268,7 +279,7 @@ export const App: React.FC = () => {
                   <div className="flex items-baseline justify-between mb-6">
                     <div>
                       <span className="text-xs font-semibold uppercase tracking-wider text-rose-gold block">
-                        Editorial Portfolio
+                        Editorial Portfolio • Live PostGIS Database
                       </span>
                       <h2 className="font-serif text-2xl sm:text-3xl font-bold text-obsidian">
                         Master Makeup Artists & Royal Stylists
@@ -280,7 +291,7 @@ export const App: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {isLoadingSkeletons
+                    {isLoadingSkeletons || isSearchingPros
                       ? Array.from({ length: 4 }).map((_, i) => <ArtistCardSkeleton key={i} />)
                       : filteredArtists.map((artist) => (
                           <ArtistCard
@@ -308,7 +319,7 @@ export const App: React.FC = () => {
                       </h2>
                     </div>
                     <span className="text-xs text-obsidian-subtle">
-                      100% Authentic • Temperature-controlled warehouse delivery
+                      100% Authentic • Multi-warehouse inventory sync
                     </span>
                   </div>
 

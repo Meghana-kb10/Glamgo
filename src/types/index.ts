@@ -1,3 +1,5 @@
+export * from './database';
+
 export type MarketplaceMode = 'services' | 'shop';
 
 export type PortalType = 'customer' | 'pro' | 'vendor' | 'admin';
@@ -91,6 +93,9 @@ export interface CartItemService {
   venueAddress: string;
   venueType: 'Home / Venue' | 'Studio Visit';
   lockExpiresAt?: number;
+  bookingNumber?: string;
+  startOtp?: string;
+  completeOtp?: string;
 }
 
 export type CartItem = CartItemProduct | CartItemService;

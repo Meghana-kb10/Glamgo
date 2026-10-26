@@ -11,22 +11,25 @@ import {
   Instagram,
   Eye,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Receipt
 } from 'lucide-react';
 import { MOCK_KYC_APPLICANTS } from '../data/mockData';
 import { KycApplicant } from '../types';
 import { spatialSpring, snappySpring } from '../constants/motion';
 import { triggerChampagneSparkles } from '../utils/confetti';
+import { useAdminEscrow } from '../hooks/useGlamgoApi';
 
 export const AdminCommandCenter: React.FC = () => {
   const [applicants, setApplicants] = useState<KycApplicant[]>(MOCK_KYC_APPLICANTS);
+  const { ledgers, decideKyc } = useAdminEscrow();
   
   // Escrow Split-Commission Sliders
   const [platformCommission, setPlatformCommission] = useState<number>(15); // 15%
   const [escrowGuaranteeFund, setEscrowGuaranteeFund] = useState<number>(3); // 3%
   const artistPayout = 100 - platformCommission - escrowGuaranteeFund; // 82%
 
-  const handleKycDecision = (id: string, decision: 'APPROVED' | 'REJECTED', e: React.MouseEvent) => {
+  const handleKycDecision = async (id: string, decision: 'APPROVED' | 'REJECTED', e: React.MouseEvent) => {
     if (decision === 'APPROVED') {
       const rect = (e.target as HTMLElement).getBoundingClientRect();
       triggerChampagneSparkles(
@@ -34,10 +37,13 @@ export const AdminCommandCenter: React.FC = () => {
         (rect.top + rect.height / 2) / window.innerHeight
       );
     }
+    await decideKyc(id, decision);
     setApplicants((prev) =>
       prev.map((a) => (a.id === id ? { ...a, status: decision } : a))
     );
   };
+
+  const totalHeldInEscrow = ledgers.reduce((sum, l) => sum + l.gross_amount, 0) || 128000;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -50,7 +56,7 @@ export const AdminCommandCenter: React.FC = () => {
               Trust & Safety Command
             </span>
             <span className="text-xs text-obsidian-subtle font-mono">
-              Root Level Authority
+              Root Level Authority • Database table: `escrow_ledgers`
             </span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-obsidian mt-1.5">
@@ -63,10 +69,10 @@ export const AdminCommandCenter: React.FC = () => {
 
         <div className="px-4 py-2 rounded-2xl bg-white border border-rose-gold/20 shadow-sm text-right">
           <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
-            Platform Escrow Float
+            Nodal Escrow Balance
           </span>
           <span className="font-mono text-base font-bold text-champagne-dark tabular-nums">
-            ₹42,50,000 Nodal Balance
+            ₹{totalHeldInEscrow.toLocaleString('en-IN')} Active Float
           </span>
         </div>
       </div>
@@ -74,144 +80,200 @@ export const AdminCommandCenter: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left 2 Cols: KYC Artist Portfolio Approval Queue */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-serif text-xl font-bold text-obsidian">
-                Artist Portfolio & Credential Approvals
-              </h2>
-              <span className="text-xs text-obsidian-muted">
-                3-stage background check: Government ID, Master Diploma, Raw Video Portfolios
+        <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-serif text-xl font-bold text-obsidian">
+                  Artist Portfolio & Credential Approvals
+                </h2>
+                <span className="text-xs text-obsidian-muted">
+                  3-stage background check: Government ID, Master Diploma, Raw Video Portfolios
+                </span>
+              </div>
+              <span className="text-xs font-mono font-semibold text-rose-gold">
+                {applicants.filter((a) => a.status === 'PENDING').length} Pending
               </span>
             </div>
-            <span className="text-xs font-mono font-semibold text-rose-gold">
-              {applicants.filter((a) => a.status === 'PENDING').length} Pending
-            </span>
-          </div>
 
-          <div className="space-y-4">
-            <AnimatePresence>
-              {applicants.map((app) => (
-                <motion.div
-                  key={app.id}
-                  layout
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -60 }}
-                  transition={spatialSpring}
-                  className={`p-6 rounded-3xl bg-white border shadow-luxury transition-all ${
-                    app.status === 'APPROVED'
-                      ? 'border-emerald-500 bg-emerald-50/30'
-                      : app.status === 'REJECTED'
-                      ? 'border-red-300 opacity-50'
-                      : 'border-rose-gold/25'
-                  }`}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                    {/* Applicant Profile */}
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={app.avatar}
-                        alt={app.artistName}
-                        className="w-16 h-16 rounded-2xl object-cover border-2 border-champagne"
-                      />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-serif text-lg font-bold text-obsidian">
-                            {app.artistName}
-                          </h3>
-                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-surface-cream text-obsidian">
-                            {app.category}
+            <div className="space-y-4">
+              <AnimatePresence>
+                {applicants.map((app) => (
+                  <motion.div
+                    key={app.id}
+                    layout
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -60 }}
+                    transition={spatialSpring}
+                    className={`p-6 rounded-3xl bg-white border shadow-luxury transition-all ${
+                      app.status === 'APPROVED'
+                        ? 'border-emerald-500 bg-emerald-50/30'
+                        : app.status === 'REJECTED'
+                        ? 'border-red-300 opacity-50'
+                        : 'border-rose-gold/25'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      {/* Applicant Profile */}
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={app.avatar}
+                          alt={app.artistName}
+                          className="w-16 h-16 rounded-2xl object-cover border-2 border-champagne"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-serif text-lg font-bold text-obsidian">
+                              {app.artistName}
+                            </h3>
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-surface-cream text-obsidian">
+                              {app.category}
+                            </span>
+                          </div>
+                          <span className="text-xs text-obsidian-muted block mt-0.5">
+                            {app.city} • {app.experienceYears} Years Documented Experience
+                          </span>
+                          <span className="text-xs text-rose-gold font-mono flex items-center gap-1 mt-1">
+                            <Instagram className="w-3.5 h-3.5" />
+                            <span>{app.instagramHandle}</span>
                           </span>
                         </div>
-                        <span className="text-xs text-obsidian-muted block mt-0.5">
-                          {app.city} • {app.experienceYears} Years Documented Experience
-                        </span>
-                        <span className="text-xs text-rose-gold font-mono flex items-center gap-1 mt-1">
-                          <Instagram className="w-3.5 h-3.5" />
-                          <span>{app.instagramHandle}</span>
-                        </span>
+                      </div>
+
+                      {/* Actions or Status */}
+                      <div>
+                        {app.status === 'PENDING' ? (
+                          <div className="flex items-center gap-2">
+                            <motion.button
+                              whileTap={{ scale: 0.94 }}
+                              transition={snappySpring}
+                              onClick={(e) => handleKycDecision(app.id, 'APPROVED', e)}
+                              className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                            >
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              <span>Approve Pro</span>
+                            </motion.button>
+
+                            <motion.button
+                              whileTap={{ scale: 0.94 }}
+                              transition={snappySpring}
+                              onClick={(e) => handleKycDecision(app.id, 'REJECTED', e)}
+                              className="px-3 py-2 rounded-xl bg-surface-cream hover:bg-red-50 text-obsidian-muted hover:text-red-700 text-xs font-semibold border border-rose-gold/20"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                            </motion.button>
+                          </div>
+                        ) : (
+                          <span
+                            className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                              app.status === 'APPROVED'
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {app.status}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Actions or Status */}
-                    <div>
-                      {app.status === 'PENDING' ? (
-                        <div className="flex items-center gap-2">
-                          <motion.button
-                            whileTap={{ scale: 0.94 }}
-                            transition={snappySpring}
-                            onClick={(e) => handleKycDecision(app.id, 'APPROVED', e)}
-                            className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
-                          >
-                            <CheckCircle className="w-3.5 h-3.5" />
-                            <span>Approve Pro</span>
-                          </motion.button>
-
-                          <motion.button
-                            whileTap={{ scale: 0.94 }}
-                            transition={snappySpring}
-                            onClick={(e) => handleKycDecision(app.id, 'REJECTED', e)}
-                            className="px-3 py-2 rounded-xl bg-surface-cream hover:bg-red-50 text-obsidian-muted hover:text-red-700 text-xs font-semibold border border-rose-gold/20"
-                          >
-                            <XCircle className="w-3.5 h-3.5" />
-                          </motion.button>
+                    {/* Verification Docs Strip */}
+                    <div className="mt-4 pt-4 border-t border-rose-gold/15 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div className="p-2.5 rounded-xl bg-surface-cream/60 flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-obsidian-subtle uppercase block font-semibold">
+                            Government ID
+                          </span>
+                          <span className="font-mono font-medium text-obsidian">{app.idProof}</span>
                         </div>
-                      ) : (
-                        <span
-                          className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
-                            app.status === 'APPROVED'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}
-                        >
-                          {app.status}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                      </div>
 
-                  {/* Verification Docs Strip */}
-                  <div className="mt-4 pt-4 border-t border-rose-gold/15 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <div className="p-2.5 rounded-xl bg-surface-cream/60 flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-obsidian-subtle uppercase block font-semibold">
-                          Government ID
-                        </span>
-                        <span className="font-mono font-medium text-obsidian">{app.idProof}</span>
+                      <div className="p-2.5 rounded-xl bg-surface-cream/60 flex items-center gap-2">
+                        <FileBadge className="w-4 h-4 text-champagne-dark shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-obsidian-subtle uppercase block font-semibold">
+                            Accreditation
+                          </span>
+                          <span className="font-medium text-obsidian line-clamp-1">{app.certificate}</span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-2.5 rounded-xl bg-surface-cream/60 flex items-center gap-2">
-                      <FileBadge className="w-4 h-4 text-champagne-dark shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-obsidian-subtle uppercase block font-semibold">
-                          Accreditation
-                        </span>
-                        <span className="font-medium text-obsidian line-clamp-1">{app.certificate}</span>
-                      </div>
+                    {/* Portfolio Thumbnail Proofs */}
+                    <div className="mt-3 flex items-center gap-2">
+                      <span className="text-[10px] font-semibold uppercase text-obsidian-subtle mr-1">
+                        Submitted Looks:
+                      </span>
+                      {app.portfolioSamples.map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt="Proof"
+                          className="w-12 h-12 rounded-lg object-cover border border-rose-gold/30 cursor-pointer hover:scale-105 transition-transform"
+                        />
+                      ))}
                     </div>
-                  </div>
 
-                  {/* Portfolio Thumbnail Proofs */}
-                  <div className="mt-3 flex items-center gap-2">
-                    <span className="text-[10px] font-semibold uppercase text-obsidian-subtle mr-1">
-                      Submitted Looks:
-                    </span>
-                    {app.portfolioSamples.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt="Proof"
-                        className="w-12 h-12 rounded-lg object-cover border border-rose-gold/30 cursor-pointer hover:scale-105 transition-transform"
-                      />
-                    ))}
-                  </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
 
-                </motion.div>
-              ))}
-            </AnimatePresence>
+          {/* Real Database Escrow Ledgers Table */}
+          <div className="p-6 rounded-3xl bg-white border border-rose-gold/20 shadow-luxury space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-rose-gold" />
+                <h3 className="font-serif text-lg font-bold text-obsidian">
+                  Live Database Table: `escrow_ledgers`
+                </h3>
+              </div>
+              <span className="text-xs font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-semibold">
+                PostgreSQL Ledger Synchronized
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-surface-cream/50 text-obsidian-subtle uppercase text-[10px] tracking-wider border-b border-rose-gold/15">
+                  <tr>
+                    <th className="px-4 py-2.5">Ledger ID</th>
+                    <th className="px-4 py-2.5">Gross Booking</th>
+                    <th className="px-4 py-2.5">Platform Fee</th>
+                    <th className="px-4 py-2.5">Net Payout</th>
+                    <th className="px-4 py-2.5 text-right">Escrow Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-rose-gold/10 font-mono">
+                  {ledgers.length > 0 ? (
+                    ledgers.map((l) => (
+                      <tr key={l.id} className="hover:bg-surface-cream/30">
+                        <td className="px-4 py-3 text-obsidian font-semibold">{l.id.slice(0, 16)}...</td>
+                        <td className="px-4 py-3 text-obsidian">₹{l.gross_amount.toLocaleString('en-IN')}</td>
+                        <td className="px-4 py-3 text-rose-gold">₹{l.platform_commission.toLocaleString('en-IN')}</td>
+                        <td className="px-4 py-3 text-emerald-700 font-bold">₹{l.net_payout_amount.toLocaleString('en-IN')}</td>
+                        <td className="px-4 py-3 text-right">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            l.status === 'SETTLED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                          }`}>
+                            {l.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-4 text-center text-obsidian-subtle font-sans">
+                        No active transactions yet. Complete a checkout in the Customer Portal to observe live ledger rows.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 

@@ -15,11 +15,16 @@ import {
   AlertCircle,
   CheckCircle2,
   Home,
-  Building2
+  Building2,
+  KeyRound,
+  Check,
+  ChevronRight,
+  CreditCard
 } from 'lucide-react';
 import { Artist, ServicePackage, Product, CartItemService, CartItemProduct } from '../types';
 import { spatialSpring, snappySpring, bouncySpring } from '../constants/motion';
 import { triggerBookingSuccessCelebration } from '../utils/confetti';
+import { useBookingLock, useHybridCheckout, useBookingOtp } from '../hooks/useGlamgoApi';
 
 interface BookingDrawerProps {
   isOpen: boolean;
@@ -34,13 +39,13 @@ interface BookingDrawerProps {
 }
 
 const UPCOMING_DATES = [
-  { dayName: 'Fri', dateNumber: '14', fullDate: 'Nov 14, 2026' },
-  { dayName: 'Sat', dateNumber: '15', fullDate: 'Nov 15, 2026' },
-  { dayName: 'Sun', dateNumber: '16', fullDate: 'Nov 16, 2026' },
-  { dayName: 'Mon', dateNumber: '17', fullDate: 'Nov 17, 2026' },
-  { dayName: 'Tue', dateNumber: '18', fullDate: 'Nov 18, 2026' },
-  { dayName: 'Wed', dateNumber: '19', fullDate: 'Nov 19, 2026' },
-  { dayName: 'Thu', dateNumber: '20', fullDate: 'Nov 20, 2026' },
+  { dayName: 'Fri', dateNumber: '14', fullDate: '2026-11-14' },
+  { dayName: 'Sat', dateNumber: '15', fullDate: '2026-11-15' },
+  { dayName: 'Sun', dateNumber: '16', fullDate: '2026-11-16' },
+  { dayName: 'Mon', dateNumber: '17', fullDate: '2026-11-17' },
+  { dayName: 'Tue', dateNumber: '18', fullDate: '2026-11-18' },
+  { dayName: 'Wed', dateNumber: '19', fullDate: '2026-11-19' },
+  { dayName: 'Thu', dateNumber: '20', fullDate: '2026-11-20' },
 ];
 
 const TIME_SLOTS = [
@@ -76,13 +81,23 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
     activeService?.venueType || 'Home / Venue'
   );
 
+  // API Hooks
+  const { lockSlot, lockedBooking, isLocking } = useBookingLock();
+  const { checkout, checkoutResult, isCheckingOut } = useHybridCheckout();
+  const { verifyOtp, verificationResult, isVerifying, error: otpError } = useBookingOtp();
+
   // Validation Shake Trigger states
   const [slotShake, setSlotShake] = useState(false);
   const [addressShake, setAddressShake] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
+  // OTP Verification Interactive State
+  const [otpInput, setOtpInput] = useState('');
+  const [otpMode, setOtpMode] = useState<'START' | 'COMPLETE'>('START');
+  const [otpSuccessMessage, setOtpSuccessMessage] = useState<string | null>(null);
+
   // 10-Minute Radial Lock Countdown Timer (seconds from 600 down to 0)
-  const [secondsRemaining, setSecondsRemaining] = useState(600); // 10:00
+  const [secondsRemaining, setSecondsRemaining] = useState(600);
 
   useEffect(() => {
     if (!isOpen || !activeService) return;
@@ -98,7 +113,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Radial progress calculations (radius 18, circumference ~113.1)
+  // Radial progress calculations
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
   const progressPercent = (600 - secondsRemaining) / 600;
@@ -112,9 +127,8 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
   );
   const escrowDepositDueToday = Math.round(servicePrice * 0.3) + productSubtotal;
   const balanceAtVenue = Math.round(servicePrice * 0.7);
-  const grandTotal = servicePrice + productSubtotal;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (activeService && !selectedTime) {
       setSlotShake(true);
       setTimeout(() => setSlotShake(false), 500);
@@ -126,9 +140,72 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
       return;
     }
 
-    // Success flow
-    setBookingConfirmed(true);
-    triggerBookingSuccessCelebration();
+    try {
+      let createdBookingId = undefined;
+
+      // 1. Lock slot via API if active service exists
+      if (activeService) {
+        const lockRes = await lockSlot({
+          customer_id: 'usr-cust-001',
+          professional_id: 'pro-001',
+          service_offering_ids: ['srv-001'],
+          service_mode: venueType === 'Home / Venue' ? 'AT_VENUE' : 'IN_STUDIO',
+          venue_address: {
+            street: venueAddress,
+            city: 'Mumbai',
+            state: 'MH',
+            postal_code: '400050',
+            latitude: 19.0607,
+            longitude: 72.8362,
+          },
+          slot_start: `${selectedDate}T14:30:00Z`,
+          slot_end: `${selectedDate}T17:30:00Z`,
+        });
+        createdBookingId = lockRes.booking.id;
+      }
+
+      // 2. Process Hybrid Checkout via API
+      await checkout({
+        customer_id: 'usr-cust-001',
+        booking_id: createdBookingId,
+        items: productCartItems.map((p) => ({
+          variant_id: 'var-001',
+          quantity: p.quantity,
+        })),
+        shipping_address: {
+          street: venueAddress,
+          city: 'Mumbai',
+          state: 'MH',
+          postal_code: '400050',
+          latitude: 19.0607,
+          longitude: 72.8362,
+        },
+        gateway_provider: 'RAZORPAY',
+      });
+
+      setBookingConfirmed(true);
+      triggerBookingSuccessCelebration();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otpInput || otpInput.length < 6) return;
+    try {
+      const res = await verifyOtp({
+        booking_id: checkoutResult?.booking?.id || 'bk-seed-001',
+        otp_type: otpMode,
+        otp_code: otpInput,
+      });
+      setOtpSuccessMessage(res.message);
+      if (otpMode === 'START') {
+        setOtpMode('COMPLETE');
+        setOtpInput('');
+      }
+    } catch (err: any) {
+      console.error(err);
+    }
   };
 
   if (!isOpen) return null;
@@ -145,7 +222,6 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        {/* Drawer Panel with spatialSpring */}
         <motion.div
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
@@ -161,8 +237,8 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                 <h2 className="font-serif text-xl font-bold text-obsidian">
                   Hybrid Booking & Glam Cart
                 </h2>
-                <span className="text-[11px] text-obsidian-subtle">
-                  Services & Cosmetics unified in one checkout
+                <span className="text-[11px] text-obsidian-subtle font-mono">
+                  API: /api/v1/bookings/lock & /api/v1/cart/checkout
                 </span>
               </div>
             </div>
@@ -187,7 +263,6 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                 className="p-4 rounded-2xl bg-gradient-to-r from-obsidian via-obsidian-deep to-obsidian text-white shadow-luxury flex items-center justify-between border border-champagne/30"
               >
                 <div className="flex items-center gap-3">
-                  {/* SVG Radial Countdown Ring */}
                   <div className="relative w-12 h-12 flex items-center justify-center">
                     <svg className="w-12 h-12 -rotate-90">
                       <circle
@@ -220,11 +295,11 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                         Slot Reserved & Locked
                       </span>
                       <span className="text-[10px] bg-champagne-dark/40 px-1.5 py-0.2 rounded font-mono text-champagne">
-                        Live
+                        Redis Redlock Active
                       </span>
                     </div>
                     <p className="text-[11px] text-white/80">
-                      Artist calendar held for you. Expires in{' '}
+                      Calendar held for you. Expires in{' '}
                       <strong className="font-mono text-white tabular-nums">
                         {formatTimer(secondsRemaining)}
                       </strong>
@@ -236,7 +311,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                   <span className="text-[10px] text-white/60 block">Status</span>
                   <span className="font-mono text-xs font-bold text-emerald-400 flex items-center gap-1 justify-end">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Protected</span>
+                    <span>PostgreSQL GIST Protected</span>
                   </span>
                 </div>
               </motion.div>
@@ -361,7 +436,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-obsidian">Service Location</span>
+                      <span className="text-xs font-semibold text-obsidian">Service Location Mode</span>
                       <div className="flex items-center gap-1 p-0.5 rounded-lg bg-surface-cream border border-rose-gold/20 text-[11px]">
                         <button
                           onClick={() => setVenueType('Home / Venue')}
@@ -370,7 +445,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                           }`}
                         >
                           <Home className="w-3 h-3 text-rose-gold" />
-                          <span>At-Home</span>
+                          <span>AT_VENUE</span>
                         </button>
                         <button
                           onClick={() => setVenueType('Studio Visit')}
@@ -379,7 +454,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                           }`}
                         >
                           <Building2 className="w-3 h-3 text-rose-gold" />
-                          <span>In-Studio</span>
+                          <span>IN_STUDIO</span>
                         </button>
                       </div>
                     </div>
@@ -422,7 +497,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                     Cosmetics & Retail SKUs ({productCartItems.length})
                   </span>
                   <span className="text-[11px] text-emerald-700 font-semibold">
-                    Free Express Delivery
+                    Free Express Delivery (Vendor Sub-Orders)
                   </span>
                 </div>
 
@@ -468,7 +543,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
               </div>
             )}
 
-            {/* 4. Unified Hybrid Cart Upsell ("Complete Your Look") */}
+            {/* 4. Complete Your Look Upsell */}
             <div className="pt-2">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs uppercase font-bold tracking-wider text-obsidian flex items-center gap-1.5">
@@ -478,7 +553,6 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                 <span className="text-[11px] text-obsidian-subtle">Backstage Essentials</span>
               </div>
 
-              {/* Horizontal Upsell Carousel */}
               <div className="flex items-stretch gap-3 overflow-x-auto pb-2 scrollbar-none">
                 {upsellProducts.map((prod) => (
                   <div
@@ -518,43 +592,100 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
               </div>
             </div>
 
-            {/* Booking Confirmation Celebration overlay if confirmed */}
+            {/* 5. Booking Confirmation & OTP Terminal */}
             <AnimatePresence>
               {bookingConfirmed && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="p-6 rounded-2xl bg-emerald-50 border border-emerald-300 text-center space-y-3"
+                  className="p-6 rounded-2xl bg-emerald-50 border border-emerald-300 space-y-4"
                 >
-                  <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md">
-                    <CheckCircle2 className="w-7 h-7" />
+                  <div className="text-center">
+                    <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md mb-2">
+                      <CheckCircle2 className="w-7 h-7" />
+                    </div>
+                    <h4 className="font-serif text-xl font-bold text-emerald-900">
+                      Booking & Escrow Confirmed!
+                    </h4>
+                    <p className="text-xs text-emerald-800 leading-relaxed max-w-sm mx-auto">
+                      Transaction ID: <span className="font-mono font-bold">{checkoutResult?.payment_transaction.gateway_payment_id || 'pay_rzp_94819'}</span>
+                    </p>
+                    {checkoutResult?.booking && (
+                      <span className="inline-block mt-1 font-mono text-xs bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-md font-semibold">
+                        Booking #{checkoutResult.booking.booking_number}
+                      </span>
+                    )}
                   </div>
-                  <h4 className="font-serif text-xl font-bold text-emerald-900">
-                    Booking & Escrow Confirmed!
-                  </h4>
-                  <p className="text-xs text-emerald-800 leading-relaxed max-w-sm mx-auto">
-                    Your appointment with <strong>{activeService?.artist.name}</strong> on{' '}
-                    <strong>{selectedDate} at {selectedTime}</strong> has been secured in escrow.
-                    A confirmation SMS & calendar invite has been dispatched.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setBookingConfirmed(false);
-                      onClose();
-                    }}
-                    className="px-5 py-2 rounded-xl bg-emerald-700 text-white text-xs font-semibold shadow-sm"
-                  >
-                    Return to Discovery
-                  </button>
+
+                  {/* Interactive OTP Verification Simulation */}
+                  <div className="p-4 rounded-xl bg-white border border-emerald-200 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+                        <KeyRound className="w-4 h-4 text-emerald-700" />
+                        <span>Interactive Service State Machine (OTP Terminal)</span>
+                      </div>
+                      <span className="text-[10px] font-mono uppercase bg-emerald-100 px-2 py-0.5 rounded font-bold text-emerald-800">
+                        Mode: {otpMode}
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-emerald-800 leading-relaxed">
+                      {otpMode === 'START'
+                        ? 'When the makeup artist reaches your venue, enter the 6-digit Start OTP (Test OTP: 582914) to transition status to IN_PROGRESS.'
+                        : 'Once hair and bridal makeup are finished, enter the 6-digit Complete OTP (Test OTP: 394812) to release Escrow funds!'}
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={otpInput}
+                        onChange={(e) => setOtpInput(e.target.value)}
+                        placeholder={otpMode === 'START' ? 'Enter 582914' : 'Enter 394812'}
+                        className="flex-1 px-3 py-2 rounded-lg bg-surface-cream border border-emerald-300 font-mono text-center text-sm font-bold tracking-widest text-obsidian outline-none focus:border-emerald-600"
+                      />
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleVerifyOtp}
+                        disabled={isVerifying || otpInput.length < 6}
+                        className="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-semibold"
+                      >
+                        {isVerifying ? 'Verifying...' : 'Verify OTP'}
+                      </motion.button>
+                    </div>
+
+                    {otpError && (
+                      <span className="text-[11px] text-red-600 font-medium block">
+                        {otpError}
+                      </span>
+                    )}
+
+                    {otpSuccessMessage && (
+                      <span className="text-[11px] text-emerald-700 font-semibold block">
+                        ✓ {otpSuccessMessage}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-center pt-2">
+                    <button
+                      onClick={() => {
+                        setBookingConfirmed(false);
+                        onClose();
+                      }}
+                      className="px-5 py-2 rounded-xl bg-emerald-700 text-white text-xs font-semibold shadow-sm"
+                    >
+                      Return to Discovery
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
           </div>
 
-          {/* Checkout Footer with Rolling Tabular Numbers */}
+          {/* Checkout Footer */}
           <div className="p-6 glass-panel border-t border-rose-gold/25 space-y-3 shadow-luxury">
-            {/* Price Ledger breakdown */}
             <div className="space-y-1.5 text-xs text-obsidian-muted">
               {activeService && (
                 <>
@@ -608,17 +739,26 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
               whileTap={{ scale: 0.96 }}
               transition={snappySpring}
               onClick={handleCheckout}
-              disabled={!activeService && productCartItems.length === 0}
+              disabled={(!activeService && productCartItems.length === 0) || isLocking || isCheckingOut}
               className="w-full py-3.5 rounded-2xl bg-obsidian hover:bg-obsidian-deep disabled:bg-obsidian/40 text-white font-semibold text-sm tracking-wide flex items-center justify-center gap-2 shadow-lg transition-all"
             >
-              <Lock className="w-4 h-4 text-champagne-light" />
-              <span>Lock Slot & Proceed to Escrow Payment</span>
-              <ArrowRight className="w-4 h-4 text-champagne-light" />
+              {isLocking || isCheckingOut ? (
+                <>
+                  <Sparkles className="w-4 h-4 text-champagne-light animate-spin" />
+                  <span>Processing Razorpay Escrow Intent...</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4 text-champagne-light" />
+                  <span>Lock Slot & Proceed to Escrow Payment</span>
+                  <ArrowRight className="w-4 h-4 text-champagne-light" />
+                </>
+              )}
             </motion.button>
 
             <div className="flex items-center justify-center gap-2 text-[10px] text-obsidian-subtle">
               <ShieldCheck className="w-3.5 h-3.5 text-champagne-dark" />
-              <span>100% Escrow Protected • Instant Full Refund if Cancelled &gt; 48h Prior</span>
+              <span>Razorpay Route Escrow • PostgreSQL 16 `EXCLUDE USING gist` Protected</span>
             </div>
           </div>
 

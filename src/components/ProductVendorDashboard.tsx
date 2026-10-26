@@ -13,50 +13,35 @@ import {
   Search,
   ExternalLink
 } from 'lucide-react';
-import { MOCK_VENDOR_INVENTORY } from '../data/mockData';
-import { VendorInventoryItem } from '../types';
 import { snappySpring } from '../constants/motion';
 import { triggerChampagneSparkles } from '../utils/confetti';
+import { useVendorInventory } from '../hooks/useGlamgoApi';
 
 export const ProductVendorDashboard: React.FC = () => {
-  const [inventory, setInventory] = useState<VendorInventoryItem[]>(MOCK_VENDOR_INVENTORY);
+  const { inventory, isLoading, adjustStock, generateAwb } = useVendorInventory();
   const [generatingLabelId, setGeneratingLabelId] = useState<string | null>(null);
 
-  const handleGenerateLabel = (itemId: string, e: React.MouseEvent) => {
-    setGeneratingLabelId(itemId);
+  const handleGenerateLabel = async (subOrderId: string, e: React.MouseEvent) => {
+    setGeneratingLabelId(subOrderId);
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     triggerChampagneSparkles(
       (rect.left + rect.width / 2) / window.innerWidth,
       (rect.top + rect.height / 2) / window.innerHeight
     );
 
-    setTimeout(() => {
-      setInventory((prev) =>
-        prev.map((item) =>
-          item.id === itemId
-            ? { ...item, shippingStatus: 'LABEL_GENERATED' }
-            : item
-        )
-      );
+    try {
+      await generateAwb(subOrderId, 'Bluedart Air Express');
+    } finally {
       setGeneratingLabelId(null);
-    }, 1200);
+    }
   };
 
-  const handleAdjustStock = (itemId: string, delta: number) => {
-    setInventory((prev) =>
-      prev.map((item) => {
-        if (item.id !== itemId) return item;
-        const newStock = Math.max(0, item.inStock + delta);
-        const newStatus =
-          newStock <= 5 ? 'CRITICAL' : newStock <= item.reorderPoint ? 'LOW_STOCK' : 'IN_STOCK';
-        return {
-          ...item,
-          inStock: newStock,
-          status: newStatus,
-        };
-      })
-    );
+  const handleAdjustStock = async (variantId: string, delta: number) => {
+    await adjustStock(variantId, delta);
   };
+
+  const variants = inventory?.variants || [];
+  const products = inventory?.products || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -68,7 +53,7 @@ export const ProductVendorDashboard: React.FC = () => {
               Vendor Fulfillment Node
             </span>
             <span className="text-xs text-obsidian-subtle font-mono">
-              Hub ID: BOM-BANDRA-04
+              Hub ID: BOM-BKC-HUB-04 • POST /api/v1/vendor/inventory
             </span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-obsidian mt-1.5">
@@ -100,7 +85,7 @@ export const ProductVendorDashboard: React.FC = () => {
               Active Cosmetic SKUs & Bundles
             </h2>
             <span className="text-xs text-obsidian-muted">
-              Live synchronization with Customer Hybrid Cart and Upsell Carousel
+              Live database state tied to `products` and `product_variants` tables
             </span>
           </div>
 
@@ -122,117 +107,134 @@ export const ProductVendorDashboard: React.FC = () => {
             <thead className="bg-surface-cream/50 text-obsidian-subtle uppercase text-[10px] tracking-wider border-b border-rose-gold/15">
               <tr>
                 <th className="px-6 py-3.5">SKU & Item Name</th>
-                <th className="px-6 py-3.5">Category</th>
+                <th className="px-6 py-3.5">Shade / Size</th>
                 <th className="px-6 py-3.5 text-center">Available Stock</th>
                 <th className="px-6 py-3.5 text-center">Stock Alert Status</th>
-                <th className="px-6 py-3.5">Price</th>
+                <th className="px-6 py-3.5">Retail Price</th>
                 <th className="px-6 py-3.5 text-right">Fulfillment Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-rose-gold/10">
-              {inventory.map((item) => (
-                <tr key={item.id} className="hover:bg-surface-cream/30 transition-colors">
-                  {/* SKU & Brand */}
-                  <td className="px-6 py-4">
-                    <span className="font-mono text-[10px] text-obsidian-subtle block">
-                      {item.sku}
-                    </span>
-                    <span className="font-semibold text-obsidian text-sm block">
-                      {item.name}
-                    </span>
-                    <span className="text-xs text-rose-gold font-medium">{item.brand}</span>
-                  </td>
+              {variants.map((v: any) => {
+                const prod = products.find((p: any) => p.id === v.product_id);
+                const status =
+                  v.stock_quantity <= 5
+                    ? 'CRITICAL'
+                    : v.stock_quantity <= 15
+                    ? 'LOW_STOCK'
+                    : 'IN_STOCK';
 
-                  {/* Category */}
-                  <td className="px-6 py-4 text-obsidian-muted font-medium">
-                    {item.category}
-                  </td>
-
-                  {/* Available Stock + Quick adjust buttons */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => handleAdjustStock(item.id, -1)}
-                        className="p-1 rounded-md bg-surface-cream hover:bg-rose-blush border border-rose-gold/20"
-                      >
-                        <Minus className="w-3 h-3 text-obsidian" />
-                      </motion.button>
-
-                      <span className="font-mono text-sm font-bold text-obsidian w-8 text-center tabular-nums">
-                        {item.inStock}
+                return (
+                  <tr key={v.id} className="hover:bg-surface-cream/30 transition-colors">
+                    {/* SKU & Brand */}
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-[10px] text-obsidian-subtle block">
+                        {v.sku}
                       </span>
-
-                      <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => handleAdjustStock(item.id, 1)}
-                        className="p-1 rounded-md bg-surface-cream hover:bg-rose-blush border border-rose-gold/20"
-                      >
-                        <Plus className="w-3 h-3 text-obsidian" />
-                      </motion.button>
-                    </div>
-                    <span className="text-[10px] text-obsidian-subtle text-center block mt-1">
-                      {item.reserved} held in checkout
-                    </span>
-                  </td>
-
-                  {/* Low Stock Pulsing Badges */}
-                  <td className="px-6 py-4 text-center">
-                    {item.status === 'CRITICAL' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-300 animate-pulse">
-                        <AlertTriangle className="w-3 h-3 text-red-600" />
-                        <span>Critical Stock (&lt; 5)</span>
+                      <span className="font-semibold text-obsidian text-sm block">
+                        {prod?.title || 'Luxury Cosmetic Item'}
                       </span>
-                    ) : item.status === 'LOW_STOCK' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
-                        <AlertTriangle className="w-3 h-3 text-amber-600" />
-                        <span>Low Stock Alert</span>
+                      <span className="text-xs text-rose-gold font-medium">
+                        {prod?.brand_name || 'Charlotte Tilbury'}
                       </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
-                        <CheckCircle className="w-3 h-3 text-emerald-600" />
-                        <span>Healthy</span>
-                      </span>
-                    )}
-                  </td>
+                    </td>
 
-                  {/* Price */}
-                  <td className="px-6 py-4 font-mono font-bold text-obsidian tabular-nums">
-                    ₹{item.price.toLocaleString('en-IN')}
-                  </td>
+                    {/* Shade / Size */}
+                    <td className="px-6 py-4 text-obsidian-muted font-medium">
+                      {v.shade_name ? (
+                        <div className="flex items-center gap-1.5">
+                          {v.shade_hex && (
+                            <span
+                              className="w-3.5 h-3.5 rounded-full border border-gray-300"
+                              style={{ backgroundColor: v.shade_hex }}
+                            />
+                          )}
+                          <span>{v.shade_name}</span>
+                        </div>
+                      ) : (
+                        <span>{v.size_label || 'Standard'}</span>
+                      )}
+                    </td>
 
-                  {/* 1-Click "Generate Shipping Label" Morphing Button */}
-                  <td className="px-6 py-4 text-right">
-                    {item.shippingStatus === 'LABEL_GENERATED' ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-semibold shadow-xs">
-                        <Printer className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>AWB #GLAM-94819 Ready</span>
+                    {/* Available Stock + Quick adjust buttons */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleAdjustStock(v.id, -1)}
+                          className="p-1 rounded-md bg-surface-cream hover:bg-rose-blush border border-rose-gold/20"
+                        >
+                          <Minus className="w-3 h-3 text-obsidian" />
+                        </motion.button>
+
+                        <span className="font-mono text-sm font-bold text-obsidian w-8 text-center tabular-nums">
+                          {v.stock_quantity}
+                        </span>
+
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleAdjustStock(v.id, 1)}
+                          className="p-1 rounded-md bg-surface-cream hover:bg-rose-blush border border-rose-gold/20"
+                        >
+                          <Plus className="w-3 h-3 text-obsidian" />
+                        </motion.button>
+                      </div>
+                      <span className="text-[10px] text-obsidian-subtle text-center block mt-1">
+                        {v.reserved_quantity} held in carts
                       </span>
-                    ) : (
+                    </td>
+
+                    {/* Low Stock Pulsing Badges */}
+                    <td className="px-6 py-4 text-center">
+                      {status === 'CRITICAL' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                          <AlertTriangle className="w-3 h-3 text-red-600" />
+                          <span>Critical (&lt; 5)</span>
+                        </span>
+                      ) : status === 'LOW_STOCK' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                          <AlertTriangle className="w-3 h-3 text-amber-600" />
+                          <span>Low Stock</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          <CheckCircle className="w-3 h-3 text-emerald-600" />
+                          <span>Healthy</span>
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Price */}
+                    <td className="px-6 py-4 font-mono font-bold text-obsidian tabular-nums">
+                      ₹{v.retail_price.toLocaleString('en-IN')}
+                    </td>
+
+                    {/* 1-Click "Generate Shipping Label" Morphing Button */}
+                    <td className="px-6 py-4 text-right">
                       <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.94 }}
                         transition={snappySpring}
-                        onClick={(e) => handleGenerateLabel(item.id, e)}
-                        disabled={generatingLabelId === item.id}
+                        onClick={(e) => handleGenerateLabel(v.id, e)}
+                        disabled={generatingLabelId === v.id}
                         className="px-3.5 py-1.5 rounded-xl bg-obsidian hover:bg-obsidian-deep text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm transition-all"
                       >
-                        {generatingLabelId === item.id ? (
+                        {generatingLabelId === v.id ? (
                           <>
                             <Sparkles className="w-3.5 h-3.5 text-champagne-light animate-spin" />
-                            <span>Generating AWB...</span>
+                            <span>Calling Logistics API...</span>
                           </>
                         ) : (
                           <>
                             <FileText className="w-3.5 h-3.5 text-champagne-light" />
-                            <span>Generate Shipping Label</span>
+                            <span>Generate 3PL AWB</span>
                           </>
                         )}
                       </motion.button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
