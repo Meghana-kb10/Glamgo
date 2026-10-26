@@ -28,6 +28,7 @@ import { triggerBookingSuccessCelebration } from '../utils/confetti';
 import { useBookingLock, useHybridCheckout, useBookingOtp } from '../hooks/useGlamgoApi';
 import { InvoiceModal, InvoiceModalData } from './InvoiceModal';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 interface BookingDrawerProps {
   isOpen: boolean;
@@ -72,6 +73,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
 }) => {
   // Auth Context
   const { user } = useAuth();
+  const toast = useToast();
 
   // Local slot & address states
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -192,8 +194,13 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
 
       setBookingConfirmed(true);
       triggerBookingSuccessCelebration();
-    } catch (e) {
+      toast.success(
+        'Your luxury bridal reservation & order are secured with 0-collision guarantee.',
+        'Reservation Confirmed'
+      );
+    } catch (e: any) {
       console.error(e);
+      toast.error(e.message || 'Booking transaction failed', 'Booking Alert');
     }
   };
 
@@ -206,12 +213,17 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
         otp_code: otpInput,
       });
       setOtpSuccessMessage(res.message);
+      toast.success(
+        res.message || 'OTP verified! Escrow payout settled to artist account.',
+        otpMode === 'START' ? 'Service Commenced' : 'Escrow Settled'
+      );
       if (otpMode === 'START') {
         setOtpMode('COMPLETE');
         setOtpInput('');
       }
     } catch (err: any) {
       console.error(err);
+      toast.error(err.message || 'Invalid OTP code', 'Verification Alert');
     }
   };
 

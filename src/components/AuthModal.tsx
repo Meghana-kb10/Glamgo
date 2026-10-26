@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Eye, EyeOff, Sparkles, Check, AlertCircle, ArrowRight, ShieldCheck, Crown, Brush, Store } from 'lucide-react';
 import { useAuth, UserRole } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { MOTION_PRIMITIVES, tapScale } from '../constants/motion';
 
 interface AuthModalProps {
@@ -59,6 +60,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSuccess,
 }) => {
   const { login, signup } = useAuth();
+  const toast = useToast();
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [role, setRole] = useState<UserRole>(defaultRole);
 
@@ -124,6 +126,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsLoading(false);
       if (res.success) {
         setSuccessMessage('Welcome to Glamgo Atelier. Your membership is active.');
+        toast.success(`Welcome to Glamgo, ${fullName}! Your Atelier account is active.`, 'Account Created');
         setTimeout(() => {
           onSuccess?.();
           onClose();
@@ -137,6 +140,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsLoading(false);
       if (res.success) {
         setSuccessMessage('Signed in successfully. Welcome back.');
+        toast.success('Signed in successfully. Welcome to your Atelier dashboard.', 'Authentication Verified');
         setTimeout(() => {
           onSuccess?.();
           onClose();
@@ -159,6 +163,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setIsLoading(false);
     if (res.success) {
       setSuccessMessage(`Authenticated as ${persona.name} (${persona.badge})`);
+      toast.success(`Signed in as ${persona.name} (${persona.badge})`, 'Persona Switched');
       setTimeout(() => {
         onSuccess?.();
         onClose();

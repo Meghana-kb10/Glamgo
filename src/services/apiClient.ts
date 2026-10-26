@@ -531,9 +531,13 @@ export const glamgoApi = {
     async process(dto: HybridCheckoutDto): Promise<ApiResponse<HybridCheckoutResponse>> {
       if (isLiveBackend) {
         try {
+          const idempotencyKey = `idemp_${dto.booking_id || dto.customer_id}_${Date.now()}`;
           const res = await fetch(`${API_BASE_URL}/checkout/hybrid`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              ...getAuthHeaders(),
+              'Idempotency-Key': idempotencyKey,
+            },
             body: JSON.stringify(dto),
           });
 
