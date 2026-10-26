@@ -16,6 +16,8 @@ import { AdminCommandCenter } from './components/AdminCommandCenter';
 import { ShowcaseLandingPage } from './components/ShowcaseLandingPage';
 import { PullToRefresh } from './components/PullToRefresh';
 import { AuthModal } from './components/AuthModal';
+import { CustomerBookingsModal } from './components/CustomerBookingsModal';
+import { useSseEvents } from './hooks/useSseEvents';
 import { spatialSpring } from './constants/motion';
 
 import { MOCK_ARTISTS, MOCK_PRODUCTS } from './data/mockData';
@@ -31,9 +33,15 @@ import {
 import { useProfessionalsSearch } from './hooks/useGlamgoApi';
 
 export const App: React.FC = () => {
+  // Real-time Haute Beauté Telemetry & Webhook Streaming
+  useSseEvents();
+
   // Navigation & Ecosystem States
   const [mode, setMode] = useState<MarketplaceMode>('services');
   const [activePortal, setActivePortal] = useState<PortalType>('landing');
+
+  // Customer Reservations & Orders Hub Modal (PRD CUST-06)
+  const [isBookingsModalOpen, setIsBookingsModalOpen] = useState(false);
 
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -253,6 +261,7 @@ export const App: React.FC = () => {
             cartCount={totalCartCount}
             wishlistCount={wishlist.size}
             onOpenCart={() => setIsBookingDrawerOpen(true)}
+            onOpenBookings={() => setIsBookingsModalOpen(true)}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onLogoClick={() => setActivePortal('landing')}
@@ -466,6 +475,12 @@ export const App: React.FC = () => {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authModalMode}
+      />
+
+      {/* Customer Post-Booking Management Hub (PRD CUST-06) */}
+      <CustomerBookingsModal
+        isOpen={isBookingsModalOpen}
+        onClose={() => setIsBookingsModalOpen(false)}
       />
 
       {/* Dev Skeleton Toggle (bottom-left, visible on active portals) */}

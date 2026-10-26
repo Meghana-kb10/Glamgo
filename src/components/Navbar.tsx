@@ -12,6 +12,7 @@ import {
   Crown,
   Brush,
   Store,
+  Calendar,
 } from 'lucide-react';
 import { MarketplaceMode, PortalType } from '../types';
 import { snappySpring, bouncySpring, tapScale, hoverElevate } from '../constants/motion';
@@ -23,6 +24,7 @@ interface NavbarProps {
   cartCount: number;
   wishlistCount: number;
   onOpenCart: () => void;
+  onOpenBookings?: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onLogoClick?: () => void;
@@ -36,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   cartCount,
   wishlistCount,
   onOpenCart,
+  onOpenBookings,
   searchQuery,
   onSearchChange,
   onLogoClick,
@@ -145,6 +148,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </motion.button>
 
+          {/* Customer Reservations & Post-Booking Hub (PRD CUST-06) */}
+          <motion.button
+            type="button"
+            aria-label="My Atelier Bookings"
+            whileHover={hoverElevate}
+            whileTap={tapScale}
+            transition={snappySpring}
+            onClick={onOpenBookings}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-rose-gold/25 text-[13px] text-obsidian font-medium cursor-pointer shadow-xs hover:border-rose-gold/50 transition-colors focus-visible:ring-2 focus-visible:ring-rose-gold focus-visible:outline-none"
+          >
+            <Calendar className="w-3.5 h-3.5 text-rose-gold" />
+            <span className="hidden lg:inline">My Bookings</span>
+          </motion.button>
+
           {/* Interactive Hybrid Cart Button with Popping Badge */}
           <motion.button
             type="button"
@@ -217,6 +234,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
 
                     <div className="py-2 space-y-1">
+                      {onOpenBookings && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            onOpenBookings();
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-stone-900 bg-amber-50/70 hover:bg-amber-100 border border-amber-200/60 transition-colors"
+                        >
+                          <Calendar className="w-4 h-4 text-amber-700" />
+                          <span>My Bookings &amp; Orders</span>
+                        </button>
+                      )}
                       {onNavigatePortal && (
                         <>
                           <button

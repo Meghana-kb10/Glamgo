@@ -350,6 +350,33 @@ export const glamgoApi = {
         timestamp: new Date().toISOString(),
       };
     },
+
+    async getPayouts(proId?: string): Promise<ApiResponse<any>> {
+      if (isLiveBackend) {
+        try {
+          const qs = proId ? `?proId=${proId}` : '';
+          const res = await fetch(`${API_BASE_URL}/pro/payouts${qs}`);
+          if (res.ok) {
+            const json = await res.json();
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live pro payouts error, using fallback:', e.message);
+        }
+      }
+
+      await delay(140);
+      const res = mockDb.getProPayouts(proId);
+      return {
+        success: true,
+        data: res,
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
   },
 
   // ==========================================
@@ -473,6 +500,35 @@ export const glamgoApi = {
         source: 'simulated-database',
       };
     },
+
+    async getMyBookings(customerId?: string): Promise<ApiResponse<any[]>> {
+      if (isLiveBackend) {
+        try {
+          const qs = customerId ? `?customerId=${customerId}` : '';
+          const res = await fetch(`${API_BASE_URL}/bookings/my${qs}`, {
+            headers: getAuthHeaders(),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live getMyBookings error, using mock fallback:', e.message);
+        }
+      }
+
+      await delay(120);
+      const res = mockDb.getMyBookings(customerId);
+      return {
+        success: true,
+        data: res,
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
   },
 
   // ==========================================
@@ -560,6 +616,35 @@ export const glamgoApi = {
 
       await delay(260); // payment processing simulation
       const res = mockDb.processHybridCheckout(dto);
+      return {
+        success: true,
+        data: res,
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
+
+    async getMyOrders(customerId?: string): Promise<ApiResponse<any[]>> {
+      if (isLiveBackend) {
+        try {
+          const qs = customerId ? `?customerId=${customerId}` : '';
+          const res = await fetch(`${API_BASE_URL}/orders/my${qs}`, {
+            headers: getAuthHeaders(),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live getMyOrders error, using fallback:', e.message);
+        }
+      }
+
+      await delay(130);
+      const res = mockDb.getMyOrders(customerId);
       return {
         success: true,
         data: res,
@@ -716,6 +801,41 @@ export const glamgoApi = {
         source: 'simulated-database',
       };
     },
+
+    async sendCarrierWebhook(payload: {
+      awb_number: string;
+      status: 'PICKED_UP' | 'IN_TRANSIT' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'RTO';
+      carrier?: string;
+      location?: string;
+    }): Promise<ApiResponse<any>> {
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/webhooks/logistics`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live logistics webhook error, using fallback:', e.message);
+        }
+      }
+
+      await delay(180);
+      const res = mockDb.updateLogisticsStatus(payload.awb_number, payload.status, payload.location);
+      return {
+        success: true,
+        data: res,
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
   },
 
   // ==========================================
@@ -843,6 +963,41 @@ export const glamgoApi = {
             validOtpSettled: true,
           },
         },
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
+
+    async resolveDispute(payload: {
+      booking_id: string;
+      resolution: 'FULL_REFUND' | 'PARTIAL_REFUND' | 'RELEASE_ESCROW';
+      refund_amount?: number;
+      dispute_notes?: string;
+    }): Promise<ApiResponse<any>> {
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/admin/disputes/resolve`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live dispute resolution error, using fallback:', e.message);
+        }
+      }
+
+      await delay(180);
+      const res = mockDb.resolveDispute(payload.booking_id, payload.resolution, payload.refund_amount);
+      return {
+        success: true,
+        data: res,
         timestamp: new Date().toISOString(),
         source: 'simulated-database',
       };

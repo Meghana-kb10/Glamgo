@@ -1025,6 +1025,197 @@ class MockRelationalDatabase {
     this.users.push(newUser);
     return newUser;
   }
+
+  /**
+   * GET /api/v1/bookings/my
+   * Retrieve customer's active and completed bookings with pro details
+   */
+  getMyBookings(userId?: string) {
+    const list = userId ? this.bookings.filter((b) => b.customer_id === userId) : this.bookings;
+    return list.map((b) => {
+      const pro = this.professionalProfiles.find((p) => p.id === b.professional_id);
+      const proUser = pro ? this.users.find((u) => u.id === pro.user_id) : undefined;
+      const addr = b.venue_address;
+      const items = this.bookingItems.filter((i) => i.booking_id === b.id);
+      const offerings = items.map((i) => this.serviceOfferings.find((s) => s.id === i.service_offering_id)).filter(Boolean);
+
+      return {
+        id: b.id,
+        booking_number: b.booking_number,
+        status: b.status,
+        service_mode: b.service_mode || 'AT_VENUE',
+        slot_start: b.slot_start,
+        slot_end: b.slot_end,
+        total_amount: b.total_amount,
+        deposit_paid_amount: b.deposit_paid_amount,
+        balance_due_amount: b.balance_due_amount,
+        start_otp_hash: b.start_otp_hash,
+        complete_otp_hash: b.complete_otp_hash,
+        created_at: b.created_at,
+        professional: {
+          id: pro?.id || b.professional_id,
+          business_name: pro?.business_name || 'Master Beauty Atelier',
+          slug: pro?.slug || 'master-artist',
+          rating_avg: pro?.rating_avg || 4.95,
+          review_count: pro?.review_count || 128,
+          artist_name: proUser?.full_name || 'Tanya Grewal',
+          avatar_url: proUser?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        },
+        services: offerings,
+        venue_address: addr
+          ? `${addr.street}, ${addr.city}, ${addr.postal_code}`
+          : 'Suite 4B, Pali Hill Heritage, Bandra West, Mumbai 400050',
+      };
+    });
+  }
+
+  /**
+   * GET /api/v1/orders/my
+   * Retrieve customer's retail beauty orders with sub-orders and tracking
+   */
+  getMyOrders(userId?: string) {
+    const list = userId ? this.orders.filter((o) => o.customer_id === userId) : this.orders;
+    return list.map((o) => {
+      const subOrders = this.subOrders.filter((s) => s.order_id === o.id);
+      const items = this.orderItems
+        .filter((i) => subOrders.some((s) => s.id === i.sub_order_id))
+        .map((i) => {
+          const variant = this.productVariants.find((v) => v.id === i.variant_id);
+          const product = variant ? this.products.find((p) => p.id === variant.product_id) : undefined;
+          return {
+            ...i,
+            variant,
+            product,
+          };
+        });
+
+      return {
+        id: o.id,
+        order_number: o.order_number,
+        total_amount: o.total_amount,
+        net_payable: o.net_payable,
+        status: (o as any).status || subOrders[0]?.status || 'CONFIRMED',
+        created_at: o.created_at,
+        sub_orders: subOrders,
+        items,
+      };
+    });
+  }
+
+  /**
+   * GET /api/v1/pro/payouts
+   * Calculate professional earnings, escrow held, and settlement ledger
+   */
+  getProPayouts(proId?: string) {
+    const bookings = proId ? this.bookings.filter((b) => b.professional_id === proId) : this.bookings;
+    const completedBookings = bookings.filter((b) => b.status === 'COMPLETED');
+    const inProgressBookings = bookings.filter((b) => b.status === 'IN_PROGRESS' || b.status === 'CONFIRMED');
+
+    const grossRevenue = completedBookings.reduce((sum, b) => sum + (Number(b.total_amount) || 0), 0);
+    const platformCommission = Math.round(grossRevenue * 0.18);
+    const settledEarnings = grossRevenue - platformCommission;
+
+    const escrowHeld = inProgressBookings.reduce((sum, b) => {
+      const gross = Number(b.total_amount) || 0;
+      return sum + (gross - Math.round(gross * 0.18));
+    }, 0);
+
+    const transactions = this.escrowLedgers
+      .filter((e) => e.booking_id)
+      .slice(0, 10)
+      .map((e) => ({
+        id: e.id,
+        reference: e.id,
+        gross_amount: e.gross_amount,
+        commission: e.platform_commission,
+        net_payout: e.net_payout_amount,
+        status: e.status,
+        date: e.settled_at || e.created_at,
+      }));
+
+    return {
+      total_events: completedBookings.length,
+      upcoming_events: inProgressBookings.length,
+      gross_revenue: grossRevenue || 384000,
+      platform_commission: platformCommission || Math.round(384000 * 0.18),
+      settled_earnings: settledEarnings || Math.round(384000 * 0.82),
+      escrow_held: escrowHeld || 118000,
+      recent_transactions: transactions,
+    };
+  }
+
+  /**
+   * POST /api/v1/webhooks/logistics
+   * 3PL carrier callback to advance package tracking state and trigger escrow release
+   */
+  updateLogisticsStatus(awb: string, status: 'PICKED_UP' | 'IN_TRANSIT' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'RTO', location?: string) {
+    let subOrder = this.subOrders.find((s) => s.awb_tracking_number === awb);
+    if (!subOrder && this.subOrders.length > 0) {
+      subOrder = this.subOrders[0];
+      subOrder.awb_tracking_number = awb;
+    }
+
+    if (subOrder) {
+      subOrder.status = status === 'DELIVERED' ? 'DELIVERED' : 'SHIPPED';
+      subOrder.updated_at = new Date().toISOString();
+      if (status === 'DELIVERED') {
+        subOrder.delivered_at = new Date().toISOString();
+
+        // Release or mark vendor escrow eligible for payout (T+7 days window)
+        const escrow = this.escrowLedgers.find((e) => e.sub_order_id === subOrder!.id);
+        if (escrow) {
+          escrow.status = 'ELIGIBLE_FOR_PAYOUT';
+          escrow.eligible_release_at = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
+        }
+      }
+    }
+
+    return {
+      awb,
+      status,
+      location: location || 'BOM Central Express Hub',
+      updated_at: new Date().toISOString(),
+      sub_order: subOrder,
+    };
+  }
+
+  /**
+   * POST /api/v1/admin/disputes/resolve
+   * Admin dispute arbitration engine
+   */
+  resolveDispute(bookingId: string, resolution: 'FULL_REFUND' | 'PARTIAL_REFUND' | 'RELEASE_ESCROW', refundAmount?: number) {
+    const booking = this.bookings.find((b) => b.id === bookingId);
+    if (booking) {
+      if (resolution === 'FULL_REFUND') {
+        booking.status = 'CANCELLED_BY_CUSTOMER';
+      } else if (resolution === 'RELEASE_ESCROW') {
+        booking.status = 'COMPLETED';
+      }
+      booking.updated_at = new Date().toISOString();
+    }
+
+    const ledger = this.escrowLedgers.find((e) => e.booking_id === bookingId);
+    if (ledger) {
+      if (resolution === 'FULL_REFUND') {
+        ledger.status = 'REFUNDED';
+      } else if (resolution === 'RELEASE_ESCROW') {
+        ledger.status = 'SETTLED';
+        ledger.settled_at = new Date().toISOString();
+      } else if (resolution === 'PARTIAL_REFUND' && refundAmount) {
+        ledger.net_payout_amount = Math.max(0, ledger.net_payout_amount - refundAmount);
+        ledger.status = 'SETTLED';
+        ledger.settled_at = new Date().toISOString();
+      }
+    }
+
+    return {
+      booking_id: bookingId,
+      resolution,
+      refund_amount: refundAmount || 0,
+      booking_status: booking?.status,
+      escrow_status: ledger?.status,
+    };
+  }
 }
 
 // Export singleton instance

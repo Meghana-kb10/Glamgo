@@ -18,12 +18,36 @@ import { triggerChampagneSparkles } from '../utils/confetti';
 import { useVendorInventory } from '../hooks/useGlamgoApi';
 import { glamgoApi } from '../services/apiClient';
 import { ShippingLabelModal, ShippingLabelData } from './ShippingLabelModal';
+import { useToast } from '../context/ToastContext';
 
 export const ProductVendorDashboard: React.FC = () => {
+  const toast = useToast();
   const { inventory, isLoading, adjustStock, generateAwb } = useVendorInventory();
   const [generatingLabelId, setGeneratingLabelId] = useState<string | null>(null);
   const [activeLabel, setActiveLabel] = useState<ShippingLabelData | null>(null);
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
+  const [simulatingCarrierStatus, setSimulatingCarrierStatus] = useState<string | null>(null);
+
+  const handleSimulateCarrierWebhook = async (status: 'PICKED_UP' | 'IN_TRANSIT' | 'DELIVERED') => {
+    setSimulatingCarrierStatus(status);
+    try {
+      const awb = activeLabel?.awb_number || 'BLR-BD-948102';
+      const res = await glamgoApi.vendor.sendCarrierWebhook({
+        awb_number: awb,
+        status,
+        carrier: 'BlueDart Priority Air',
+        location: status === 'DELIVERED' ? 'Recipient Destination (Bandra West)' : 'BOM Airport Sorting Hub',
+      });
+      toast.success(
+        res.data?.message || `Carrier tracking updated to ${status}. Broadcast across SSE telemetry.`,
+        '3PL Logistics Webhook'
+      );
+    } catch (e: any) {
+      toast.error(e.message || 'Logistics callback error', 'Carrier Error');
+    } finally {
+      setSimulatingCarrierStatus(null);
+    }
+  };
 
   const handleGenerateLabel = async (subOrderId: string, e: React.MouseEvent) => {
     setGeneratingLabelId(subOrderId);
@@ -249,6 +273,83 @@ export const ProductVendorDashboard: React.FC = () => {
               })}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* 3PL Courier Carrier Webhook Simulator (PRD Section 4.3 & VEND-03) */}
+      <div className="p-6 rounded-3xl bg-white border border-rose-gold/20 shadow-luxury space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Truck className="w-4 h-4 text-rose-gold" />
+              <h3 className="font-serif text-lg font-bold text-obsidian">
+                3PL Courier Dispatch &amp; Carrier Webhook Simulator
+              </h3>
+            </div>
+            <p className="text-xs text-obsidian-muted mt-0.5">
+              Simulate carrier status callbacks (`POST /api/v1/webhooks/logistics`). Advancing to `DELIVERED` automatically transitions sub-orders and starts the $T+7$ day escrow payout window.
+            </p>
+          </div>
+
+          <span className="font-mono text-xs text-obsidian bg-surface-cream px-3 py-1 rounded-xl border border-rose-gold/20 font-semibold self-start sm:self-auto">
+            Target AWB: {activeLabel?.awb_number || 'BLR-BD-948102'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => handleSimulateCarrierWebhook('PICKED_UP')}
+            disabled={simulatingCarrierStatus !== null}
+            className="p-4 rounded-2xl bg-surface-cream hover:bg-rose-blush/40 border border-rose-gold/20 text-left transition-all cursor-pointer"
+          >
+            <span className="text-[10px] uppercase font-bold text-rose-gold block mb-1">
+              Step 1: Courier Intake
+            </span>
+            <span className="text-xs font-bold text-obsidian block">
+              Emit "PICKED_UP"
+            </span>
+            <span className="text-[11px] text-obsidian-muted block mt-1">
+              Driver scans parcel at BOM warehouse
+            </span>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => handleSimulateCarrierWebhook('IN_TRANSIT')}
+            disabled={simulatingCarrierStatus !== null}
+            className="p-4 rounded-2xl bg-surface-cream hover:bg-rose-blush/40 border border-rose-gold/20 text-left transition-all cursor-pointer"
+          >
+            <span className="text-[10px] uppercase font-bold text-champagne-dark block mb-1">
+              Step 2: Linehaul Flight
+            </span>
+            <span className="text-xs font-bold text-obsidian block">
+              Emit "IN_TRANSIT"
+            </span>
+            <span className="text-[11px] text-obsidian-muted block mt-1">
+              Air express en-route to destination hub
+            </span>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => handleSimulateCarrierWebhook('DELIVERED')}
+            disabled={simulatingCarrierStatus !== null}
+            className="p-4 rounded-2xl bg-emerald-50 hover:bg-emerald-100/60 border border-emerald-300 text-left transition-all cursor-pointer"
+          >
+            <span className="text-[10px] uppercase font-bold text-emerald-800 block mb-1">
+              Step 3: Doorstep Handover
+            </span>
+            <span className="text-xs font-bold text-emerald-950 block">
+              Emit "DELIVERED"
+            </span>
+            <span className="text-[11px] text-emerald-800 block mt-1">
+              Unlocks $T+7$ day vendor escrow payout
+            </span>
+          </motion.button>
         </div>
       </div>
 
