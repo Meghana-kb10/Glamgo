@@ -2,5 +2,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 .vscode
 .DS_Store
+.taste-skill/inspect/

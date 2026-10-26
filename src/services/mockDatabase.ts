@@ -79,6 +79,7 @@ class MockRelationalDatabase {
       avatar_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
       roles: ['CUSTOMER'],
       is_active: true,
+      password_hash: '$2b$10$SK6zVEPoKyh26/NUWsehJ.f0S5PUZGQKPHcHomszW7HEjliwtAuYu', // GlamgoBride2026! & Glamgo2026!
       created_at: '2026-01-10T10:00:00Z',
       updated_at: '2026-10-20T10:00:00Z',
     };
@@ -91,6 +92,7 @@ class MockRelationalDatabase {
       avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
       roles: ['PROFESSIONAL'],
       is_active: true,
+      password_hash: '$2b$10$ug14e.VKK8Xyiy6KJ31ZBeZ3CsacGRW8LL/zxcQVHYsPdn3LkyIti', // TanyaArtistry2026! & Glamgo2026!
       created_at: '2025-11-12T08:30:00Z',
       updated_at: '2026-10-25T14:20:00Z',
     };
@@ -103,6 +105,7 @@ class MockRelationalDatabase {
       avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
       roles: ['PROFESSIONAL'],
       is_active: true,
+      password_hash: '$2b$10$EDkvOMLMSBvGcWM9HtJ/I.LJnq7W8nvWvIfpcxcYdhkDV8L2e4Cfu', // Glamgo2026!
       created_at: '2026-02-14T09:00:00Z',
       updated_at: '2026-10-24T12:00:00Z',
     };
@@ -115,6 +118,7 @@ class MockRelationalDatabase {
       avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
       roles: ['PROFESSIONAL'],
       is_active: true,
+      password_hash: '$2b$10$EDkvOMLMSBvGcWM9HtJ/I.LJnq7W8nvWvIfpcxcYdhkDV8L2e4Cfu', // Glamgo2026!
       created_at: '2025-08-01T10:00:00Z',
       updated_at: '2026-10-21T09:00:00Z',
     };
@@ -127,11 +131,25 @@ class MockRelationalDatabase {
       avatar_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=200&q=80',
       roles: ['VENDOR'],
       is_active: true,
+      password_hash: '$2b$10$IcQuSy2WmX4wrXIMuCI8o.f6jOOuq9Vs7CsHYaoVkrcg6O4uERdK2', // VendorLuxe2026! & Glamgo2026!
       created_at: '2025-06-01T00:00:00Z',
       updated_at: '2026-10-26T00:00:00Z',
     };
 
-    this.users.push(userCustomer, userPro1, userPro2, userPro3, userVendor1);
+    const userAdmin: User = {
+      id: 'usr-adm-001',
+      phone: '+919800000001',
+      email: 'admin@glamgo.in',
+      full_name: 'Sophia Laurent (Chief Curator)',
+      avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+      roles: ['ADMIN'],
+      is_active: true,
+      password_hash: '$2b$10$BPDubddFU85rW59HBwyMHeNSoHxREZemwKv360/lGTqMQqa18uPPW', // AdminGlamgo2026! & Glamgo2026!
+      created_at: '2025-01-01T00:00:00Z',
+      updated_at: '2026-10-26T00:00:00Z',
+    };
+
+    this.users.push(userCustomer, userPro1, userPro2, userPro3, userVendor1, userAdmin);
 
     // 2. Seed Professional Profiles
     const pro1: ProfessionalProfile = {
@@ -952,6 +970,60 @@ class MockRelationalDatabase {
     subOrder.updated_at = new Date().toISOString();
 
     return subOrder;
+  }
+
+  /**
+   * Find user by email (case-insensitive, supporting demo aliases)
+   */
+  findUserByEmail(email: string): User | undefined {
+    const normalized = email.trim().toLowerCase();
+    
+    // Check direct email match
+    const user = this.users.find((u) => u.email?.toLowerCase() === normalized);
+    if (user) return user;
+
+    // Check demo aliases
+    if (normalized === 'bride@glamgo.in') {
+      return this.users.find((u) => u.email === 'rhea.singhania@glamgo.luxury');
+    }
+    if (normalized === 'tanya@glamgo.in') {
+      return this.users.find((u) => u.email === 'tanya@tanyagrewal.artistry');
+    }
+    if (normalized === 'vendor@glamgo.in') {
+      return this.users.find((u) => u.email === 'atelier@glamgo.luxury');
+    }
+    if (normalized === 'admin@glamgo.in' || normalized === 'admin@glamgo.luxury') {
+      return this.users.find((u) => u.email === 'admin@glamgo.in');
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Create a new user with secure password hash
+   */
+  createUser(userData: {
+    fullName: string;
+    email: string;
+    passwordHash: string;
+    role?: 'CUSTOMER' | 'PROFESSIONAL' | 'VENDOR' | 'ADMIN';
+    phone?: string;
+  }): User {
+    const newUser: User = {
+      id: uuid('usr'),
+      phone: userData.phone || `+9198${Math.floor(10000000 + Math.random() * 90000000)}`,
+      email: userData.email.trim().toLowerCase(),
+      full_name: userData.fullName.trim(),
+      avatar_url: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
+      roles: [userData.role || 'CUSTOMER'],
+      is_active: true,
+      password_hash: userData.passwordHash,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.users.push(newUser);
+    return newUser;
   }
 }
 

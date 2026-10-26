@@ -1,37 +1,57 @@
 import { Transition } from 'framer-motion';
 
 /**
- * Mandatory Glamgo Framer Motion Physics Presets (The 5 Pillars)
+ * Impeccable Motion Primitives & Calibrated Physics
+ * Apple & Linear-grade damped physical micro-movements.
+ * Eliminates generic rubber-band cartoon oscillations.
  */
-export const SPRINGS = {
-  snappy: { type: 'spring', stiffness: 400, damping: 28, mass: 0.8 } as Transition,   // Buttons, heart pops, filter pills, toggles
-  spatial: { type: 'spring', stiffness: 260, damping: 30, mass: 1.0 } as Transition,  // Shared element layoutId transitions, drawers, expanding cards
-  gentle: { type: 'spring', stiffness: 140, damping: 22, mass: 1.1 } as Transition,   // Hero staggered entrance, scroll reveals, parallax
+export const MOTION_PRIMITIVES = {
+  // Tactile click / micro-interactions (sub-180ms settling, feels like a physical taptic click)
+  tactile: { type: 'spring', stiffness: 420, damping: 32, mass: 0.8 } as Transition,
+  
+  // Spatial element layoutId transitions, drawers, modal presentations, and expanding cards
+  spatial: { type: 'spring', stiffness: 280, damping: 28, mass: 1.0 } as Transition,
+  
+  // Soft editorial cascade / staggered entrance
+  reveal: { type: 'spring', stiffness: 180, damping: 26, mass: 1.0 } as Transition,
+  
+  // Sub-200ms crisp mechanical UI transitions
+  crisp: { duration: 0.16, ease: [0.16, 1, 0.3, 1] } as Transition,
 };
 
-// Aliases for component convenience
-export const snappySpring = SPRINGS.snappy;
-export const spatialSpring = SPRINGS.spatial;
-export const gentleFloat = SPRINGS.gentle;
+// Aliases for component convenience and backward-compatibility
+export const SPRINGS = {
+  snappy: MOTION_PRIMITIVES.tactile,
+  spatial: MOTION_PRIMITIVES.spatial,
+  gentle: MOTION_PRIMITIVES.reveal,
+};
 
+export const snappySpring = MOTION_PRIMITIVES.tactile;
+export const spatialSpring = MOTION_PRIMITIVES.spatial;
+export const gentleFloat = MOTION_PRIMITIVES.reveal;
+
+// Damped subtle spring replacing uncontrolled bouncy bounce
 export const bouncySpring: Transition = {
   type: 'spring',
-  stiffness: 500,
-  damping: 18,
-  mass: 0.9,
+  stiffness: 440,
+  damping: 28,
+  mass: 0.85,
 };
 
+// 1px tactile mechanical depression (replaces exaggerated shrinking)
 export const tapScale = {
-  scale: 0.96,
-  transition: SPRINGS.snappy,
+  scale: 0.98,
+  y: 1,
+  transition: MOTION_PRIMITIVES.tactile,
 };
 
+// Refined 2px elevation with specular lift (replaces unnatural 5px floating)
 export const hoverElevate = {
-  y: -5,
-  transition: SPRINGS.snappy,
+  y: -2,
+  transition: MOTION_PRIMITIVES.tactile,
 };
 
-export const staggerContainer = (staggerChildren = 0.08, delayChildren = 0) => ({
+export const staggerContainer = (staggerChildren = 0.06, delayChildren = 0) => ({
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -43,24 +63,24 @@ export const staggerContainer = (staggerChildren = 0.08, delayChildren = 0) => (
 });
 
 export const fadeInUp = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 16 },
   show: {
     opacity: 1,
     y: 0,
-    transition: SPRINGS.spatial,
+    transition: MOTION_PRIMITIVES.spatial,
   },
 };
 
 export const scaleFade = {
-  hidden: { opacity: 0, scale: 0.94 },
+  hidden: { opacity: 0, scale: 0.97 },
   show: {
     opacity: 1,
     scale: 1,
-    transition: SPRINGS.spatial,
+    transition: MOTION_PRIMITIVES.spatial,
   },
   exit: {
     opacity: 0,
-    scale: 0.94,
-    transition: { duration: 0.2 },
+    scale: 0.97,
+    transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] },
   },
 };

@@ -27,6 +27,7 @@ import { spatialSpring, snappySpring, bouncySpring } from '../constants/motion';
 import { triggerBookingSuccessCelebration } from '../utils/confetti';
 import { useBookingLock, useHybridCheckout, useBookingOtp } from '../hooks/useGlamgoApi';
 import { InvoiceModal, InvoiceModalData } from './InvoiceModal';
+import { useAuth } from '../context/AuthContext';
 
 interface BookingDrawerProps {
   isOpen: boolean;
@@ -69,6 +70,9 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
   onUpdateServiceSlot,
   onClearService,
 }) => {
+  // Auth Context
+  const { user } = useAuth();
+
   // Local slot & address states
   const [selectedDate, setSelectedDate] = useState<string>(
     activeService?.date || UPCOMING_DATES[1].fullDate
@@ -169,7 +173,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
 
       // 2. Process Hybrid Checkout via API
       await checkout({
-        customer_id: 'usr-cust-001',
+        customer_id: user?.id || 'usr-cust-001',
         booking_id: createdBookingId,
         items: productCartItems.map((p) => ({
           variant_id: 'var-001',

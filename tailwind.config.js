@@ -23,21 +23,21 @@ export default {
         obsidian: {
           DEFAULT: '#181311', // Obsidian Espresso
           deep: '#120E0D',
-          cocoa: '#6E5D54',  // Muted Cocoa
-          muted: '#6E5D54',
-          subtle: '#8C7E78',
+          cocoa: '#4A3D36',   // High-contrast Muted Cocoa (WCAG AAA)
+          muted: '#4A3D36',   // High-contrast Accessible Muted
+          subtle: '#5C4E47',  // High-contrast Accessible Subtle
         },
         champagne: {
           DEFAULT: '#D4AF37', // Champagne Gold
           light: '#F4E7BE',
           soft: '#E8D288',
-          dark: '#A6841A',
+          dark: '#7A580A',    // High-contrast Deep Amber Bronze (WCAG AA > 5.5:1)
         },
         rose: {
-          gold: '#C87D65',    // Editorial Rose Gold
-          velvet: '#C84B6B',  // Velvet Rose
+          gold: '#C87D65',    // Editorial Rose Gold (Accents & Borders)
+          velvet: '#A8324F',  // Accessible Velvet Crimson
           blush: '#F7EAE4',   // Warm Blush Tint
-          dark: '#A23B55',
+          dark: '#8E3824',    // High-contrast Terracotta Text (WCAG AA > 5.8:1)
         },
         sage: {
           DEFAULT: '#2E6F40', // Botanical Sage

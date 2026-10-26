@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { FilterBar, FilterState } from './components/FilterBar';
@@ -13,6 +13,10 @@ import { PortalSwitcher } from './components/PortalSwitcher';
 import { ProStudioDashboard } from './components/ProStudioDashboard';
 import { ProductVendorDashboard } from './components/ProductVendorDashboard';
 import { AdminCommandCenter } from './components/AdminCommandCenter';
+import { ShowcaseLandingPage } from './components/ShowcaseLandingPage';
+import { PullToRefresh } from './components/PullToRefresh';
+import { AuthModal } from './components/AuthModal';
+import { spatialSpring } from './constants/motion';
 
 import { MOCK_ARTISTS, MOCK_PRODUCTS } from './data/mockData';
 import {
@@ -29,7 +33,16 @@ import { useProfessionalsSearch } from './hooks/useGlamgoApi';
 export const App: React.FC = () => {
   // Navigation & Ecosystem States
   const [mode, setMode] = useState<MarketplaceMode>('services');
-  const [activePortal, setActivePortal] = useState<PortalType>('customer');
+  const [activePortal, setActivePortal] = useState<PortalType>('landing');
+
+  // Auth Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'signup'>('login');
+
+  const handleOpenAuth = (authMode: 'login' | 'signup' = 'login') => {
+    setAuthModalMode(authMode);
+    setIsAuthModalOpen(true);
+  };
 
   // Dev state for Champagne Shimmer Skeletons
   const [isLoadingSkeletons, setIsLoadingSkeletons] = useState(false);
@@ -226,130 +239,196 @@ export const App: React.FC = () => {
   const totalCartCount = (activeServiceCart ? 1 : 0) + productCartItems.reduce((acc, i) => acc + i.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-canvas-light text-obsidian flex flex-col selection:bg-rose-gold/20 selection:text-obsidian pb-24">
-      
-      {/* 1. Glassmorphic Sticky Header */}
-      <Navbar
-        mode={mode}
-        onModeChange={(newMode) => {
-          setMode(newMode);
-          if (activePortal !== 'customer') setActivePortal('customer');
-        }}
-        cartCount={totalCartCount}
-        wishlistCount={wishlist.size}
-        onOpenCart={() => setIsBookingDrawerOpen(true)}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-
-      {/* Main Ecosystem Switcher View */}
-      <main className="flex-1">
-        {/* PORTAL 1: Customer Marketplace */}
-        {activePortal === 'customer' && (
-          <div>
-            {/* Hero Section with Explanatory Choreography */}
-            <HeroSection
-              mode={mode}
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onQuickExplore={() => {
-                const el = document.getElementById('discovery-grid');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-            />
-
-            {/* Filter Bar (for Services Mode) */}
-            {mode === 'services' && (
-              <FilterBar
-                filters={filters}
-                onToggleFilter={handleToggleFilter}
-                onSortChange={(sort) => setFilters((prev) => ({ ...prev, sort }))}
-                totalResults={filteredArtists.length}
-              />
-            )}
-
-            {/* Discovery Grid Container */}
-            <div id="discovery-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-              
-              {/* Services Mode: Artist Discovery Grid */}
-              {mode === 'services' && (
-                <div>
-                  <div className="flex items-baseline justify-between mb-6">
-                    <div>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-rose-gold block">
-                        Editorial Portfolio • Live PostGIS Database
-                      </span>
-                      <h2 className="font-serif text-2xl sm:text-3xl font-bold text-obsidian">
-                        Master Makeup Artists & Royal Stylists
-                      </h2>
-                    </div>
-                    <span className="text-xs text-obsidian-subtle">
-                      Tap card for high-definition portfolio & before/after comparisons
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {isLoadingSkeletons || isSearchingPros
-                      ? Array.from({ length: 4 }).map((_, i) => <ArtistCardSkeleton key={i} />)
-                      : filteredArtists.map((artist) => (
-                          <ArtistCard
-                            key={artist.id}
-                            artist={artist}
-                            isWishlisted={wishlist.has(artist.id)}
-                            onToggleWishlist={handleToggleWishlist}
-                            onSelectArtist={setSelectedArtistForModal}
-                          />
-                        ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Shop Mode: Luxury Product Discovery Grid */}
-              {mode === 'shop' && (
-                <div>
-                  <div className="flex items-baseline justify-between mb-6">
-                    <div>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-champagne-dark block">
-                        Direct From Backstage
-                      </span>
-                      <h2 className="font-serif text-2xl sm:text-3xl font-bold text-obsidian">
-                        Curated Bridal & Red Carpet Formulations
-                      </h2>
-                    </div>
-                    <span className="text-xs text-obsidian-subtle">
-                      100% Authentic • Multi-warehouse inventory sync
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {isLoadingSkeletons
-                      ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                      : filteredProducts.map((product) => (
-                          <ProductCard
-                            key={product.id}
-                            product={product}
-                            onAddToCart={handleAddToCart}
-                          />
-                        ))}
-                  </div>
-                </div>
-              )}
-
-            </div>
-          </div>
+    <LayoutGroup id="glamgo-app">
+      <div className="min-h-screen bg-canvas-light text-obsidian flex flex-col selection:bg-rose-gold/20 selection:text-obsidian pb-24">
+        
+        {/* 1. Glassmorphic Sticky Header (shown on portals other than landing) */}
+        {activePortal !== 'landing' && (
+          <Navbar
+            mode={mode}
+            onModeChange={(newMode) => {
+              setMode(newMode);
+              if (activePortal !== 'customer') setActivePortal('customer');
+            }}
+            cartCount={totalCartCount}
+            wishlistCount={wishlist.size}
+            onOpenCart={() => setIsBookingDrawerOpen(true)}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onLogoClick={() => setActivePortal('landing')}
+            onOpenAuth={handleOpenAuth}
+            onNavigatePortal={setActivePortal}
+          />
         )}
 
-        {/* PORTAL 2: Beauty Professional Studio Dashboard */}
-        {activePortal === 'pro' && <ProStudioDashboard />}
+        {/* Main Ecosystem Switcher View with Spatial Page Transitions */}
+        <main className="flex-1">
+          <AnimatePresence mode="wait">
+            {/* PORTAL 0: Modern Project Showcase & Motion Laboratory */}
+            {activePortal === 'landing' && (
+              <motion.div
+                key="landing"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={spatialSpring}
+              >
+                <ShowcaseLandingPage
+                  onNavigatePortal={setActivePortal}
+                  onExploreMarketplace={(targetMode) => {
+                    setMode(targetMode);
+                    setActivePortal('customer');
+                  }}
+                  onOpenAuth={handleOpenAuth}
+                />
+              </motion.div>
+            )}
 
-        {/* PORTAL 3: Product Vendor Dashboard */}
-        {activePortal === 'vendor' && <ProductVendorDashboard />}
+            {/* PORTAL 1: Customer Marketplace */}
+            {activePortal === 'customer' && (
+              <motion.div
+                key="customer"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={spatialSpring}
+              >
+                {/* Hero Section with Explanatory Choreography */}
+                <HeroSection
+                  mode={mode}
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={setSelectedCategory}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  onQuickExplore={() => {
+                    const el = document.getElementById('discovery-grid');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                />
 
-        {/* PORTAL 4: Admin Command Center */}
-        {activePortal === 'admin' && <AdminCommandCenter />}
-      </main>
+                {/* Filter Bar (for Services Mode) */}
+                {mode === 'services' && (
+                  <FilterBar
+                    filters={filters}
+                    onToggleFilter={handleToggleFilter}
+                    onSortChange={(sort) => setFilters((prev) => ({ ...prev, sort }))}
+                    totalResults={filteredArtists.length}
+                  />
+                )}
+
+                {/* Interactive Pull-to-Refresh Container */}
+                <PullToRefresh onRefresh={() => new Promise((res) => setTimeout(res, 850))}>
+                  <div id="discovery-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    
+                    {/* Services Mode: Artist Discovery Grid */}
+                    {mode === 'services' && (
+                      <div>
+                        <div className="flex items-baseline justify-between mb-6">
+                          <div>
+                            <span className="text-[13px] font-semibold uppercase tracking-wider text-rose-dark block">
+                              Editorial Portfolio • Live PostGIS Database
+                            </span>
+                            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-obsidian [text-wrap:balance]">
+                              Master Makeup Artists &amp; Royal Stylists
+                            </h2>
+                          </div>
+                          <span className="text-sm text-obsidian-muted">
+                            Tap card for high-definition lookbook
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          {isLoadingSkeletons || isSearchingPros
+                            ? Array.from({ length: 4 }).map((_, i) => <ArtistCardSkeleton key={i} />)
+                            : filteredArtists.map((artist) => (
+                                <ArtistCard
+                                  key={artist.id}
+                                  artist={artist}
+                                  isWishlisted={wishlist.has(artist.id)}
+                                  onToggleWishlist={handleToggleWishlist}
+                                  onSelectArtist={setSelectedArtistForModal}
+                                />
+                              ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Shop Mode: Luxury Product Discovery Grid */}
+                    {mode === 'shop' && (
+                      <div>
+                        <div className="flex items-baseline justify-between mb-6">
+                          <div>
+                            <span className="text-[13px] font-semibold uppercase tracking-wider text-obsidian-muted block">
+                              Direct From Backstage
+                            </span>
+                            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-obsidian [text-wrap:balance]">
+                              Curated Bridal &amp; Red Carpet Formulations
+                            </h2>
+                          </div>
+                          <span className="text-sm text-obsidian-muted">
+                            100% Authentic • Multi-warehouse inventory sync
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          {isLoadingSkeletons
+                            ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+                            : filteredProducts.map((product) => (
+                                <ProductCard
+                                  key={product.id}
+                                  product={product}
+                                  onAddToCart={handleAddToCart}
+                                />
+                              ))}
+                        </div>
+                      </div>
+                    )}
+
+                  </div>
+                </PullToRefresh>
+              </motion.div>
+            )}
+
+            {/* PORTAL 2: Beauty Professional Studio Dashboard */}
+            {activePortal === 'pro' && (
+              <motion.div
+                key="pro"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={spatialSpring}
+              >
+                <ProStudioDashboard />
+              </motion.div>
+            )}
+
+            {/* PORTAL 3: Product Vendor Dashboard */}
+            {activePortal === 'vendor' && (
+              <motion.div
+                key="vendor"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={spatialSpring}
+              >
+                <ProductVendorDashboard />
+              </motion.div>
+            )}
+
+            {/* PORTAL 4: Admin Command Center */}
+            {activePortal === 'admin' && (
+              <motion.div
+                key="admin"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={spatialSpring}
+              >
+                <AdminCommandCenter />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </main>
 
       {/* Shared Element Artist Profile Modal */}
       <AnimatePresence>
@@ -382,19 +461,31 @@ export const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Dev Skeleton Toggle (bottom-left) */}
-      <DevSkeletonToggle
-        isLoading={isLoadingSkeletons}
-        onToggle={() => setIsLoadingSkeletons(!isLoadingSkeletons)}
+      {/* Editorial Luxury Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authModalMode}
       />
 
-      {/* Floating Ecosystem Portal Switcher (bottom-center) */}
-      <PortalSwitcher
-        activePortal={activePortal}
-        onSelectPortal={setActivePortal}
-      />
+      {/* Dev Skeleton Toggle (bottom-left, visible on active portals) */}
+      {activePortal !== 'landing' && (
+        <DevSkeletonToggle
+          isLoading={isLoadingSkeletons}
+          onToggle={() => setIsLoadingSkeletons(!isLoadingSkeletons)}
+        />
+      )}
 
-    </div>
+      {/* Floating Ecosystem Portal Switcher (bottom-center, visible on active portals) */}
+      {activePortal !== 'landing' && (
+        <PortalSwitcher
+          activePortal={activePortal}
+          onSelectPortal={setActivePortal}
+        />
+      )}
+
+      </div>
+    </LayoutGroup>
   );
 };
 export default App;

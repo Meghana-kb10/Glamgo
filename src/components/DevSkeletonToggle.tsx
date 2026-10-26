@@ -46,12 +46,9 @@ export const DevSkeletonToggle: React.FC<DevSkeletonToggleProps> = ({ isLoading,
         <div className="relative flex items-center justify-center">
           <div
             className={`w-2 h-2 rounded-full ${
-              isLive ? 'bg-emerald-400' : 'bg-champagne-dark'
+              isLive ? 'bg-emerald-500' : 'bg-champagne-dark'
             }`}
           />
-          {isLive && (
-            <div className="absolute w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-75" />
-          )}
         </div>
 
         <span className="font-sans font-semibold tracking-wide">

@@ -69,6 +69,28 @@ if (typeof window !== 'undefined') {
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 
+export const getAuthToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('glamgo_auth_token');
+};
+
+export const setAuthToken = (token: string | null) => {
+  if (typeof window === 'undefined') return;
+  if (token) {
+    localStorage.setItem('glamgo_auth_token', token);
+  } else {
+    localStorage.removeItem('glamgo_auth_token');
+  }
+};
+
+export const getAuthHeaders = (): Record<string, string> => {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -89,6 +111,148 @@ export const glamgoApi = {
   // 1. AUTHENTICATION & ONBOARDING
   // ==========================================
   auth: {
+    async signup(payload: {
+      fullName: string;
+      email: string;
+      password: string;
+      role?: 'CUSTOMER' | 'PROFESSIONAL' | 'VENDOR' | 'ADMIN';
+      phone?: string;
+    }): Promise<ApiResponse<{ token: string; user: any }>> {
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json();
+          if (res.ok && json.success) {
+            setAuthToken(json.token);
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+          throw new Error(json.error || 'Signup failed');
+        } catch (e: any) {
+          if (!e.message?.includes('fetch failed')) throw e;
+        }
+      }
+
+      await delay(180);
+      const cleanEmail = payload.email.trim().toLowerCase();
+      if (mockDb.findUserByEmail(cleanEmail)) {
+        throw new Error('An account with this email address already exists. Please sign in.');
+      }
+      const newUser = mockDb.createUser({
+        fullName: payload.fullName,
+        email: cleanEmail,
+        passwordHash: '$2b$10$EDkvOMLMSBvGcWM9HtJ/I.LJnq7W8nvWvIfpcxcYdhkDV8L2e4Cfu',
+        role: payload.role || 'CUSTOMER',
+        phone: payload.phone,
+      });
+      const token = `jwt_sim_${newUser.id}_${Date.now()}`;
+      setAuthToken(token);
+      return {
+        success: true,
+        data: {
+          token,
+          user: newUser,
+        },
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
+
+    async login(payload: { email: string; password: string }): Promise<ApiResponse<{ token: string; user: any }>> {
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json();
+          if (res.ok && json.success) {
+            setAuthToken(json.token);
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+          throw new Error(json.error || 'Authentication failed');
+        } catch (e: any) {
+          if (!e.message?.includes('fetch failed')) throw e;
+        }
+      }
+
+      await delay(150);
+      const user = mockDb.findUserByEmail(payload.email);
+      if (!user) {
+        throw new Error('Invalid email or password.');
+      }
+      const token = `jwt_sim_${user.id}_${Date.now()}`;
+      setAuthToken(token);
+      return {
+        success: true,
+        data: {
+          token,
+          user,
+        },
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
+
+    async getMe(): Promise<ApiResponse<{ user: any }>> {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: getAuthHeaders(),
+          });
+          const json = await res.json();
+          if (res.ok && json.success) {
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+          throw new Error(json.error || 'Failed to rehydrate session');
+        } catch (e: any) {
+          if (!e.message?.includes('fetch failed')) throw e;
+        }
+      }
+
+      await delay(80);
+      return {
+        success: true,
+        data: {
+          user: mockDb.users[0],
+        },
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
+
+    async logout(): Promise<void> {
+      setAuthToken(null);
+      if (isLiveBackend) {
+        try {
+          await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+          });
+        } catch {
+          // Ignore network errors on logout
+        }
+      }
+    },
+
     async sendOtp(phone: string): Promise<ApiResponse<{ message: string; testOtp: string }>> {
       await delay(120);
       return {

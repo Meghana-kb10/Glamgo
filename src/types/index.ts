@@ -2,7 +2,7 @@ export * from './database';
 
 export type MarketplaceMode = 'services' | 'shop';
 
-export type PortalType = 'customer' | 'pro' | 'vendor' | 'admin';
+export type PortalType = 'landing' | 'customer' | 'pro' | 'vendor' | 'admin';
 
 export interface ServicePackage {
   id: string;

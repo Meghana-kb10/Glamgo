@@ -52,12 +52,13 @@ export type PaymentStatus = 'INITIATED' | 'CAPTURED' | 'FAILED' | 'REFUNDED';
 
 export interface User {
   id: string; // UUIDv7
-  phone: string;
+  phone?: string | null;
   email: string | null;
   full_name: string;
   avatar_url: string | null;
   roles: UserRole[];
   is_active: boolean;
+  password_hash?: string;
   created_at: string;
   updated_at: string;
 }

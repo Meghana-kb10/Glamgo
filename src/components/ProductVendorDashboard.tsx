@@ -81,8 +81,8 @@ export const ProductVendorDashboard: React.FC = () => {
             <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
               Auto-Dispatch Mode
             </span>
-            <span className="text-xs font-bold text-emerald-700 flex items-center gap-1 justify-end">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 justify-end">
+              <span className="w-2 h-2 rounded-full bg-emerald-600" />
               <span>Active (Same-Day)</span>
             </span>
           </div>
