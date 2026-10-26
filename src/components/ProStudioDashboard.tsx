@@ -13,18 +13,51 @@ import {
   Sparkles,
   Lock,
   ChevronRight,
-  UserCheck
+  UserCheck,
+  FileText,
+  RotateCcw
 } from 'lucide-react';
 import { MOCK_INCOMING_REQUESTS, MOCK_CALENDAR_SLOTS } from '../data/mockData';
 import { IncomingBookingRequest, CalendarTimeSlot } from '../types';
 import { snappySpring, spatialSpring, bouncySpring } from '../constants/motion';
 import { triggerChampagneSparkles } from '../utils/confetti';
+import { InvoiceModal, InvoiceModalData } from './InvoiceModal';
+import { glamgoApi } from '../services/apiClient';
 
 export const ProStudioDashboard: React.FC = () => {
   const [requests, setRequests] = useState<IncomingBookingRequest[]>(MOCK_INCOMING_REQUESTS);
   const [calendarSlots, setCalendarSlots] = useState<CalendarTimeSlot[]>(MOCK_CALENDAR_SLOTS);
   const [selectedDay, setSelectedDay] = useState<string>('All');
   const [activeTab, setActiveTab] = useState<'requests' | 'calendar' | 'payouts'>('requests');
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+  const [activeInvoiceData, setActiveInvoiceData] = useState<InvoiceModalData | undefined>(undefined);
+  const [cancelNotice, setCancelNotice] = useState<string | null>(null);
+
+  const handleOpenInvoice = (req: IncomingBookingRequest) => {
+    setActiveInvoiceData({
+      bookingNumber: req.id,
+      customerName: req.clientName,
+      packageName: req.packageName,
+      packagePrice: req.amount,
+      venueAddress: req.venue,
+      checkInOtp: '4921',
+      escrowStatus: 'HELD_IN_ESCROW',
+    });
+    setIsInvoiceOpen(true);
+  };
+
+  const handleCancelBooking = async (reqId: string) => {
+    try {
+      const res = await glamgoApi.bookings.cancel(reqId, 'Cancelled from Pro Studio Dashboard');
+      setRequests((prev) =>
+        prev.map((r) => (r.id === reqId ? { ...r, status: 'DECLINED' } : r))
+      );
+      setCancelNotice(res.data?.message || 'Slot successfully freed in PostgreSQL GiST index.');
+      setTimeout(() => setCancelNotice(null), 4000);
+    } catch (err: any) {
+      console.error(err);
+    }
+  };
 
   // Accept / Decline handlers
   const handleAction = (id: string, action: 'ACCEPTED' | 'DECLINED', e: React.MouseEvent) => {
@@ -191,6 +224,13 @@ export const ProStudioDashboard: React.FC = () => {
             </span>
           </div>
 
+          {cancelNotice && (
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-semibold flex items-center gap-2 shadow-sm">
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{cancelNotice}</span>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <AnimatePresence>
               {requests.map((req) => (
@@ -292,23 +332,47 @@ export const ProStudioDashboard: React.FC = () => {
                         </motion.button>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between text-xs font-semibold">
-                        <span
-                          className={
-                            req.status === 'ACCEPTED'
-                              ? 'text-emerald-700 flex items-center gap-1'
-                              : 'text-rose-700'
-                          }
-                        >
-                          {req.status === 'ACCEPTED' ? (
-                            <>
-                              <CheckCircle className="w-4 h-4 text-emerald-600" />
-                              <span>Confirmed & Added to Calendar</span>
-                            </>
-                          ) : (
-                            'Declined & Deposit Released to Client'
-                          )}
-                        </span>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <span
+                            className={
+                              req.status === 'ACCEPTED'
+                                ? 'text-emerald-700 flex items-center gap-1'
+                                : 'text-rose-700'
+                            }
+                          >
+                            {req.status === 'ACCEPTED' ? (
+                              <>
+                                <CheckCircle className="w-4 h-4 text-emerald-600" />
+                                <span>Confirmed & Held in Calendar</span>
+                              </>
+                            ) : (
+                              'Declined / Slot Cancelled'
+                            )}
+                          </span>
+                        </div>
+
+                        {req.status === 'ACCEPTED' && (
+                          <div className="flex items-center gap-2 pt-1">
+                            <motion.button
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => handleOpenInvoice(req)}
+                              className="flex-1 py-1.5 rounded-lg bg-surface-cream hover:bg-rose-blush border border-rose-gold/25 text-obsidian text-[11px] font-semibold flex items-center justify-center gap-1"
+                            >
+                              <FileText className="w-3 h-3 text-rose-gold" />
+                              <span>View Split-Tax Invoice</span>
+                            </motion.button>
+                            <motion.button
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => handleCancelBooking(req.id)}
+                              className="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-[11px] font-semibold flex items-center gap-1"
+                              title="Free Slot in PostgreSQL GiST Index"
+                            >
+                              <RotateCcw className="w-3 h-3 text-red-600" />
+                              <span>Free Slot</span>
+                            </motion.button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -458,6 +522,12 @@ export const ProStudioDashboard: React.FC = () => {
         </div>
       )}
 
+      {/* Split-Tax GST Invoice & Receipt Modal */}
+      <InvoiceModal
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+        data={activeInvoiceData}
+      />
     </div>
   );
 };

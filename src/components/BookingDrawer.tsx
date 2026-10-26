@@ -19,12 +19,14 @@ import {
   KeyRound,
   Check,
   ChevronRight,
-  CreditCard
+  CreditCard,
+  FileText
 } from 'lucide-react';
 import { Artist, ServicePackage, Product, CartItemService, CartItemProduct } from '../types';
 import { spatialSpring, snappySpring, bouncySpring } from '../constants/motion';
 import { triggerBookingSuccessCelebration } from '../utils/confetti';
 import { useBookingLock, useHybridCheckout, useBookingOtp } from '../hooks/useGlamgoApi';
+import { InvoiceModal, InvoiceModalData } from './InvoiceModal';
 
 interface BookingDrawerProps {
   isOpen: boolean;
@@ -90,6 +92,7 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
   const [slotShake, setSlotShake] = useState(false);
   const [addressShake, setAddressShake] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
 
   // OTP Verification Interactive State
   const [otpInput, setOtpInput] = useState('');
@@ -667,16 +670,29 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                     )}
                   </div>
 
-                  <div className="text-center pt-2">
-                    <button
-                      onClick={() => {
-                        setBookingConfirmed(false);
-                        onClose();
-                      }}
-                      className="px-5 py-2 rounded-xl bg-emerald-700 text-white text-xs font-semibold shadow-sm"
+                  {/* Operational Artifact: View Split-Tax GST Invoice & Receipt */}
+                  <div className="space-y-2 pt-2">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setIsInvoiceOpen(true)}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-600 text-xs font-semibold flex items-center justify-center gap-2 shadow-sm transition-all"
                     >
-                      Return to Discovery
-                    </button>
+                      <FileText className="w-4 h-4 text-emerald-600" />
+                      <span>View Split-Tax GST Invoice & Receipt</span>
+                    </motion.button>
+
+                    <div className="text-center">
+                      <button
+                        onClick={() => {
+                          setBookingConfirmed(false);
+                          onClose();
+                        }}
+                        className="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold shadow-sm"
+                      >
+                        Return to Discovery
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -764,6 +780,30 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
 
         </motion.div>
       </div>
+
+      {/* Split-Tax GST Invoice & Receipt Modal */}
+      <InvoiceModal
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+        data={{
+          orderNumber: (checkoutResult as any)?.order_id || checkoutResult?.order?.id || 'GLAM-ORD-948201',
+          bookingNumber: (checkoutResult as any)?.booking_id || checkoutResult?.booking?.id || 'GLAM-BK-492104',
+          artistName: activeService?.artist.name || 'Tanya Grewal Artistry Studio',
+          packageName: activeService?.package.name || 'Signature Sabyasachi Bridal HD Package',
+          packagePrice: activeService?.package.price || 32000,
+          checkInOtp: (checkoutResult as any)?.check_in_otp || '4921',
+          venueAddress: venueAddress || 'Suite 4B, Pali Hill Heritage, Bandra West, Mumbai 400050',
+          products: productCartItems.map((item) => ({
+            title: item.product.name || 'Cosmetic Formulation',
+            brand: item.product.brand || 'Glamgo Atelier',
+            batchNumber: 'BOM-2026-B81',
+            expiryDate: '12/2027',
+            hsnCode: '3304',
+            price: item.product.price,
+            quantity: item.quantity,
+          })),
+        }}
+      />
     </div>
   );
 };

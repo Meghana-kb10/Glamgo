@@ -267,6 +267,48 @@ export const glamgoApi = {
         timestamp: new Date().toISOString(),
       };
     },
+
+    async cancel(bookingId: string, reason?: string): Promise<ApiResponse<any>> {
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/cancel`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason }),
+          });
+          const json = await res.json();
+          if (res.ok) {
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live cancel error, falling back to mockDb:', e.message);
+        }
+      }
+
+      await delay(200);
+      const booking = mockDb.bookings.find((b) => b.id === bookingId);
+      if (booking) {
+        booking.status = 'CANCELLED_BY_CUSTOMER';
+      }
+      return {
+        success: true,
+        data: {
+          booking_id: bookingId,
+          status: 'CANCELLED_BY_CUSTOMER',
+          cancellation_tier: 'FULL_REFUND (>24h Notice)',
+          refund_percentage: 100,
+          refund_amount: 32000,
+          artist_compensation_fee: 0,
+          slot_freed: true,
+          message: 'Booking cancelled. Slot has been freed for re-booking.',
+        },
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
+      };
+    },
   },
 
   // ==========================================
@@ -435,6 +477,75 @@ export const glamgoApi = {
         success: true,
         data: res,
         timestamp: new Date().toISOString(),
+      };
+    },
+
+    async generateShippingLabel(payload: {
+      orderId?: string;
+      subOrderId?: string;
+      courier?: string;
+      weightKg?: number;
+    }): Promise<ApiResponse<any>> {
+      if (isLiveBackend) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/vendor/shipments/label`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            return {
+              ...json,
+              source: 'live-postgres-redis',
+            };
+          }
+        } catch (e: any) {
+          console.warn('⚠️ [API Client] Live shipments/label error, using mockDb fallback:', e.message);
+        }
+      }
+
+      await delay(250);
+      const courier = payload.courier || 'BlueDart Priority Air';
+      const awb = `BLR-BD-${Math.floor(1000000 + Math.random() * 9000000)}`;
+      return {
+        success: true,
+        data: {
+          awb_number: awb,
+          carrier: courier,
+          routing_code: 'BOM/MAH/HUB-09',
+          order_id: payload.orderId || 'ord-001',
+          sub_order_id: payload.subOrderId || 'sub-001',
+          dispatch_hub: 'BOM-BKC-HUB-04 (Glamgo Central)',
+          destination_pincode: '400050',
+          recipient: {
+            name: 'Rhea Singhania',
+            phone: '+91 98201 99481',
+            address: 'Suite 4B, Pali Hill Heritage, Bandra West, Mumbai, MH - 400050',
+          },
+          package_specs: {
+            weight_kg: payload.weightKg || 0.65,
+            dimensions: '20 x 15 x 10 cm',
+            declared_value: 3600,
+            handling: 'FRAGILE - COSMETIC TEMPERATURE SENSITIVE',
+          },
+          skus: [
+            {
+              title: '24K Gold Camellia Glow Serum Primer',
+              brand: 'Backstage Formulations',
+              batch_number: 'BOM-2026-B81',
+              expiry: '12/2027',
+              quantity: 1,
+              hsn_code: '3304',
+              shade: 'Champagne Luster',
+            },
+          ],
+          dispatch_date: new Date().toISOString(),
+          estimated_delivery: '28 Oct 2026',
+          status: 'DISPATCH_READY',
+        },
+        timestamp: new Date().toISOString(),
+        source: 'simulated-database',
       };
     },
   },

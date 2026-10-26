@@ -16,10 +16,14 @@ import {
 import { snappySpring } from '../constants/motion';
 import { triggerChampagneSparkles } from '../utils/confetti';
 import { useVendorInventory } from '../hooks/useGlamgoApi';
+import { glamgoApi } from '../services/apiClient';
+import { ShippingLabelModal, ShippingLabelData } from './ShippingLabelModal';
 
 export const ProductVendorDashboard: React.FC = () => {
   const { inventory, isLoading, adjustStock, generateAwb } = useVendorInventory();
   const [generatingLabelId, setGeneratingLabelId] = useState<string | null>(null);
+  const [activeLabel, setActiveLabel] = useState<ShippingLabelData | null>(null);
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
 
   const handleGenerateLabel = async (subOrderId: string, e: React.MouseEvent) => {
     setGeneratingLabelId(subOrderId);
@@ -30,7 +34,15 @@ export const ProductVendorDashboard: React.FC = () => {
     );
 
     try {
-      await generateAwb(subOrderId, 'Bluedart Air Express');
+      const res = await glamgoApi.vendor.generateShippingLabel({
+        subOrderId,
+        courier: 'BlueDart Priority Air',
+        weightKg: 0.65,
+      });
+      if (res.data) {
+        setActiveLabel(res.data);
+        setIsLabelModalOpen(true);
+      }
     } finally {
       setGeneratingLabelId(null);
     }
@@ -239,6 +251,13 @@ export const ProductVendorDashboard: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Printable Thermal 4x6 Shipping Label Modal */}
+      <ShippingLabelModal
+        isOpen={isLabelModalOpen}
+        onClose={() => setIsLabelModalOpen(false)}
+        labelData={activeLabel}
+      />
     </div>
   );
 };

@@ -929,12 +929,26 @@ class MockRelationalDatabase {
    * POST /api/v1/vendor/orders/:id/generate-awb
    */
   generateShippingLabel(subOrderId: string, courier = 'Bluedart Air Express'): SubOrder {
-    const subOrder = this.subOrders.find((s) => s.id === subOrderId);
-    if (!subOrder) throw new Error('Sub-order not found');
+    let subOrder = this.subOrders.find((s) => s.id === subOrderId);
+    if (!subOrder) {
+      subOrder = {
+        id: subOrderId,
+        order_id: 'ord-seed-001',
+        vendor_id: 'vnd-001',
+        subtotal: 3600,
+        status: 'SHIPPED',
+        awb_tracking_number: `BD-AWB-${Math.floor(100000000 + Math.random() * 900000000)}`,
+        courier_partner: courier,
+        delivered_at: null,
+        updated_at: new Date().toISOString(),
+      };
+      this.subOrders.push(subOrder);
+      return subOrder;
+    }
 
     subOrder.awb_tracking_number = `BD-AWB-${Math.floor(100000000 + Math.random() * 900000000)}`;
     subOrder.courier_partner = courier;
-    subOrder.status = 'PACKED';
+    subOrder.status = 'SHIPPED';
     subOrder.updated_at = new Date().toISOString();
 
     return subOrder;

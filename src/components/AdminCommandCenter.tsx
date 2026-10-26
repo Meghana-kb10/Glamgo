@@ -12,17 +12,21 @@ import {
   Eye,
   Lock,
   ArrowRight,
-  Receipt
+  Receipt,
+  FileText
 } from 'lucide-react';
 import { MOCK_KYC_APPLICANTS } from '../data/mockData';
 import { KycApplicant } from '../types';
 import { spatialSpring, snappySpring } from '../constants/motion';
 import { triggerChampagneSparkles } from '../utils/confetti';
 import { useAdminEscrow } from '../hooks/useGlamgoApi';
+import { InvoiceModal, InvoiceModalData } from './InvoiceModal';
 
 export const AdminCommandCenter: React.FC = () => {
   const [applicants, setApplicants] = useState<KycApplicant[]>(MOCK_KYC_APPLICANTS);
   const { ledgers, decideKyc } = useAdminEscrow();
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+  const [activeInvoiceData, setActiveInvoiceData] = useState<InvoiceModalData | undefined>(undefined);
   
   // Escrow Split-Commission Sliders
   const [platformCommission, setPlatformCommission] = useState<number>(15); // 15%
@@ -244,7 +248,8 @@ export const AdminCommandCenter: React.FC = () => {
                     <th className="px-4 py-2.5">Gross Booking</th>
                     <th className="px-4 py-2.5">Platform Fee</th>
                     <th className="px-4 py-2.5">Net Payout</th>
-                    <th className="px-4 py-2.5 text-right">Escrow Status</th>
+                    <th className="px-4 py-2.5 text-center">Escrow Status</th>
+                    <th className="px-4 py-2.5 text-right">Tax Audit</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-rose-gold/10 font-mono">
@@ -255,18 +260,35 @@ export const AdminCommandCenter: React.FC = () => {
                         <td className="px-4 py-3 text-obsidian">₹{l.gross_amount.toLocaleString('en-IN')}</td>
                         <td className="px-4 py-3 text-rose-gold">₹{l.platform_commission.toLocaleString('en-IN')}</td>
                         <td className="px-4 py-3 text-emerald-700 font-bold">₹{l.net_payout_amount.toLocaleString('en-IN')}</td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-3 text-center">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             l.status === 'SETTLED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                           }`}>
                             {l.status}
                           </span>
                         </td>
+                        <td className="px-4 py-3 text-right">
+                          <motion.button
+                            whileTap={{ scale: 0.94 }}
+                            onClick={() => {
+                              setActiveInvoiceData({
+                                orderNumber: l.id,
+                                packagePrice: l.gross_amount,
+                                escrowStatus: l.status === 'SETTLED' ? 'SETTLED' : 'HELD_IN_ESCROW',
+                              });
+                              setIsInvoiceOpen(true);
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-surface-cream hover:bg-rose-blush border border-rose-gold/25 text-obsidian text-[11px] font-sans font-semibold inline-flex items-center gap-1 shadow-2xs"
+                          >
+                            <FileText className="w-3 h-3 text-rose-gold" />
+                            <span>Invoice</span>
+                          </motion.button>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-4 py-4 text-center text-obsidian-subtle font-sans">
+                      <td colSpan={6} className="px-4 py-4 text-center text-obsidian-subtle font-sans">
                         No active transactions yet. Complete a checkout in the Customer Portal to observe live ledger rows.
                       </td>
                     </tr>
@@ -407,6 +429,12 @@ export const AdminCommandCenter: React.FC = () => {
 
       </div>
 
+      {/* Split-Tax GST Invoice & Receipt Modal */}
+      <InvoiceModal
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+        data={activeInvoiceData}
+      />
     </div>
   );
 };
