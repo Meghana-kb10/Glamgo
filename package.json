@@ -13,6 +13,8 @@
     "db:seed": "npx tsx prisma/seed.ts",
     "server:dev": "npx tsx server/index.ts",
     "verify:concurrency": "npx tsx scripts/verify-concurrency.ts",
+    "git:sync": "npx tsx scripts/auto-git-sync.ts",
+    "git:daemon": "npx tsx scripts/auto-git-sync.ts --daemon",
     "dev:full": "concurrently -k -p \"[{name}]\" -n \"FRONTEND,BACKEND\" -c \"cyan.bold,magenta.bold\" \"npm run dev\" \"npm run server:dev\""
   },
   "dependencies": {
