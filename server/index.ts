@@ -103,9 +103,11 @@ app.use('/api/', generalApiLimiter);
 const isCloudPostgres =
   DATABASE_URL.includes('sslmode=require') ||
   DATABASE_URL.includes('supabase.co') ||
+  DATABASE_URL.includes('supabase.com') ||
   DATABASE_URL.includes('amazonaws.com') ||
   DATABASE_URL.includes('render.com') ||
-  DATABASE_URL.includes('neon.tech');
+  DATABASE_URL.includes('neon.tech') ||
+  DATABASE_URL.includes('pooler');
 
 export const pgPool = new pg.Pool({
   connectionString: DATABASE_URL,
