@@ -122,6 +122,20 @@ pgPool.on('error', (err) => {
   console.warn('⚠️ [PostgreSQL Pool] Unexpected error on idle client (reconnecting automatically):', err.message);
 });
 
+pgPool.on('connect', (client) => {
+  client.on('error', (err) => {
+    console.warn('⚠️ [PostgreSQL Client Socket Notice]:', err.message);
+  });
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ [Uncaught Exception Handled]:', err.message);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  console.error('⚠️ [Unhandled Rejection Handled]:', reason?.message || reason);
+});
+
 let isPostgresConnected = false;
 
 async function ensureAuthSchema() {
@@ -920,10 +934,10 @@ app.get('/api/v1/products', async (req: Request, res: Response) => {
     try {
       const client = await pgPool.connect();
       const pRes = await client.query(`
-        SELECT p.*, v.business_name AS vendor_name
+        SELECT p.*, v.brand_name AS vendor_name
         FROM products p
         JOIN vendor_profiles v ON p.vendor_id = v.id
-        WHERE p.status = 'ACTIVE'
+        WHERE p.is_active = true
         ORDER BY p.rating_avg DESC;
       `);
       const skuRes = await client.query(`SELECT * FROM product_skus WHERE stock_quantity > 0;`);
