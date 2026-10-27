@@ -30,7 +30,10 @@ export function useSseEvents() {
       if (!isSubscribed) return;
 
       try {
-        const es = new EventSource('http://localhost:4000/api/v1/events/stream');
+        const streamUrl = (import.meta as any).env?.VITE_API_BASE_URL
+          ? `${(import.meta as any).env.VITE_API_BASE_URL}/events/stream`
+          : 'http://localhost:4000/api/v1/events/stream';
+        const es = new EventSource(streamUrl);
         eventSourceRef.current = es;
 
         es.addEventListener('connected', (e) => {
