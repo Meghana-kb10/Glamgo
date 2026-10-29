@@ -233,13 +233,20 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
       </div>
 
       {/* 3. Selected Artist Identity Showcase Strip */}
-      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-r from-blush/40 via-soft-ivory to-blush/20 border border-mist flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xs">
+      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-r from-blush/35 via-white to-blush/20 border border-champagne-gold/30 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
         <div className="flex items-start sm:items-center gap-4">
-          <img
-            src={activeArtist.avatar}
-            alt={activeArtist.name}
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-champagne-gold shadow-md shrink-0"
-          />
+          <div className="relative shrink-0">
+            <img
+              src={activeArtist.avatar}
+              alt={activeArtist.name}
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-champagne-gold shadow-md"
+            />
+            {activeArtist.isVerified && (
+              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              </div>
+            )}
+          </div>
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-bold uppercase tracking-wider bg-rose-plum text-white px-2.5 py-0.5 rounded-full">
@@ -353,7 +360,7 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
         </div>
 
         {/* Category Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           {CATEGORY_TABS.map((tab) => {
             const isSelected = selectedCategory === tab.id;
             const count = categoryCounts[tab.id];
@@ -362,20 +369,20 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                 key={tab.id}
                 type="button"
                 onClick={() => setSelectedCategory(tab.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer font-sans shrink-0 ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs transition-all cursor-pointer font-sans shrink-0 ${
                   isSelected
-                    ? 'bg-rose-plum text-white shadow-xs'
-                    : 'bg-white hover:bg-blush/50 border border-mist text-ink hover:text-rose-plum shadow-2xs'
+                    ? 'bg-rose-plum text-white font-semibold shadow-xs'
+                    : 'bg-white hover:bg-blush/40 border border-mist text-ink hover:text-rose-plum font-medium'
                 }`}
               >
                 <span>{tab.label}</span>
                 {count !== undefined && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                      isSelected ? 'bg-white/25 text-white' : 'bg-blush text-rose-plum'
+                    className={`text-[11px] font-mono ${
+                      isSelected ? 'text-white/90' : 'text-mauve-grey'
                     }`}
                   >
-                    {count}
+                    ({count})
                   </span>
                 )}
               </button>
@@ -405,117 +412,121 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPackages.map((pkg) => {
             const isExpanded = expandedPackageId === pkg.id;
 
             return (
               <div
                 key={pkg.id}
-                className="bg-white rounded-3xl border border-mist hover:border-rose-plum/30 shadow-card hover:shadow-luxury transition-all duration-300 p-5 sm:p-6 flex flex-col justify-between space-y-4"
+                className="group bg-white rounded-3xl border border-mist hover:border-champagne-gold/60 shadow-card hover:shadow-luxury transition-all duration-300 overflow-hidden flex flex-col justify-between"
               >
-                {/* Header & Badges */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-champagne-gold/20 text-ink">
-                      {pkg.tier}
+                {/* 1. High-End Editorial Photography Header */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-mist/20">
+                  <img
+                    src={pkg.imageUrl || activeArtist.coverImage}
+                    alt={pkg.name}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
+
+                  {/* Luxury Tag on Image */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-ink/75 backdrop-blur-md text-champagne-gold border border-champagne-gold/30 shadow-xs">
+                      {pkg.isPopular ? 'Most Booked' : pkg.tier}
                     </span>
-                    <div className="flex items-center gap-1.5">
-                      {pkg.isPopular && <Badge type="bestseller" text="Most Booked" />}
-                      <span className="text-[10px] font-semibold text-mauve-grey uppercase tracking-wider bg-soft-ivory px-2 py-0.5 rounded-md border border-mist">
-                        {pkg.serviceMode === 'IN_STUDIO' ? 'Studio Visit' : 'At-Home Service'}
+                  </div>
+
+                  {/* Duration & Service Mode Overlay Pill */}
+                  <div className="absolute bottom-3 inset-x-3 flex items-center justify-between text-white/95 text-[11px] font-medium z-10">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-ink/65 backdrop-blur-md border border-white/10">
+                      <Clock className="w-3.5 h-3.5 text-champagne-gold" />
+                      <span className="font-mono">{pkg.durationMinutes} mins</span>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-ink/65 backdrop-blur-md border border-white/10 text-white/90">
+                      {pkg.serviceMode === 'IN_STUDIO' ? 'Studio Visit' : 'At-Home Service'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2. Card Body Content */}
+                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <h4 className="font-serif text-lg font-bold text-ink group-hover:text-rose-plum transition-colors line-clamp-1">
+                      {pkg.name}
+                    </h4>
+
+                    <p className="text-xs text-mauve-grey line-clamp-2 leading-relaxed font-sans">
+                      {pkg.description}
+                    </p>
+
+                    {/* Curated Inclusions Preview */}
+                    <div className="pt-2 space-y-1.5 text-xs text-ink/90 font-sans">
+                      {pkg.inclusions.slice(0, 2).map((inc, i) => (
+                        <div key={i} className="flex items-start gap-2 text-[11px] text-mauve-grey leading-tight">
+                          <span className="text-rose-plum font-bold shrink-0 mt-0.5">•</span>
+                          <span className="line-clamp-1">{inc}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Expand/Collapse Formulations */}
+                    {pkg.inclusions.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => setExpandedPackageId(isExpanded ? null : pkg.id)}
+                        className="text-[11px] font-semibold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer transition-colors pt-1"
+                      >
+                        <span>{isExpanded ? 'Hide Extra Details' : `+${pkg.inclusions.length - 2} More Inclusions & Formulations`}</span>
+                        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
+                    )}
+
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={spatialSpring}
+                          className="space-y-2 pt-2 border-t border-mist/60 overflow-hidden text-xs"
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum block">
+                            Formulations Used:
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {pkg.productsUsed.map((prod, i) => (
+                              <span key={i} className="text-[10px] bg-blush/60 px-2 py-0.5 rounded-md text-ink">
+                                {prod}
+                              </span>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* 3. Pricing & Booking Action */}
+                  <div className="pt-4 border-t border-mist flex items-center justify-between gap-3">
+                    <div>
+                      <span className="text-[10px] text-mauve-grey uppercase font-bold tracking-wider block">
+                        Session Fee
+                      </span>
+                      <span className="font-serif text-xl sm:text-2xl font-bold text-ink tabular-nums">
+                        ₹{pkg.price.toLocaleString('en-IN')}
                       </span>
                     </div>
-                  </div>
 
-                  <h4 className="font-serif text-lg font-bold text-ink line-clamp-2 leading-snug">
-                    {pkg.name}
-                  </h4>
-
-                  <p className="text-xs text-mauve-grey line-clamp-2 leading-relaxed font-sans">
-                    {pkg.description}
-                  </p>
-                </div>
-
-                {/* Duration & Key Formulations */}
-                <div className="space-y-3 pt-2 border-t border-mist/80">
-                  <div className="flex items-center justify-between text-xs text-mauve-grey">
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <Clock className="w-3.5 h-3.5 text-rose-plum" />
-                      <span className="font-mono text-ink font-bold">{pkg.durationMinutes} mins</span>
-                    </div>
-                    <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">
-                      Sterile Tool Kit
-                    </span>
-                  </div>
-
-                  {/* Top 2 Inclusions */}
-                  <div className="space-y-1 text-xs text-ink font-sans">
-                    {pkg.inclusions.slice(0, 2).map((inc, i) => (
-                      <div key={i} className="flex items-start gap-1.5 text-[11px] text-mauve-grey">
-                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                        <span className="line-clamp-1">{inc}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Expand/Collapse extra inclusions */}
-                  {pkg.inclusions.length > 2 && (
                     <button
                       type="button"
-                      onClick={() => setExpandedPackageId(isExpanded ? null : pkg.id)}
-                      className="text-[11px] font-bold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer transition-colors"
+                      onClick={(e) => handleBook(e, pkg)}
+                      className="h-10 px-4 rounded-xl bg-rose-plum hover:bg-deep-plum text-white text-xs font-semibold flex items-center gap-2 shadow-xs hover:shadow-luxury transition-all cursor-pointer group/btn"
                     >
-                      <span>{isExpanded ? 'Hide Extra Details' : `+${pkg.inclusions.length - 2} More Inclusions & Formulations`}</span>
-                      {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      <span>Book with {activeArtist.name.split(' ')[0]}</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5" />
                     </button>
-                  )}
-
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={spatialSpring}
-                        className="space-y-2 pt-2 border-t border-mist/60 overflow-hidden text-xs"
-                      >
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum block">
-                          Formulations Used:
-                        </span>
-                        <div className="flex flex-wrap gap-1">
-                          {pkg.productsUsed.map((prod, i) => (
-                            <span key={i} className="text-[10px] bg-blush/60 px-2 py-0.5 rounded-md text-ink">
-                              {prod}
-                            </span>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Pricing & Direct Booking Action */}
-                <div className="pt-3 border-t border-mist flex items-center justify-between gap-3">
-                  <div>
-                    <span className="text-[10px] text-mauve-grey uppercase font-bold tracking-wider block">
-                      Treatment Fee
-                    </span>
-                    <span className="font-serif text-xl font-bold text-ink tabular-nums">
-                      ₹{pkg.price.toLocaleString('en-IN')}
-                    </span>
                   </div>
-
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={(e) => handleBook(e, pkg)}
-                    style={{ backgroundColor: '#B8336A', color: '#FFFFFF' }}
-                    leftIcon={<Calendar className="w-3.5 h-3.5 text-white" />}
-                    className="rounded-xl text-xs font-semibold cursor-pointer shadow-xs"
-                  >
-                    Book with {activeArtist.name.split(' ')[0]}
-                  </Button>
                 </div>
               </div>
             );

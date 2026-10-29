@@ -16,6 +16,7 @@ export interface ServicePackage {
   productsUsed: string[];
   inclusions: string[];
   isPopular?: boolean;
+  imageUrl?: string;
 }
 
 export interface BeforeAfterImage {

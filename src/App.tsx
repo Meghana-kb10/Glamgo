@@ -744,7 +744,7 @@ export const App: React.FC = () => {
                   />
                 ) : (
                   /* Main Customer Marketplace Home (PRD HOME-1..9) */
-                  <div className="space-y-2 pb-16">
+                  <div className="space-y-2 pb-28">
                     {/* 1. Location Pill & Sticky Search Bar with Rotating Placeholder */}
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-2 sm:p-2.5 rounded-2xl sm:rounded-full border border-mist shadow-xs">

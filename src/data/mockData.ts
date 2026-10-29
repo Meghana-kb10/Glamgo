@@ -44,6 +44,7 @@ export const MOCK_ARTISTS: Artist[] = [
         category: 'bridal',
         serviceMode: 'AT_VENUE',
         isPopular: true,
+        imageUrl: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80',
         description: 'Complete royal wedding day look. Customized color correction, ultra-dewy waterproof HD base, bespoke cut-crease eye artistry, and royal lehenga draping.',
         productsUsed: [
           'Charlotte Tilbury Hollywood Flawless Filter',
@@ -68,6 +69,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Signature',
         category: 'bridal',
         serviceMode: 'AT_VENUE',
+        imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80',
         description: 'Micro-fine Temptu silicon airbrush technology providing flawless 24-hour heat and humidity resistance. Ideal for summer and destination weddings.',
         productsUsed: [
           'Temptu Pro Silicon Airbrush System',
@@ -92,6 +94,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Red Carpet',
         category: 'makeup',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
         description: 'High-octane dramatic glam with sculpted cheekbones, metallic smoked eyeliner, and voluminous Hollywood wave hair.',
         productsUsed: [
           'Fenty Beauty Pro Filt\'r Soft Matte',
@@ -114,6 +117,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Signature',
         category: 'hair',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
         description: 'Glossy red-carpet waves crafted with thermal protection, micro-pin setting, and optional fresh floral integration.',
         productsUsed: [
           'Dyson Supersonic & Corrale',
@@ -135,6 +139,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'skin',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
         description: 'Ice globe lymphatic drainage and hyaluronic acid dermal infusion designed to maximize makeup adherence and camera glow.',
         productsUsed: [
           'Biologique Recherche Lotion P50',
@@ -156,6 +161,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'draping',
         serviceMode: 'AT_VENUE',
+        imageUrl: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80',
         description: 'Knife-edge pleating and architectural anchoring for heavy bridal silk sarees, Kanjivarams, and couture designer lehengas.',
         productsUsed: [
           'High-tensile anti-snag safety pins',
@@ -177,6 +183,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Signature',
         category: 'nails',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=800&q=80',
         description: 'Precision dry e-file cuticle detailing followed by sculpted gel tips and mirror-glaze chrome pigments.',
         productsUsed: [
           'Apres Gel-X System',
@@ -257,6 +264,7 @@ export const MOCK_ARTISTS: Artist[] = [
         category: 'bridal',
         serviceMode: 'AT_VENUE',
         isPopular: true,
+        imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80',
         description: 'Refined, featherlight complexion work with micro-draping of peachy blush and natural fluttery lashes for the discerning minimalist bride.',
         productsUsed: [
           'Westman Atelier Vital Skin Foundation Stick',
@@ -279,6 +287,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Red Carpet',
         category: 'makeup',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80',
         description: 'Duochrome holographic eyelids, juicy glazed lips, and multi-dimensional shimmer cheeks that catch stage lighting.',
         productsUsed: [
           'Danessa Myricks Colorfix Chrome',
@@ -299,6 +308,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Signature',
         category: 'makeup',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80',
         description: 'Ultra-luminous, weightless skin finish with sculpted monochromatic tones and wet-look glossy accents.',
         productsUsed: [
           'Charlotte Tilbury Beauty Light Wand',
@@ -320,6 +330,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'hair',
         serviceMode: 'AT_VENUE',
+        imageUrl: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80',
         description: 'High-shine bouncy blowout using Dyson Airwrap with botanical keratin glaze for silk movement.',
         productsUsed: [
           'Dyson Airwrap Multi-Styler',
@@ -341,6 +352,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'nails',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80',
         description: 'Hailey Bieber signature pearl-white chrome finish over natural nails with gentle cuticle nourishment.',
         productsUsed: [
           'OPI Funny Bunny Gel',
@@ -362,6 +374,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'skin',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1512290900672-1f41443493b8?auto=format&fit=crop&w=800&q=80',
         description: 'Gua sha facial sculpting with squalane and ceramide ampoules to de-puff and sculpt jawline before makeup.',
         productsUsed: [
           'Augustinus Bader The Rich Cream',
@@ -431,6 +444,7 @@ export const MOCK_ARTISTS: Artist[] = [
         category: 'bridal',
         serviceMode: 'AT_VENUE',
         isPopular: true,
+        imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80',
         description: 'Authentic 9-yard or 6-yard Kanjivaram silk saree draping with knife-edge pleats, floral jada poola hair cascade, and antique temple jewelry alignment.',
         productsUsed: [
           'Dior Forever Skin Glow Foundation',
@@ -453,6 +467,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Signature',
         category: 'hair',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80',
         description: 'High-couture bridal bun or braided cascade with custom structural wireframing to support heavy temple jewelry and fresh South Indian poola jada.',
         productsUsed: [
           'Schwarzkopf OSIS+ Session Label',
@@ -474,6 +489,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'draping',
         serviceMode: 'AT_VENUE',
+        imageUrl: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80',
         description: 'Master draping for traditional Madisar, Iyer, Iyengar, or contemporary pleated silk bridal sarees with zero movement guarantee.',
         productsUsed: [
           'Anti-tear brass safety anchors',
@@ -495,6 +511,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Bridal Couture',
         category: 'bridal',
         serviceMode: 'AT_VENUE',
+        imageUrl: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80',
         description: 'Sweat-proof, humidity-resistant golden undertone bridal complexion with wing-extended kohl eyes and crimson velvet lips.',
         productsUsed: [
           'Estée Lauder Double Wear Stay-in-Place',
@@ -516,6 +533,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'skin',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
         description: 'Pure 24k colloidal gold leaf massage combined with enzymatic fruit enzymes for radiant wedding-morning glow.',
         productsUsed: [
           'Peter Thomas Roth 24K Gold Mask',
@@ -537,6 +555,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'nails',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=800&q=80',
         description: 'Micro-sculpted baby boomer or crisp bridal French tips with subtle crystal gem accents on the ring finger.',
         productsUsed: [
           'Bio Sculpture Gel',
@@ -605,6 +624,7 @@ export const MOCK_ARTISTS: Artist[] = [
         category: 'bridal',
         serviceMode: 'AT_VENUE',
         isPopular: true,
+        imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
         description: 'Includes 30 mins of ice globe cryo-therapy, hyaluronic acid infusion, followed by non-clogging mineral HD makeup.',
         productsUsed: [
           'Biologique Recherche Lotion P50 Prep',
@@ -627,6 +647,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Signature',
         category: 'makeup',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80',
         description: 'Dermatologically safe evening makeup crafted specifically for reactive, rosacea, or acne-prone skin with clean mineral pigments.',
         productsUsed: [
           'Ilia Super Serum Skin Tint SPF 40',
@@ -648,6 +669,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'skin',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1512290900672-1f41443493b8?auto=format&fit=crop&w=800&q=80',
         description: 'Painless vacuum extraction of stubborn blackheads and pore debris followed by medical-grade LED blue-light therapy.',
         productsUsed: [
           'Paula\'s Choice 2% BHA Liquid',
@@ -669,6 +691,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'hair',
         serviceMode: 'HYBRID',
+        imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
         description: 'Soft, wispy face-framing curls with a low textured chignon bun, ideal for sangeet or intimate ceremonies.',
         productsUsed: [
           'Briogeo Farewell Frizz Rosarco Milk',
@@ -690,6 +713,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'skin',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
         description: 'Full body sugar exfoliation and organic cold-pressed almond oil cocoon to eliminate rough texture and dryness.',
         productsUsed: [
           'Herbivore Botanicals Coco Rose Body Polish',
@@ -711,6 +735,7 @@ export const MOCK_ARTISTS: Artist[] = [
         tier: 'Classic',
         category: 'nails',
         serviceMode: 'IN_STUDIO',
+        imageUrl: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80',
         description: 'Acetone-free, 10-free non-toxic nail repair treatment with botanical keratin strengthening drops.',
         productsUsed: [
           'Zoya Naked Manicure System',

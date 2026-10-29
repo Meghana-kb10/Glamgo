@@ -567,8 +567,18 @@ export const ArtistProfileModal: React.FC<ArtistProfileModalProps> = ({
                               : 'bg-white hover:bg-blush/20 border-mist shadow-xs'
                           }`}
                         >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
+                          <div className="flex flex-col sm:flex-row items-start gap-4">
+                            {/* Treatment Image Thumbnail */}
+                            {pkg.imageUrl && (
+                              <img
+                                src={pkg.imageUrl}
+                                alt={pkg.name}
+                                className="w-full sm:w-24 sm:h-24 h-36 rounded-2xl object-cover shrink-0 border border-mist shadow-2xs"
+                                loading="lazy"
+                              />
+                            )}
+
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-champagne-gold/20 text-ink">
                                   {pkg.tier}
@@ -595,13 +605,13 @@ export const ArtistProfileModal: React.FC<ArtistProfileModalProps> = ({
                               </div>
                             </div>
 
-                            <div className="text-right shrink-0">
-                              <span className="font-mono text-lg sm:text-xl font-bold text-ink block tabular-nums">
+                            <div className="text-right shrink-0 w-full sm:w-auto flex sm:flex-col justify-between items-center sm:items-end pt-2 sm:pt-0 border-t sm:border-t-0 border-mist/60">
+                              <span className="font-serif text-lg sm:text-xl font-bold text-ink block tabular-nums">
                                 ₹{pkg.price.toLocaleString('en-IN')}
                               </span>
                               <button
                                 type="button"
-                                className="mt-2 text-xs font-semibold text-rose-plum hover:text-deep-plum flex items-center gap-1 ml-auto cursor-pointer"
+                                className="mt-2 text-xs font-semibold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer"
                               >
                                 <span>{isExpanded ? 'Less' : 'Details'}</span>
                                 {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
