@@ -89,3 +89,47 @@
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Explicit Core Brand Utilities */
+.bg-soft-ivory {
+  background-color: #FFFBF8 !important;
+}
+.bg-blush {
+  background-color: #FCE7F0 !important;
+}
+.bg-ink {
+  background-color: #1F1A1D !important;
+}
+.bg-mist {
+  background-color: #EDE4E8 !important;
+}
+.text-ink {
+  color: #1F1A1D !important;
+}
+.text-mauve-grey {
+  color: #6E6369 !important;
+}
+.border-mist {
+  border-color: #EDE4E8 !important;
+}
+.bg-rose-plum {
+  background-color: #B8336A !important;
+}
+.bg-deep-plum {
+  background-color: #7A1F4A !important;
+}
+.text-rose-plum {
+  color: #B8336A !important;
+}
+.border-rose-plum {
+  border-color: #B8336A !important;
+}
+.bg-champagne-gold {
+  background-color: #C9A25B !important;
+}
+.text-champagne-gold {
+  color: #C9A25B !important;
+}
+.border-champagne-gold {
+  border-color: #C9A25B !important;
+}

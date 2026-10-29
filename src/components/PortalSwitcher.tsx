@@ -22,7 +22,7 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
   ];
 
   return (
-    <div className="fixed bottom-4 inset-x-0 z-40 flex justify-center pointer-events-none px-4">
+    <div className="fixed bottom-4 inset-x-0 z-40 hidden lg:flex justify-center pointer-events-none px-4">
       <motion.nav
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

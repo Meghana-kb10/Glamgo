@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('🚨 [Glamgo Error Boundary Caught Exception]:', error, errorInfo);
+    console.error('[Glamgo Error Boundary Caught Exception]:', error, errorInfo);
     this.setState({ errorInfo });
   }
 

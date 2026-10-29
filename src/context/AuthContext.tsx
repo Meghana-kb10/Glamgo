@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { glamgoApi, getAuthToken, setAuthToken } from '../services/apiClient';
+import { authService } from '../services/authService';
 
 export type UserRole = 'CUSTOMER' | 'PROFESSIONAL' | 'VENDOR' | 'ADMIN';
 
@@ -10,6 +11,10 @@ export interface AuthUser {
   roles: UserRole[];
   avatarUrl?: string | null;
   phone?: string | null;
+  preferredGender?: 'female' | 'male' | 'none';
+  city?: string;
+  pincode?: string;
+  isNewUser?: boolean;
 }
 
 interface SignupData {
@@ -27,6 +32,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signup: (data: SignupData) => Promise<{ success: boolean; error?: string }>;
+  loginWithAuthUser: (authUser: AuthUser, token: string) => void;
+  updateUser: (data: Partial<AuthUser>) => void;
   logout: () => void;
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
@@ -146,8 +153,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
+  const loginWithAuthUser = useCallback((authUser: AuthUser, receivedToken: string) => {
+    setUser(authUser);
+    setToken(receivedToken);
+    setAuthToken(receivedToken);
+    if (authUser.roles?.length) {
+      setActiveRole(authUser.roles[0]);
+    }
+  }, []);
+
+  const updateUser = useCallback((updated: Partial<AuthUser>) => {
+    setUser((prev) => (prev ? { ...prev, ...updated } : null));
+  }, []);
+
   const logout = useCallback(() => {
     glamgoApi.auth.logout();
+    authService.logout();
+    try {
+      localStorage.removeItem('glamgo_booking_draft');
+      localStorage.removeItem('glamgo_saved_addresses');
+      localStorage.removeItem('glamgo_cart_service');
+      localStorage.removeItem('glamgo_cart_products');
+      localStorage.removeItem('glamgo_auth_token');
+      localStorage.removeItem('glamgo_auth_user');
+    } catch {
+      // Ignored
+    }
     setToken(null);
     setUser(null);
     setActiveRole('CUSTOMER');
@@ -163,6 +194,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isLoading,
         login,
         signup,
+        loginWithAuthUser,
+        updateUser,
         logout,
         activeRole,
         setActiveRole,

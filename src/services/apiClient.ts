@@ -305,7 +305,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Discovery endpoint offline, falling back to mockDb:', e.message);
+          console.warn('[API Client] Discovery endpoint offline, falling back to mockDb:', e.message);
         }
       }
 
@@ -364,7 +364,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live pro payouts error, using fallback:', e.message);
+          console.warn('[API Client] Live pro payouts error, using fallback:', e.message);
         }
       }
 
@@ -405,7 +405,7 @@ export const glamgoApi = {
           if (e.message.includes('reserved by another customer')) {
             throw e;
           }
-          console.warn('⚠️ [API Client] Live lock server unreachable, using mock lock:', e.message);
+          console.warn('[API Client] Live lock server unreachable, using mock lock:', e.message);
         }
       }
 
@@ -435,7 +435,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] OTP server offline, falling back to mockDb:', e.message);
+          console.warn('[API Client] OTP server offline, falling back to mockDb:', e.message);
         }
       }
 
@@ -475,7 +475,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live cancel error, falling back to mockDb:', e.message);
+          console.warn('[API Client] Live cancel error, falling back to mockDb:', e.message);
         }
       }
 
@@ -516,7 +516,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live getMyBookings error, using mock fallback:', e.message);
+          console.warn('[API Client] Live getMyBookings error, using mock fallback:', e.message);
         }
       }
 
@@ -553,7 +553,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live products server offline, using mockDb:', e.message);
+          console.warn('[API Client] Live products server offline, using mockDb:', e.message);
         }
       }
 
@@ -610,7 +610,7 @@ export const glamgoApi = {
           if (e.message.includes('double-booking') || e.message.includes('GiST')) {
             throw e;
           }
-          console.warn('⚠️ [API Client] Live checkout error, falling back to mockDb:', e.message);
+          console.warn('[API Client] Live checkout error, falling back to mockDb:', e.message);
         }
       }
 
@@ -639,7 +639,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live getMyOrders error, using fallback:', e.message);
+          console.warn('[API Client] Live getMyOrders error, using fallback:', e.message);
         }
       }
 
@@ -676,7 +676,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Vendor endpoint fallback:', e.message);
+          console.warn('[API Client] Vendor endpoint fallback:', e.message);
         }
       }
 
@@ -720,7 +720,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] AWB endpoint fallback:', e.message);
+          console.warn('[API Client] AWB endpoint fallback:', e.message);
         }
       }
 
@@ -754,7 +754,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live shipments/label error, using mockDb fallback:', e.message);
+          console.warn('[API Client] Live shipments/label error, using mockDb fallback:', e.message);
         }
       }
 
@@ -823,7 +823,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live logistics webhook error, using fallback:', e.message);
+          console.warn('[API Client] Live logistics webhook error, using fallback:', e.message);
         }
       }
 
@@ -854,7 +854,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Admin escrows endpoint fallback:', e.message);
+          console.warn('[API Client] Admin escrows endpoint fallback:', e.message);
         }
       }
 
@@ -882,7 +882,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] KYC endpoint fallback:', e.message);
+          console.warn('[API Client] KYC endpoint fallback:', e.message);
         }
       }
 
@@ -911,7 +911,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live diagnostics error, using fallback:', e.message);
+          console.warn('[API Client] Live diagnostics error, using fallback:', e.message);
         }
       }
 
@@ -989,7 +989,7 @@ export const glamgoApi = {
             };
           }
         } catch (e: any) {
-          console.warn('⚠️ [API Client] Live dispute resolution error, using fallback:', e.message);
+          console.warn('[API Client] Live dispute resolution error, using fallback:', e.message);
         }
       }
 

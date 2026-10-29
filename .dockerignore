@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-ssr
+.git
+.github
+.vscode
+.taste-skill
+*.log
+.env
+.env.local
+scratch
+*.md
+!DEPLOYMENT.md

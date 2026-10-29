@@ -1,0 +1,45 @@
+name: Glamgo CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build, Audit & Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: TypeScript Typecheck & Production Build
+        run: npm run build
+
+      - name: Verify Distribution Artifacts
+        run: |
+          test -d dist || { echo "dist folder missing"; exit 1; }
+          test -f dist/index.html || { echo "index.html missing"; exit 1; }
+          echo "Production assets successfully compiled!"
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: glamgo-production-dist
+          path: dist/
+          retention-days: 7

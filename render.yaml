@@ -1,10 +1,12 @@
 services:
+  # 1. Full-Stack Web Service (API + Vite SPA)
   - type: web
-    name: glamgo-backend
+    name: glamgo-web
     env: node
-    plan: free
-    buildCommand: npm install
-    startCommand: npm start
+    plan: starter
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npx tsx server/index.ts
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
@@ -14,6 +16,26 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: glamgo-postgres
+          property: connectionString
       - key: REDIS_URL
-        sync: false
+        fromService:
+          type: redis
+          name: glamgo-redis
+          property: connectionString
+
+  # 2. Redis Cache & Concurrency Lock Instance
+  - type: redis
+    name: glamgo-redis
+    plan: starter
+    region: oregon
+    ipAllowList: []
+
+databases:
+  # 3. Managed PostgreSQL Database
+  - name: glamgo-postgres
+    plan: starter
+    region: oregon
+    databaseName: glamgo_db
+    user: glamgo_admin

@@ -1331,7 +1331,7 @@ export const ShowcaseLandingPage: React.FC<ShowcaseLandingPageProps> = ({
                 </button>
                 <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-obsidian via-obsidian/50 to-transparent text-white">
                   <h3 className="font-serif text-2xl font-bold">Tanya Grewal Artistry</h3>
-                  <p className="text-sm text-white/90 mt-1">Bandra West, Mumbai • ★ 4.98 (124 Royal Brides)</p>
+                  <p className="text-sm text-white/90 mt-1">Bandra West, Mumbai • 4.98 Rating (124 Royal Brides)</p>
                 </div>
               </div>
               <div className="p-6 space-y-4">

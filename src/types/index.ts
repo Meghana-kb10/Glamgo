@@ -11,6 +11,8 @@ export interface ServicePackage {
   durationMinutes: number;
   description: string;
   tier: 'Signature' | 'Bridal Couture' | 'Red Carpet' | 'Classic';
+  category?: 'bridal' | 'makeup' | 'hair' | 'skin' | 'nails' | 'draping' | 'spa';
+  serviceMode?: 'AT_VENUE' | 'IN_STUDIO' | 'HYBRID';
   productsUsed: string[];
   inclusions: string[];
   isPopular?: boolean;

@@ -28,7 +28,7 @@ export const DevSkeletonToggle: React.FC<DevSkeletonToggleProps> = ({ isLoading,
   };
 
   return (
-    <div className="fixed bottom-24 left-5 z-40 flex items-center gap-2">
+    <div className="fixed bottom-24 left-5 z-40 hidden lg:flex items-center gap-2">
       
       {/* 1. Live DB / Simulated Mode Indicator Pill */}
       <motion.button

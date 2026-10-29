@@ -39,7 +39,7 @@ export function useSseEvents() {
         es.addEventListener('connected', (e) => {
           try {
             const data = JSON.parse(e.data);
-            console.log('📡 [SSE Stream Active]:', data.message);
+            console.log('[SSE Stream Active]:', data.message);
           } catch {
             // ignore
           }
@@ -92,7 +92,7 @@ export function useSseEvents() {
           }
         };
       } catch (err: any) {
-        console.warn('⚠️ [SSE Connection Warning]:', err.message);
+        console.warn('[SSE Connection Warning]:', err.message);
       }
     }
 

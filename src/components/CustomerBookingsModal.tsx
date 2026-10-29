@@ -13,28 +13,31 @@ import {
   AlertCircle,
   Truck,
   Package,
-  ChevronRight,
-  ExternalLink,
   Ban,
   Star,
   RefreshCw
 } from 'lucide-react';
-import { snappySpring, spatialSpring } from '../constants/motion';
+import { spatialSpring } from '../constants/motion';
 import { glamgoApi } from '../services/apiClient';
 import { useToast } from '../context/ToastContext';
 import { InvoiceModal, InvoiceModalData } from './InvoiceModal';
 import { subscribeToSse } from '../hooks/useSseEvents';
+import { Button } from './ui/Button';
+import { Badge } from './ui/Badge';
+import { loadCustomerBookings, updateCustomerBookingStatus } from '../utils/storage';
 
 interface CustomerBookingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   customerId?: string;
+  onBookAgain?: (booking: any) => void;
 }
 
 export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
   isOpen,
   onClose,
   customerId,
+  onBookAgain,
 }) => {
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<'bookings' | 'orders'>('bookings');
@@ -58,10 +61,36 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
         glamgoApi.bookings.getMyBookings(customerId),
         glamgoApi.checkout.getMyOrders(customerId),
       ]);
-      if (bksRes.data) setBookings(bksRes.data);
+      const localBookings = loadCustomerBookings();
+      const serverBookings = bksRes.data || [];
+      
+      const seen = new Set<string>();
+      const merged: any[] = [];
+      
+      // Local (most recent first)
+      for (const bk of localBookings) {
+        const key = bk.booking_number || bk.id;
+        if (!seen.has(key)) {
+          seen.add(key);
+          merged.push(bk);
+        }
+      }
+
+      // Server / live database
+      for (const bk of serverBookings) {
+        const key = bk.booking_number || bk.id;
+        if (!seen.has(key)) {
+          seen.add(key);
+          merged.push(bk);
+        }
+      }
+
+      setBookings(merged);
       if (ordsRes.data) setOrders(ordsRes.data);
     } catch (e: any) {
-      console.warn('⚠️ [Customer Bookings Error]:', e.message);
+      console.warn('[Customer Bookings Error]:', e.message);
+      const fallbackBookings = loadCustomerBookings();
+      setBookings(fallbackBookings);
     } finally {
       setIsLoading(false);
     }
@@ -109,6 +138,7 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
     setIsCancelling(true);
     try {
       const res = await glamgoApi.bookings.cancel(cancellingBookingId, 'Customer requested schedule cancellation');
+      updateCustomerBookingStatus(cancellingBookingId, 'CANCELLED_BY_CUSTOMER');
       toast.success(
         res.data?.message || 'Your appointment has been cancelled and PostgreSQL GiST slot freed.',
         'Cancellation Confirmed'
@@ -125,35 +155,44 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="customer-bookings-title"
+    >
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-stone-950/60 backdrop-blur-md"
+        className="fixed inset-0 bg-ink/70 backdrop-blur-md"
       />
 
-      <div className="min-h-full flex items-center justify-center p-4 sm:p-6 text-stone-900">
+      <div className="min-h-full flex items-center justify-center p-4 sm:p-6 text-ink">
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 14 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 14 }}
           transition={spatialSpring}
-          className="relative w-full max-w-3xl bg-[#FAF8F5] rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-3xl bg-soft-ivory rounded-3xl shadow-2xl border border-mist overflow-hidden flex flex-col max-h-[90vh]"
+          style={{ backgroundColor: '#FFFBF8' }}
         >
           {/* Header */}
-          <div className="px-6 py-5 bg-white border-b border-stone-200 flex items-center justify-between">
+          <div className="px-6 py-5 bg-white border-b border-mist flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-blush/60 text-rose-plum flex items-center justify-center border border-rose-plum/20 shadow-xs">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif text-xl font-bold text-stone-900 tracking-tight">
+                <h3
+                  id="customer-bookings-title"
+                  className="font-serif text-xl font-bold text-ink tracking-tight"
+                >
                   My Atelier Reservations &amp; Orders
                 </h3>
-                <span className="text-[13px] text-stone-500 font-medium">
+                <span className="text-xs text-mauve-grey font-medium">
                   PRD CUST-06 • Post-Booking Lifecycle &amp; 3PL Logistics
                 </span>
               </div>
@@ -165,14 +204,15 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                 onClick={fetchCustomerData}
                 disabled={isLoading}
                 title="Refresh Status"
-                className="p-2 rounded-xl text-stone-500 hover:text-stone-900 hover:bg-stone-100 transition-colors"
+                className="p-2 rounded-xl text-mauve-grey hover:text-ink hover:bg-mist/40 transition-colors cursor-pointer"
               >
-                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-amber-600' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-rose-plum' : ''}`} />
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 rounded-xl text-stone-500 hover:text-stone-900 hover:bg-stone-100 transition-colors"
+                aria-label="Close modal"
+                className="p-2 rounded-xl text-mauve-grey hover:text-ink hover:bg-mist/40 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -180,14 +220,14 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
           </div>
 
           {/* Navigation Pill Tabs */}
-          <div className="px-6 pt-4 pb-2 bg-white/70 border-b border-stone-200/80 flex items-center gap-3">
+          <div className="px-6 pt-4 pb-2 bg-white/70 border-b border-mist flex items-center gap-3">
             <button
               type="button"
               onClick={() => setActiveTab('bookings')}
-              className={`px-4 py-2 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'bookings'
-                  ? 'bg-stone-900 text-stone-50 shadow-sm'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+                  ? 'bg-rose-plum text-white shadow-xs'
+                  : 'text-mauve-grey hover:text-ink hover:bg-blush/30'
               }`}
             >
               Bridal Reservations ({bookings.length})
@@ -195,10 +235,10 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('orders')}
-              className={`px-4 py-2 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'orders'
-                  ? 'bg-stone-900 text-stone-50 shadow-sm'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+                  ? 'bg-rose-plum text-white shadow-xs'
+                  : 'text-mauve-grey hover:text-ink hover:bg-blush/30'
               }`}
             >
               Cosmetics Shipments ({orders.length})
@@ -208,8 +248,8 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
           {/* Body Content */}
           <div className="p-6 overflow-y-auto space-y-6 flex-1">
             {isLoading && (
-              <div className="py-12 text-center text-stone-500 space-y-2">
-                <RefreshCw className="w-6 h-6 animate-spin mx-auto text-amber-600" />
+              <div className="py-12 text-center text-mauve-grey space-y-2">
+                <RefreshCw className="w-6 h-6 animate-spin mx-auto text-rose-plum" />
                 <p className="text-sm font-medium">Rehydrating your reservation telemetry...</p>
               </div>
             )}
@@ -217,10 +257,10 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
             {!isLoading && activeTab === 'bookings' && (
               <div className="space-y-5">
                 {bookings.length === 0 ? (
-                  <div className="py-16 text-center text-stone-500 space-y-3">
-                    <Calendar className="w-10 h-10 mx-auto text-stone-400 stroke-1" />
-                    <h4 className="font-serif text-lg font-semibold text-stone-800">No Active Reservations</h4>
-                    <p className="text-sm text-stone-500 max-w-sm mx-auto">
+                  <div className="py-16 text-center text-mauve-grey space-y-3">
+                    <Calendar className="w-10 h-10 mx-auto text-mist stroke-1" />
+                    <h4 className="font-serif text-lg font-semibold text-ink">No Active Reservations</h4>
+                    <p className="text-xs text-mauve-grey max-w-sm mx-auto">
                       Explore master artists in the bridal discovery gallery and reserve your wedding appointment.
                     </p>
                   </div>
@@ -235,57 +275,57 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                         key={bk.id}
                         className={`p-6 rounded-2xl bg-white border transition-all shadow-xs ${
                           isCancelled
-                            ? 'border-stone-200 bg-stone-50/70 opacity-75'
-                            : 'border-stone-200 hover:border-amber-300'
+                            ? 'border-mist bg-soft-ivory/70 opacity-75'
+                            : 'border-mist hover:border-rose-plum/40'
                         }`}
                       >
                         {/* Top Metadata Row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-100">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-mist/60">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2 py-0.5 rounded-md">
+                              <span className="font-mono text-xs font-bold text-ink bg-mist/40 px-2 py-0.5 rounded-md">
                                 #{bk.booking_number}
                               </span>
                               <span
                                 className={`text-[11px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full ${
                                   isCancelled
-                                    ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                                    ? 'bg-coral-red/10 text-coral-red border border-coral-red/20'
                                     : isCompleted
-                                    ? 'bg-stone-100 text-stone-800'
+                                    ? 'bg-mist text-ink'
                                     : isInProgress
-                                    ? 'bg-blue-50 text-blue-800 border border-blue-200'
-                                    : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                    ? 'bg-blush text-rose-plum border border-rose-plum/20'
+                                    : 'bg-emerald-accent/10 text-emerald-accent border border-emerald-accent/20'
                                 }`}
                               >
                                 {bk.status}
                               </span>
                             </div>
-                            <span className="text-[13px] text-stone-500 block mt-1">
+                            <span className="text-xs text-mauve-grey block mt-1">
                               Booked on {new Date(bk.created_at || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </span>
                           </div>
 
                           {/* Check-In OTP Card (Prominent Callout) */}
                           {!isCancelled && (
-                            <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200/80 flex items-center justify-between gap-4">
+                            <div className="p-3 rounded-xl bg-champagne-gold/15 border border-champagne-gold/30 flex items-center justify-between gap-4">
                               <div>
-                                <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-900 block">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider text-ink block">
                                   Check-In OTP (Show Artist)
                                 </span>
-                                <span className="font-mono text-lg font-bold tracking-widest text-stone-900 block">
+                                <span className="font-mono text-lg font-bold tracking-widest text-ink block">
                                   {bk.start_otp_hash || '582914'}
                                 </span>
                               </div>
                               <button
                                 type="button"
                                 onClick={() => handleCopyOtp(bk.start_otp_hash || '582914')}
-                                className="p-2 rounded-lg bg-white border border-amber-200 text-amber-900 hover:bg-amber-100 transition-colors shadow-xs"
+                                className="p-2 rounded-lg bg-white border border-champagne-gold/30 text-ink hover:bg-champagne-gold/20 transition-colors shadow-xs cursor-pointer"
                                 title="Copy 6-Digit Check-In OTP"
                               >
                                 {copiedOtp === (bk.start_otp_hash || '582914') ? (
-                                  <Check className="w-4 h-4 text-emerald-600" />
+                                  <Check className="w-4 h-4 text-emerald-accent" />
                                 ) : (
-                                  <Copy className="w-4 h-4 text-stone-700" />
+                                  <Copy className="w-4 h-4 text-ink" />
                                 )}
                               </button>
                             </div>
@@ -296,25 +336,25 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                         <div className="py-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="flex items-center gap-3">
                             <img
-                              src={bk.professional?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}
+                              src={bk.professional?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80&fm=webp'}
                               alt={bk.professional?.business_name}
-                              className="w-12 h-12 rounded-2xl object-cover border border-stone-200"
+                              className="w-12 h-12 rounded-2xl object-cover border border-mist"
                             />
                             <div>
-                              <h4 className="font-serif text-base font-bold text-stone-900">
+                              <h4 className="font-serif text-base font-bold text-ink">
                                 {bk.professional?.business_name || 'Tanya Grewal Artistry Studio'}
                               </h4>
-                              <div className="flex items-center gap-1.5 text-xs text-stone-600">
-                                <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                                <span className="font-semibold text-stone-900">{bk.professional?.rating_avg || 4.95}</span>
+                              <div className="flex items-center gap-1.5 text-xs text-mauve-grey">
+                                <Star className="w-3.5 h-3.5 fill-champagne-gold text-champagne-gold" />
+                                <span className="font-semibold text-ink">{bk.professional?.rating_avg || 4.95}</span>
                                 <span>({bk.professional?.review_count || 120} verified brides)</span>
                               </div>
                             </div>
                           </div>
 
-                          <div className="space-y-1.5 text-[13px] text-stone-700">
+                          <div className="space-y-1.5 text-xs text-ink">
                             <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-amber-700 shrink-0" />
+                              <Calendar className="w-4 h-4 text-rose-plum shrink-0" />
                               <span className="font-medium">
                                 {new Date(bk.slot_start || Date.now()).toLocaleDateString('en-IN', {
                                   weekday: 'short',
@@ -325,7 +365,7 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-amber-700 shrink-0" />
+                              <Clock className="w-4 h-4 text-rose-plum shrink-0" />
                               <span className="font-mono text-xs">
                                 {new Date(bk.slot_start || Date.now()).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                                 {' — '}
@@ -333,28 +373,28 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-amber-700 shrink-0" />
+                              <MapPin className="w-4 h-4 text-rose-plum shrink-0" />
                               <span className="truncate">{bk.venue_address}</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Financial Ledger & Actions Footer */}
-                        <div className="pt-4 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="text-xs text-stone-600 space-y-0.5">
+                        <div className="pt-4 border-t border-mist flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="text-xs text-mauve-grey space-y-0.5">
                             <div className="flex items-center gap-2">
                               <span>Total Package:</span>
-                              <span className="font-mono font-bold text-stone-900 tabular-nums">
+                              <span className="font-mono font-bold text-ink tabular-nums">
                                 ₹{Number(bk.total_amount).toLocaleString('en-IN')}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 text-emerald-800 font-medium">
+                            <div className="flex items-center gap-2 text-emerald-accent font-medium">
                               <span>30% Deposit Paid (Escrow Held):</span>
                               <span className="font-mono font-bold tabular-nums">
                                 ₹{Number(bk.deposit_paid_amount || bk.total_amount * 0.3).toLocaleString('en-IN')}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 text-stone-500">
+                            <div className="flex items-center gap-2 text-mauve-grey">
                               <span>Venue Balance Due:</span>
                               <span className="font-mono tabular-nums">
                                 ₹{Number(bk.balance_due_amount || bk.total_amount * 0.7).toLocaleString('en-IN')}
@@ -363,24 +403,41 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <button
-                              type="button"
+                            {(isCompleted || isCancelled) && onBookAgain && (
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => {
+                                  onBookAgain(bk);
+                                  onClose();
+                                }}
+                                leftIcon={<Sparkles className="w-3.5 h-3.5" />}
+                                className="rounded-xl text-xs font-semibold"
+                              >
+                                Book Again
+                              </Button>
+                            )}
+
+                            <Button
+                              variant="secondary"
+                              size="sm"
                               onClick={() => handleOpenInvoice(bk)}
-                              className="px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                              leftIcon={<FileText className="w-3.5 h-3.5 text-rose-plum" />}
+                              className="rounded-xl text-xs font-semibold"
                             >
-                              <FileText className="w-3.5 h-3.5 text-stone-700" />
-                              <span>GST Tax Invoice</span>
-                            </button>
+                              GST Tax Invoice
+                            </Button>
 
                             {!isCancelled && !isCompleted && (
-                              <button
-                                type="button"
+                              <Button
+                                variant="danger"
+                                size="sm"
                                 onClick={() => setCancellingBookingId(bk.id)}
-                                className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                                leftIcon={<Ban className="w-3.5 h-3.5" />}
+                                className="rounded-xl text-xs font-semibold"
                               >
-                                <Ban className="w-3.5 h-3.5 text-rose-600" />
-                                <span>Cancel Booking</span>
-                              </button>
+                                Cancel Booking
+                              </Button>
                             )}
                           </div>
                         </div>
@@ -394,10 +451,10 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
             {!isLoading && activeTab === 'orders' && (
               <div className="space-y-4">
                 {orders.length === 0 ? (
-                  <div className="py-16 text-center text-stone-500 space-y-3">
-                    <Package className="w-10 h-10 mx-auto text-stone-400 stroke-1" />
-                    <h4 className="font-serif text-lg font-semibold text-stone-800">No Retail Orders Yet</h4>
-                    <p className="text-sm text-stone-500 max-w-sm mx-auto">
+                  <div className="py-16 text-center text-mauve-grey space-y-3">
+                    <Package className="w-10 h-10 mx-auto text-mist stroke-1" />
+                    <h4 className="font-serif text-lg font-semibold text-ink">No Retail Orders Yet</h4>
+                    <p className="text-xs text-mauve-grey max-w-sm mx-auto">
                       Explore our backstage cosmetics shop to purchase high-definition primers, lipsticks, and bridal kits.
                     </p>
                   </div>
@@ -411,34 +468,34 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                     return (
                       <div
                         key={ord.id}
-                        className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs space-y-4"
+                        className="p-6 rounded-2xl bg-white border border-mist shadow-xs space-y-4"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-mist">
                           <div>
-                            <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2 py-0.5 rounded-md">
+                            <span className="font-mono text-xs font-bold text-ink bg-mist/40 px-2 py-0.5 rounded-md">
                               #{ord.order_number}
                             </span>
-                            <span className="text-[13px] text-stone-500 ml-2">
+                            <span className="text-xs text-mauve-grey ml-2">
                               {new Date(ord.created_at || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </span>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-stone-500">Total:</span>
-                            <span className="font-mono text-sm font-bold text-stone-900 tabular-nums">
+                            <span className="text-xs text-mauve-grey">Total:</span>
+                            <span className="font-mono text-sm font-bold text-ink tabular-nums">
                               ₹{Number(ord.total_amount || 3600).toLocaleString('en-IN')}
                             </span>
                           </div>
                         </div>
 
                         {/* Courier Tracking Banner */}
-                        <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                        <div className="p-4 rounded-xl bg-champagne-gold/15 border border-champagne-gold/30 space-y-3">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-xs font-bold text-amber-950">
-                              <Truck className="w-4 h-4 text-amber-700" />
+                            <div className="flex items-center gap-2 text-xs font-bold text-ink">
+                              <Truck className="w-4 h-4 text-rose-plum" />
                               <span>{courierName}</span>
                             </div>
-                            <span className="font-mono text-xs text-stone-700 bg-white px-2 py-0.5 rounded border border-amber-200">
+                            <span className="font-mono text-xs text-ink bg-white px-2 py-0.5 rounded border border-mist">
                               AWB: {awbNumber}
                             </span>
                           </div>
@@ -446,41 +503,41 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                           {/* Tracking Progress Milestones */}
                           <div className="grid grid-cols-3 gap-2 text-center text-xs pt-1">
                             <div className="space-y-1">
-                              <div className="w-3 h-3 rounded-full bg-emerald-600 mx-auto" />
-                              <span className="font-semibold text-stone-900 block">Picked Up</span>
-                              <span className="text-[11px] text-stone-500 block">BOM Central Hub</span>
+                              <div className="w-3 h-3 rounded-full bg-emerald-accent mx-auto" />
+                              <span className="font-semibold text-ink block">Picked Up</span>
+                              <span className="text-[11px] text-mauve-grey block">BOM Central Hub</span>
                             </div>
                             <div className="space-y-1">
-                              <div className={`w-3 h-3 rounded-full mx-auto ${isDelivered ? 'bg-emerald-600' : 'bg-amber-600 animate-ping'}`} />
-                              <span className="font-semibold text-stone-900 block">In Transit</span>
-                              <span className="text-[11px] text-stone-500 block">Air Express</span>
+                              <div className={`w-3 h-3 rounded-full mx-auto ${isDelivered ? 'bg-emerald-accent' : 'bg-rose-plum animate-ping'}`} />
+                              <span className="font-semibold text-ink block">In Transit</span>
+                              <span className="text-[11px] text-mauve-grey block">Air Express</span>
                             </div>
                             <div className="space-y-1">
-                              <div className={`w-3 h-3 rounded-full mx-auto ${isDelivered ? 'bg-emerald-600' : 'bg-stone-300'}`} />
-                              <span className={`font-semibold block ${isDelivered ? 'text-emerald-700 font-bold' : 'text-stone-400'}`}>
+                              <div className={`w-3 h-3 rounded-full mx-auto ${isDelivered ? 'bg-emerald-accent' : 'bg-mist'}`} />
+                              <span className={`font-semibold block ${isDelivered ? 'text-emerald-accent font-bold' : 'text-mauve-grey'}`}>
                                 Delivered
                               </span>
-                              <span className="text-[11px] text-stone-500 block">Recipient Address</span>
+                              <span className="text-[11px] text-mauve-grey block">Recipient Address</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Order SKUs */}
                         <div className="space-y-2">
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 block">
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-mauve-grey block">
                             Packaged Items
                           </span>
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-stone-50 border border-stone-100">
-                            <Package className="w-5 h-5 text-amber-700 shrink-0" />
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-soft-ivory border border-mist">
+                            <Package className="w-5 h-5 text-rose-plum shrink-0" />
                             <div className="flex-1 text-xs">
-                              <span className="font-semibold text-stone-900 block">
+                              <span className="font-semibold text-ink block">
                                 {ord.items?.[0]?.product?.title || '24K Gold Camellia Glow Serum Primer'}
                               </span>
-                              <span className="text-stone-500">
+                              <span className="text-mauve-grey">
                                 Brand: {ord.items?.[0]?.product?.brand_name || 'Backstage Formulations'} • Shade: Champagne Luster
                               </span>
                             </div>
-                            <span className="font-mono text-xs font-bold text-stone-900 tabular-nums">
+                            <span className="font-mono text-xs font-bold text-ink tabular-nums">
                               Qty: {ord.items?.[0]?.quantity || 1}
                             </span>
                           </div>
@@ -494,18 +551,19 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
           </div>
 
           {/* Footer Info */}
-          <div className="px-6 py-4 bg-stone-100/80 border-t border-stone-200 flex items-center justify-between text-xs text-stone-600">
+          <div className="px-6 py-4 bg-white border-t border-mist flex items-center justify-between text-xs text-mauve-grey">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-amber-700" />
+              <ShieldCheck className="w-4 h-4 text-champagne-gold" />
               <span>Razorpay Route Escrow • Instant PostGIS Exclusion Release Guarantee</span>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              size="sm"
               onClick={onClose}
-              className="px-4 py-1.5 rounded-xl bg-stone-900 text-stone-50 font-medium text-xs hover:bg-stone-800 transition-colors"
+              className="rounded-xl text-xs font-medium"
             >
               Done
-            </button>
+            </Button>
           </div>
         </motion.div>
       </div>
@@ -513,22 +571,22 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
       {/* Confirmation Dialog for Cancellation */}
       <AnimatePresence>
         {cancellingBookingId && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-ink/70 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.94, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.94, opacity: 0 }}
-              className="w-full max-w-md bg-white rounded-2xl p-6 border border-rose-200 shadow-xl space-y-4"
+              className="w-full max-w-md bg-white rounded-2xl p-6 border border-coral-red/30 shadow-xl space-y-4"
             >
-              <div className="flex items-center gap-3 text-rose-700">
+              <div className="flex items-center gap-3 text-coral-red">
                 <AlertCircle className="w-6 h-6" />
-                <h4 className="font-serif text-lg font-bold text-stone-900">
+                <h4 className="font-serif text-lg font-bold text-ink">
                   Cancel Appointment?
                 </h4>
               </div>
 
-              <div className="text-xs text-stone-600 space-y-2 bg-rose-50/60 p-3 rounded-xl border border-rose-100">
-                <p className="font-semibold text-rose-900">
+              <div className="text-xs text-mauve-grey space-y-2 bg-blush/40 p-3 rounded-xl border border-blush">
+                <p className="font-semibold text-rose-plum">
                   Glamgo Cancellation Policy Tiers:
                 </p>
                 <ul className="list-disc pl-4 space-y-1">
@@ -541,22 +599,24 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setCancellingBookingId(null)}
                   disabled={isCancelling}
-                  className="px-4 py-2 rounded-xl text-stone-700 hover:bg-stone-100 text-xs font-semibold"
+                  className="rounded-xl text-xs font-semibold text-mauve-grey hover:text-ink"
                 >
                   Keep Booking
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={handleConfirmCancel}
-                  disabled={isCancelling}
-                  className="px-4 py-2 rounded-xl bg-rose-700 hover:bg-rose-800 text-white text-xs font-semibold shadow-sm"
+                  isLoading={isCancelling}
+                  className="rounded-xl text-xs font-semibold"
                 >
-                  {isCancelling ? 'Releasing Slot...' : 'Confirm Cancellation'}
-                </button>
+                  Confirm Cancellation
+                </Button>
               </div>
             </motion.div>
           </div>
@@ -572,3 +632,5 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
     </div>
   );
 };
+
+export default CustomerBookingsModal;

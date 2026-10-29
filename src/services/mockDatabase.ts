@@ -376,6 +376,37 @@ class MockRelationalDatabase {
     };
     this.bookings.push(existingBooking);
 
+    const completedBooking: Booking = {
+      id: 'bk-seed-002',
+      booking_number: 'GLAM-BK-202610-0984',
+      customer_id: userCustomer.id,
+      professional_id: pro1.id,
+      status: 'COMPLETED',
+      service_mode: 'AT_VENUE',
+      venue_address: {
+        street: 'Penthouse 401, Sea Face, Bandra West',
+        city: 'Mumbai',
+        state: 'MH',
+        postal_code: '400050',
+        latitude: 19.0607,
+        longitude: 72.8362,
+      },
+      slot_start: '2026-10-18T10:00:00Z',
+      slot_end: '2026-10-18T13:00:00Z',
+      lock_expires_at: null,
+      subtotal_amount: 32000,
+      travel_fee: 450,
+      tax_amount: 5841,
+      total_amount: 38291,
+      deposit_paid_amount: 11487,
+      balance_due_amount: 0,
+      start_otp_hash: '492810',
+      complete_otp_hash: '821943',
+      created_at: '2026-10-15T09:00:00Z',
+      updated_at: '2026-10-18T13:10:00Z',
+    };
+    this.bookings.push(completedBooking);
+
     // 7. Seed Products & Variants
     const p1: Product = {
       id: 'prod-001',

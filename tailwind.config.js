@@ -8,56 +8,104 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Core PRD & UI/UX Design System Tokens
+        'rose-plum': '#B8336A',
+        'deep-plum': '#7A1F4A',
+        'blush': '#FCE7F0',
+        'champagne-gold': '#C9A25B',
+        'soft-ivory': '#FFFBF8',
+        'ink': '#1F1A1D',
+        'mauve-grey': '#6E6369',
+        'mist': '#EDE4E8',
+        'emerald-accent': '#14744E',
+        'amber-accent': '#E8A33D',
+        'coral-red': '#D6455D',
+
+        soft: {
+          DEFAULT: '#FFFBF8',
+          ivory: '#FFFBF8',
+        },
+        blush: {
+          DEFAULT: '#FCE7F0',
+        },
+        mist: {
+          DEFAULT: '#EDE4E8',
+        },
+        ink: {
+          DEFAULT: '#1F1A1D',
+        },
+        mauve: {
+          DEFAULT: '#6E6369',
+          grey: '#6E6369',
+        },
+
+        // Backward-compatible token mappings aligned to the new palette
         canvas: {
-          light: '#FAF7F5', // Alabaster Silk
-          DEFAULT: '#FAF7F5',
-          dark: '#0E0C0D',  // Velvet Plum Obsidian
+          light: '#FFFBF8', // Soft Ivory
+          DEFAULT: '#FFFBF8',
+          dark: '#1A1216',  // Plum-tinted Dark
         },
         surface: {
-          cream: '#F3ECE7',  // Pearl Cream
-          hover: '#F7EAE4',  // Warm Blush Tint
+          cream: '#FCE7F0',  // Blush
+          hover: '#FCE7F0',  // Warm Blush Tint
           white: '#FFFFFF',
-          dark: '#181416',
-          card: '#FCF9F7',
+          dark: '#1A1216',
+          card: '#FFFFFF',
         },
         obsidian: {
-          DEFAULT: '#181311', // Obsidian Espresso
-          deep: '#120E0D',
-          cocoa: '#4A3D36',   // High-contrast Muted Cocoa (WCAG AAA)
-          muted: '#4A3D36',   // High-contrast Accessible Muted
-          subtle: '#5C4E47',  // High-contrast Accessible Subtle
+          DEFAULT: '#1F1A1D', // Ink
+          deep: '#130F11',
+          cocoa: '#6E6369',   // Mauve Grey
+          muted: '#6E6369',   // Accessible Mauve Grey
+          subtle: '#6E6369',
         },
         champagne: {
-          DEFAULT: '#D4AF37', // Champagne Gold
-          light: '#F4E7BE',
-          soft: '#E8D288',
-          dark: '#7A580A',    // High-contrast Deep Amber Bronze (WCAG AA > 5.5:1)
+          DEFAULT: '#C9A25B', // Champagne Gold
+          gold: '#C9A25B',
+          light: '#F8F1E4',
+          soft: '#E8D5B5',
+          dark: '#7A580A',
         },
         rose: {
-          gold: '#C87D65',    // Editorial Rose Gold (Accents & Borders)
-          velvet: '#A8324F',  // Accessible Velvet Crimson
-          blush: '#F7EAE4',   // Warm Blush Tint
-          dark: '#8E3824',    // High-contrast Terracotta Text (WCAG AA > 5.8:1)
+          DEFAULT: '#B8336A',
+          plum: '#B8336A',    // Rose Plum
+          gold: '#B8336A',    // Rose Plum
+          velvet: '#7A1F4A',  // Deep Plum
+          blush: '#FCE7F0',   // Blush
+          dark: '#7A1F4A',
+        },
+        deep: {
+          plum: '#7A1F4A',
         },
         sage: {
-          DEFAULT: '#2E6F40', // Botanical Sage
-          light: '#E2EFE5',
-          emerald: '#1F8A5B',
+          DEFAULT: '#1E9E6A', // Emerald
+          light: '#E2F7ED',
+          emerald: '#1E9E6A',
         },
         crimson: {
-          DEFAULT: '#B42318', // Velvet Crimson
-          velvet: '#B42318',
-          light: '#FEE4E2',
+          DEFAULT: '#D6455D', // Coral Red
+          velvet: '#D6455D',
+          light: '#FDECEF',
         },
       },
       fontFamily: {
-        serif: ['"Playfair Display"', '"Cormorant Garamond"', 'Georgia', 'serif'],
-        sans: ['"Plus Jakarta Sans"', 'Inter', '-apple-system', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        serif: ['Poppins', '-apple-system', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'sans-serif'],
+        heading: ['Poppins', '-apple-system', 'sans-serif'],
+        display: ['Poppins', '-apple-system', 'sans-serif'],
+        mono: ['monospace'],
+      },
+      borderRadius: {
+        'button': '12px',
+        'card': '16px',
+        'sheet': '24px',
+        'chip': '9999px',
       },
       boxShadow: {
-        'luxury': '0 20px 40px -15px rgba(24, 19, 17, 0.07), 0 0 1px 1px rgba(200, 125, 101, 0.08)',
-        'luxury-hover': '0 30px 60px -12px rgba(200, 75, 107, 0.16), 0 0 1px 1px rgba(212, 175, 55, 0.25)',
+        'card': '0 2px 12px rgba(31, 26, 29, 0.06)',
+        'sheet': '0 -4px 24px rgba(31, 26, 29, 0.12)',
+        'luxury': '0 20px 40px -15px rgba(31, 26, 29, 0.08), 0 0 1px 1px rgba(184, 51, 106, 0.08)',
+        'luxury-hover': '0 24px 48px -12px rgba(184, 51, 106, 0.16), 0 0 1px 1px rgba(201, 162, 91, 0.25)',
         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.06)',
         'gold-glow': '0 0 25px rgba(212, 175, 55, 0.35)',
         'rose-glow': '0 0 25px rgba(200, 125, 101, 0.35)',
