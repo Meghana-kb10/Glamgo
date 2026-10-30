@@ -4,6 +4,7 @@ import {
   X,
   Star,
   Clock,
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -39,6 +40,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isByopSelected, setIsByopSelected] = useState(false);
   const [isFavorite, setIsFavorite] = useState(() =>
     service ? favoritesService.isServiceFavorite(service.id) : false
   );
@@ -65,7 +67,8 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
     0
   );
 
-  const finalPrice = service.price + addonsTotal;
+  const byopDiscountAmount = isByopSelected ? (service.byopDiscount || 500) : 0;
+  const finalPrice = Math.max(1, service.price - byopDiscountAmount + addonsTotal);
   const images = service.galleryImages?.length ? service.galleryImages : [service.imageUrl];
 
   return (
@@ -169,6 +172,132 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             <p className="text-xs sm:text-sm text-mauve-grey leading-relaxed mt-2 font-sans">
               {service.description}
             </p>
+          </div>
+
+          {/* Yes Madam Inspired: Product Delivery Mode (All-Inclusive vs Bring Your Own Product) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-blush/35 to-soft-ivory border border-rose-plum/25 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-rose-plum" />
+                <span>Product Transparency Mode</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2 py-0.5 rounded-md">
+                Yes Madam Benchmark
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => setIsByopSelected(false)}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  !isByopSelected
+                    ? 'bg-white border-rose-plum ring-1 ring-rose-plum/25 shadow-xs'
+                    : 'bg-white/60 hover:bg-white border-mist text-mauve-grey'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-ink">All-Inclusive Sealed Kit</span>
+                  {!isByopSelected && <Check className="w-3.5 h-3.5 text-rose-plum" />}
+                </div>
+                <p className="text-[11px] text-mauve-grey leading-tight">
+                  100% genuine single-use mono-pack opened in front of you.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsByopSelected(true)}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  isByopSelected
+                    ? 'bg-white border-rose-plum ring-1 ring-rose-plum/25 shadow-xs'
+                    : 'bg-white/60 hover:bg-white border-mist text-mauve-grey'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-ink">Bring Your Own Product (BYOP)</span>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    Save ₹{(service.byopDiscount || 500).toLocaleString('en-IN')}
+                  </span>
+                </div>
+                <p className="text-[11px] text-mauve-grey leading-tight">
+                  Use your own preferred foundation/creams; pay only for master labor.
+                </p>
+              </button>
+            </div>
+          </div>
+
+          {/* Urban Company Signature: Step-by-Step Procedure Timeline */}
+          {service.procedureSteps && service.procedureSteps.length > 0 && (
+            <div className="p-5 rounded-2xl bg-white border border-mist space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-ink block">
+                  Step-by-Step Treatment Procedure ({service.procedureSteps.length} Steps)
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                  Urban Company Benchmark
+                </span>
+              </div>
+
+              <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-mist">
+                {service.procedureSteps.map((step) => (
+                  <div key={step.stepNumber} className="relative group">
+                    <div className="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-rose-plum text-white text-[9px] font-bold flex items-center justify-center ring-4 ring-white">
+                      {step.stepNumber}
+                    </div>
+                    <div>
+                      <div className="flex items-baseline justify-between gap-2">
+                        <h4 className="text-xs font-bold text-ink">{step.title}</h4>
+                        <span className="text-[10px] font-mono text-mauve-grey">{step.duration}</span>
+                      </div>
+                      <p className="text-[11px] text-mauve-grey mt-0.5 leading-relaxed">{step.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Urban Company Signature: Consumables vs Customer Requirements */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/60 space-y-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                <span>What Glamgo Delivers</span>
+              </span>
+              <ul className="space-y-1 text-xs text-ink/80">
+                {(service.disposablesIncluded || [
+                  '100% Genuine Sealed Mono-Dose Pack',
+                  'Sterile single-use bed roll & floor sheet',
+                  'Autoclaved metal tools in sealed pouch',
+                  'Post-service bio-waste disposal pouch',
+                ]).map((d, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-[11px]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{d}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/60 space-y-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-amber-700" />
+                <span>What You Need to Provide</span>
+              </span>
+              <ul className="space-y-1 text-xs text-ink/80">
+                {(service.customerRequirements || [
+                  '1 Chair or bed in a well-lit room',
+                  'Electrical socket within 2 meters',
+                  'Normal room temperature water',
+                ]).map((req, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-[11px]">
+                    <span className="text-amber-700 font-bold shrink-0">•</span>
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* 3. Before / After Slider (if available) */}
@@ -327,7 +456,11 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
               )}
             </div>
             <span className="text-[10px] text-mauve-grey block">
-              {selectedAddonIds.length > 0 ? `Includes ${selectedAddonIds.length} add-ons • All taxes included` : 'All taxes and hygiene kit included'}
+              {isByopSelected
+                ? `BYOP Labor Only (-₹${byopDiscountAmount.toLocaleString('en-IN')}) • Taxes included`
+                : selectedAddonIds.length > 0
+                ? `Includes ${selectedAddonIds.length} add-ons • All taxes included`
+                : 'All taxes & sealed single-use kit included'}
             </span>
           </div>
 

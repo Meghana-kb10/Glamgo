@@ -18,6 +18,7 @@ import { OfferBannerCarousel } from './components/home/OfferBannerCarousel';
 import { SpotlightRail } from './components/home/SpotlightRail';
 import { CategoryGrid } from './components/home/CategoryGrid';
 import { BookAgainRail } from './components/home/BookAgainRail';
+import { SalonPackagesRail } from './components/home/SalonPackagesRail';
 import { MostBookedRail } from './components/home/MostBookedRail';
 import { TopProsRail } from './components/home/TopProsRail';
 import { BridalPackagesRail } from './components/home/BridalPackagesRail';
@@ -31,6 +32,7 @@ import { ProductCatalog } from './components/shop/ProductCatalog';
 import {
   marketplaceService,
   DetailedService,
+  ValuePackageCombo,
   LocationItem,
   MARKETPLACE_CATEGORIES,
   TRENDING_SEARCHES,
@@ -510,6 +512,84 @@ export const App: React.FC = () => {
     trackEvent('add_to_cart', { serviceId: srv.id, price: srv.price });
   };
 
+  const handleSelectValuePackage = (pkg: ValuePackageCombo) => {
+    const srv: DetailedService = {
+      id: pkg.id,
+      title: pkg.name,
+      category: 'packages',
+      durationMinutes: pkg.durationMinutes,
+      price: pkg.packagePrice,
+      originalPrice: pkg.originalPrice,
+      savingsAmount: pkg.savingsAmount,
+      rating: pkg.rating,
+      reviewCount: pkg.reviewCount,
+      imageUrl: pkg.imageUrl,
+      galleryImages: [pkg.imageUrl],
+      description: pkg.tagline,
+      whatIsIncluded: pkg.includedServices,
+      productsUsed: pkg.sealedKitsIncluded,
+      procedureSteps: pkg.includedServices.map((inc, i) => ({
+        stepNumber: i + 1,
+        title: inc.split('(')[0].trim(),
+        duration: `${Math.round(pkg.durationMinutes / pkg.includedServices.length)} mins`,
+        description: `Bespoke salon treatment using genuine single-use mono-dose sealed packs with hospital-sterilized tools.`,
+      })),
+      disposablesIncluded: pkg.sealedKitsIncluded,
+      customerRequirements: ['1 Comfortable chair or bed in well-lit room', 'Power outlet within 2 meters for thermal tools'],
+      serviceMode: 'AT_VENUE',
+      faqs: [
+        {
+          question: 'Are all products genuine and sealed?',
+          answer: 'Yes! In line with Urban Company & Yes Madam standards, 100% of products are individual factory-sealed mono-packs opened directly in front of you.',
+        },
+        {
+          question: 'Can I customize any service in the package?',
+          answer: 'Yes, your certified master pro will consult with you on undertones, nail shades, and skin types prior to breaking the seals.',
+        },
+      ],
+      byopOptionAvailable: true,
+      byopDiscount: 600,
+    };
+    setSelectedServiceForDetail(srv);
+  };
+
+  const handleBookValuePackage = (pkg: ValuePackageCombo) => {
+    const srv: DetailedService = {
+      id: pkg.id,
+      title: pkg.name,
+      category: 'packages',
+      durationMinutes: pkg.durationMinutes,
+      price: pkg.packagePrice,
+      originalPrice: pkg.originalPrice,
+      savingsAmount: pkg.savingsAmount,
+      rating: pkg.rating,
+      reviewCount: pkg.reviewCount,
+      imageUrl: pkg.imageUrl,
+      galleryImages: [pkg.imageUrl],
+      description: pkg.tagline,
+      whatIsIncluded: pkg.includedServices,
+      productsUsed: pkg.sealedKitsIncluded,
+      procedureSteps: pkg.includedServices.map((inc, i) => ({
+        stepNumber: i + 1,
+        title: inc.split('(')[0].trim(),
+        duration: `${Math.round(pkg.durationMinutes / pkg.includedServices.length)} mins`,
+        description: `Bespoke salon treatment using genuine single-use mono-dose sealed packs with hospital-sterilized tools.`,
+      })),
+      disposablesIncluded: pkg.sealedKitsIncluded,
+      customerRequirements: ['1 Comfortable chair or bed in well-lit room', 'Power outlet within 2 meters for thermal tools'],
+      serviceMode: 'AT_VENUE',
+      faqs: [
+        {
+          question: 'Are all products genuine and sealed?',
+          answer: 'Yes! In line with Urban Company & Yes Madam standards, 100% of products are individual factory-sealed mono-packs opened directly in front of you.',
+        },
+      ],
+      byopOptionAvailable: true,
+      byopDiscount: 600,
+    };
+    handleBookDetailedService(srv);
+  };
+
   const handleNavRoute = (route: string) => {
     setActiveNavRoute(route);
     if (route === 'home') {
@@ -815,6 +895,16 @@ export const App: React.FC = () => {
                       bookings={defaultPastBookings}
                       onBookAgain={handleBookAgain}
                     />
+
+                    {/* 4.5. Urban Company & Yes Madam Inspired: Save with Curated Salon Packages & Combos */}
+                    <div id="salon-packages-rail-section">
+                      <SalonPackagesRail
+                        packages={marketplaceService.getValuePackages()}
+                        onSelectPackage={handleSelectValuePackage}
+                        onBookPackage={handleBookValuePackage}
+                        isPackageAdded={(pkgId) => activeServiceCart?.package.id === pkgId}
+                      />
+                    </div>
 
                     {/* 5. Occasion Chips Rail */}
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">

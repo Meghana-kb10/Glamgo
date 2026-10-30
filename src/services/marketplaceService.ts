@@ -254,6 +254,13 @@ export const OFFER_BANNERS: OfferBanner[] = [
   },
 ];
 
+export interface ProcedureStep {
+  stepNumber: number;
+  title: string;
+  duration: string;
+  description: string;
+}
+
 export interface DetailedService {
   id: string;
   title: string;
@@ -275,7 +282,168 @@ export interface DetailedService {
   faqs: { question: string; answer: string }[];
   beforeImage?: string;
   afterImage?: string;
+  procedureSteps?: ProcedureStep[];
+  disposablesIncluded?: string[];
+  customerRequirements?: string[];
+  byopOptionAvailable?: boolean;
+  byopDiscount?: number;
 }
+
+export interface ValuePackageCombo {
+  id: string;
+  name: string;
+  tagline: string;
+  badge: string;
+  durationMinutes: number;
+  packagePrice: number;
+  originalPrice: number;
+  savingsAmount: number;
+  discountPercent: number;
+  rating: number;
+  reviewCount: number;
+  imageUrl: string;
+  includedServices: string[];
+  sealedKitsIncluded: string[];
+  idealFor: string;
+  hygieneProtocol: string;
+}
+
+export const VALUE_PACKAGE_COMBOS: ValuePackageCombo[] = [
+  {
+    id: 'combo-01',
+    name: 'Head-to-Toe Radiance Salon Suite',
+    tagline: 'Complete self-care revival with Italian Rica waxing, hydra glow, and pedicure',
+    badge: 'Save 35% • Most Popular',
+    durationMinutes: 135,
+    packagePrice: 2499,
+    originalPrice: 3850,
+    savingsAmount: 1351,
+    discountPercent: 35,
+    rating: 4.94,
+    reviewCount: 2430,
+    imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+    includedServices: [
+      'Rica White Chocolate Honey Waxing (Full Arms + Legs + Underarms)',
+      'Hydra-Boost Oxygen Radiance Facial & Neck Polish',
+      'Rose Petal Relaxing Crystal Pedicure',
+      'Precision Eyebrow & Upper Lip Threading',
+    ],
+    sealedKitsIncluded: [
+      'Single-use sealed Rica cartridge opened with customer',
+      'Disposable sterile bed sheet, gown & floor mat',
+      'Individual Pedilogix exfoliating foot peel pouch',
+    ],
+    idealFor: 'Monthly grooming, pre-vacation prep & instant deep glow',
+    hygieneProtocol: '100% Genuine Mono-Dose Packs • Mess-Free Post Cleanup',
+  },
+  {
+    id: 'combo-02',
+    name: 'Pre-Wedding & Sangeet Red Carpet Glam',
+    tagline: 'High-octane camera-ready glamour with airbrush foundation and Dyson styling',
+    badge: 'Couture Suite • 33% OFF',
+    durationMinutes: 150,
+    packagePrice: 6999,
+    originalPrice: 10500,
+    savingsAmount: 3501,
+    discountPercent: 33,
+    rating: 4.98,
+    reviewCount: 860,
+    imageUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80',
+    includedServices: [
+      'Red Carpet HD Airbrush Complexion with Custom Highlighting',
+      'Dyson Voluminous Hollywood Wave Hair Architecture',
+      '3D Faux Silk Mink Lashes with Custom Eye Mapping',
+      'Architectural Dupatta / Saree Pinning with Anti-Crease Tape',
+    ],
+    sealedKitsIncluded: [
+      'Sterilized brush roll & sealed silicone airbrush pods',
+      'Emergency bridal touch-up kit with matching lip sample',
+      'High-tensile anti-snag gold safety pins',
+    ],
+    idealFor: 'Sangeet, cocktail parties, reception brides & bridesmaid entourages',
+    hygieneProtocol: 'Autoclave Sterilized Metal Tools • Fresh Lashes & Spatulas',
+  },
+  {
+    id: 'combo-03',
+    name: 'Deep Scalp Detox & Kérastase Hair Spa',
+    tagline: 'Intense salon-grade bond repair with restorative head & shoulder massage',
+    badge: 'Hair Rescue • 35% OFF',
+    durationMinutes: 75,
+    packagePrice: 2199,
+    originalPrice: 3400,
+    savingsAmount: 1201,
+    discountPercent: 35,
+    rating: 4.91,
+    reviewCount: 1120,
+    imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
+    includedServices: [
+      'Kérastase Fusio-Dose Molecular Hair Repair Spa',
+      'Ultrasonic Salicylic Scalp Peeling & Flake Clearing',
+      'Acupressure Stress-Relief Head, Neck & Shoulder Massage (20 mins)',
+      'Dyson Bouncy Blowdry with Thermal Gloss Finish',
+    ],
+    sealedKitsIncluded: [
+      'Sealed single-dose Kérastase booster ampoule',
+      'Disposable scalp massager head & fresh salon towel',
+      'Heat protection thermal barrier mist',
+    ],
+    idealFor: 'Dry, damaged, chemically-treated or dull hair needing silk bounce',
+    hygieneProtocol: 'Freshly Laundered Microfiber Towels • Single-Dose Active Serums',
+  },
+  {
+    id: 'combo-04',
+    name: 'Bridal Haldi & Mehendi Prep Extravaganza',
+    tagline: 'Full-body ritual with pure rose sugar polish and whitening radiance',
+    badge: 'Bridal Bestseller • 33% OFF',
+    durationMinutes: 180,
+    packagePrice: 5499,
+    originalPrice: 8200,
+    savingsAmount: 2701,
+    discountPercent: 33,
+    rating: 4.96,
+    reviewCount: 540,
+    imageUrl: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80',
+    includedServices: [
+      'O3+ Melanin D-Tan Brightening Facial & Bleach Alternative',
+      'Full Body Organic Rose Sugar Scrub & Almond Oil Cocoon',
+      'Russian Gel Extension & Chrome Glaze Nail Couture',
+      'Traditional Silk Kanjivaram Pre-Pleating & Waist Anchoring',
+    ],
+    sealedKitsIncluded: [
+      'O3+ sealed single-use bridal glow box with tamper sticker',
+      'Diamond bit cuticle drill set & sterile disposable buffers',
+      'Disposable biodegradable body wrap foil',
+    ],
+    idealFor: 'Haldi, Mehendi, engagement, and temple wedding rituals',
+    hygieneProtocol: 'Barcode Scan Expiry Verification • Zero Adulteration Guarantee',
+  },
+  {
+    id: 'combo-05',
+    name: 'Clean Girl Weekend Quick Refresh',
+    tagline: 'Effortless de-puffing facial and precision manicure for high-shine chic',
+    badge: 'Weekend Special • 32% OFF',
+    durationMinutes: 90,
+    packagePrice: 2699,
+    originalPrice: 3950,
+    savingsAmount: 1251,
+    discountPercent: 32,
+    rating: 4.93,
+    reviewCount: 980,
+    imageUrl: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
+    includedServices: [
+      'Cryo Ice Globe Lymphatic Sculpting & Dermal Moisture Infusion',
+      'Rica Full Arms Waxing with Aloe Soothing Gel',
+      'Glazed Donut Natural Nail Manicure with Cuticle Nourishment',
+    ],
+    sealedKitsIncluded: [
+      'Sealed single-use ampoule & organic squalane drops',
+      'Disposable nail file, buffer & wooden orange stick',
+      'Sanitized cryo wands in thermal sealed case',
+    ],
+    idealFor: 'Fast de-stressing, weekend brunch readiness, and dewy daylight radiance',
+    hygieneProtocol: '100% Single-use Disposables • Professional Leaves Room Spotless',
+  },
+];
 
 export const CURATED_SERVICES: DetailedService[] = [
   {
@@ -329,6 +497,26 @@ export const CURATED_SERVICES: DetailedService[] = [
     ],
     beforeImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80',
     afterImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80',
+    procedureSteps: [
+      { stepNumber: 1, title: 'Consultation & Undertone Mapping', duration: '15 mins', description: 'Daylight ring light check, facial bone structure analysis, and customized tone selection.' },
+      { stepNumber: 2, title: 'Deep Hydra-Infusion Skin Prep', duration: '20 mins', description: 'Cavitation ultrasonic cleanse and barrier moisture ampoule to ensure zero flashback in 4K photos.' },
+      { stepNumber: 3, title: 'High-Definition Base & Sculpt', duration: '50 mins', description: 'Micro-fine pigment layering with sweat-resistant contouring for all-day wear.' },
+      { stepNumber: 4, title: 'Cut-Crease Eye Artistry & Lashes', duration: '45 mins', description: 'Duochrome pigment placement, waterproof kohl wing, and bespoke mink lash clusters.' },
+      { stepNumber: 5, title: 'Royal Draping & Floral Architecture', duration: '50 mins', description: 'Anti-crease saree/lehenga anchoring, mathapatti fitting, and luxury emergency kit handover.' },
+    ],
+    disposablesIncluded: [
+      'Sealed single-use beauty blenders & velvet powder puffs',
+      'Individual 3D silk mink lash clusters with sterile adhesive',
+      'Disposable spatulas, mascara wands, and brush sanitizers',
+      'Protective non-woven bridal cape & roll-out hygienic floor mat',
+    ],
+    customerRequirements: [
+      'Comfortable seating with a mirror and table space',
+      'Power outlet within 2 meters for thermal hot tools',
+      'Lehenga, dupatta, and jewellery kept unboxed and ready',
+    ],
+    byopOptionAvailable: true,
+    byopDiscount: 4000,
   },
   {
     id: 'srv-002',
@@ -459,6 +647,25 @@ export const CURATED_SERVICES: DetailedService[] = [
         answer: 'Zero downtime. Your skin will look instantly plump, luminous, and camera-ready.',
       },
     ],
+    procedureSteps: [
+      { stepNumber: 1, title: 'Double Cleanse & Ozone Steam', duration: '10 mins', description: 'Gentle micellar water and foaming enzyme cleanser with mild ozone steam to open clogged pores.' },
+      { stepNumber: 2, title: 'Vortex Blackhead Vacuum Extraction', duration: '15 mins', description: 'Painless hydro-suction with salicylic serum clearing congested sebum and whiteheads.' },
+      { stepNumber: 3, title: 'Hyperbaric Oxygen Serum Infusion', duration: '15 mins', description: 'High-pressure 98% pure oxygen jet driving hyaluronic acid and peptides deep into the dermis.' },
+      { stepNumber: 4, title: 'Cryo Ice Globe Lymphatic Sculpt', duration: '10 mins', description: 'Sub-zero frozen globes de-puffing under-eye bags, tightening pores, and lifting jawline contours.' },
+      { stepNumber: 5, title: 'Bio-Cellulose Peptide Mask & SPF', duration: '10 mins', description: 'Cooling biocellulose sheet infused with ceramides, topped with SPF 50 mineral shield.' },
+    ],
+    disposablesIncluded: [
+      'Single-use sealed hydro-vacuum extraction tip',
+      'Disposable sterile headband & hair net',
+      'Sterilized single-use sponge applicator & towels',
+      'Post-service bio-waste clean up bag',
+    ],
+    customerRequirements: [
+      'Clean table or bed to lie down comfortably for 60 minutes',
+      'Standard electrical outlet within 2 meters for the oxygen jet unit',
+    ],
+    byopOptionAvailable: true,
+    byopDiscount: 800,
   },
   {
     id: 'srv-006',
@@ -565,6 +772,14 @@ export const marketplaceService = {
 
   getBridalPackages(): DetailedService[] {
     return CURATED_SERVICES.filter((s) => s.category === 'bridal');
+  },
+
+  getValuePackages(): ValuePackageCombo[] {
+    return VALUE_PACKAGE_COMBOS;
+  },
+
+  getValuePackageById(id: string): ValuePackageCombo | undefined {
+    return VALUE_PACKAGE_COMBOS.find((p) => p.id === id);
   },
 
   getCuratedProducts(): Product[] {
