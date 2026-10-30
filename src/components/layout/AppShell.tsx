@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Topbar } from './Topbar';
-import { Sidebar } from './Sidebar';
+import { Sidebar, NextAppointmentInfo } from './Sidebar';
 import { MobileDrawer } from './MobileDrawer';
 import { BottomNav, BottomNavTab } from './BottomNav';
 import { LocationItem, DetailedService } from '../../services/marketplaceService';
 import { Artist, Product } from '../../types';
 import { MOTION_SPRINGS } from '../../motion/tokens';
+import { AudienceType } from '../../config/marketing';
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -30,6 +31,10 @@ export interface AppShellProps {
   upcomingBookingsCount?: number;
   bottomNavActiveTab: BottomNavTab;
   onSelectBottomNavTab: (tab: BottomNavTab) => void;
+  audience?: AudienceType;
+  onChangeAudience?: (audience: AudienceType) => void;
+  onSelectCategory?: (categorySlug: string) => void;
+  nextAppointment?: NextAppointmentInfo | null;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -54,6 +59,10 @@ export const AppShell: React.FC<AppShellProps> = ({
   upcomingBookingsCount = 0,
   bottomNavActiveTab,
   onSelectBottomNavTab,
+  audience = 'women',
+  onChangeAudience,
+  onSelectCategory,
+  nextAppointment = null,
 }) => {
   // Sidebar collapsed state with localStorage persistence
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
@@ -119,6 +128,9 @@ export const AppShell: React.FC<AppShellProps> = ({
         onSelectService={onSelectService}
         onSelectArtist={onSelectArtist}
         onSelectProduct={onSelectProduct}
+        audience={audience}
+        onChangeAudience={onChangeAudience}
+        onSelectCategory={onSelectCategory}
       />
 
       {/* 2. Persistent Sidebar (Desktop >=1024px: 240px/72px, Tablet 600-1023px: 72px) */}
@@ -130,6 +142,10 @@ export const AppShell: React.FC<AppShellProps> = ({
           onNavigate={onNavigate}
           onOpenAuth={onOpenAuth}
           upcomingBookingsCount={upcomingBookingsCount}
+          nextAppointment={nextAppointment}
+          audience={audience}
+          onOpenBookings={onOpenBookings}
+          onOpenOffers={onOpenOffers}
         />
       </div>
 
@@ -147,7 +163,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       <motion.div
         layout
         transition={MOTION_SPRINGS.slider}
-        className={`flex-1 transition-all duration-200 pt-14 sm:pt-[72px] ${
+        className={`flex-1 transition-all duration-200 pt-20 sm:pt-[82px] ${
           // Padding left matches sidebar width on tablet & desktop
           isSidebarCollapsed ? 'sm:pl-[72px]' : 'sm:pl-[72px] lg:pl-[240px]'
         }`}
@@ -155,7 +171,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <main
           id="main-content"
           tabIndex={-1}
-          className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 lg:pb-12 focus:outline-none"
+          className="max-w-[1300px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 lg:pb-12 focus:outline-none"
         >
           {children}
         </main>

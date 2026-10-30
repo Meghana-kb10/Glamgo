@@ -29,6 +29,18 @@ import { SearchModal } from './components/search/SearchModal';
 import { ServiceDetailModal } from './components/catalog/ServiceDetailModal';
 import { CategoryListingPage } from './components/catalog/CategoryListingPage';
 import { ProductCatalog } from './components/shop/ProductCatalog';
+import { HeroHome } from './components/home/HeroHome';
+import { CategoryTiles } from './components/home/CategoryTiles';
+import { FirstTimeOfferStrip } from './components/home/FirstTimeOfferStrip';
+import { PackageBuilderCard } from './components/home/PackageBuilderCard';
+import { WhyGlamgoStrip } from './components/home/WhyGlamgoStrip';
+import { ReviewCarousel } from './components/home/ReviewCarousel';
+import { BridalBannerCard } from './components/home/BridalBannerCard';
+import { HowItWorksStrip } from './components/home/HowItWorksStrip';
+import { Footer } from './components/layout/Footer';
+import { SafetyPromiseModal } from './components/home/SafetyPromiseModal';
+import { OffersPage } from './components/offers/OffersPage';
+import { AudienceType } from './config/marketing';
 import {
   marketplaceService,
   DetailedService,
@@ -211,6 +223,26 @@ export const App: React.FC = () => {
   const [favorites, setFavorites] = useState<string[]>(() => favoritesService.getFavorites().artists);
   const [rotatingSearchIndex, setRotatingSearchIndex] = useState(0);
 
+  // Audience State: Women | Men | Kids (persists in localStorage)
+  const [audience, setAudience] = useState<AudienceType>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('glamgo_audience');
+        if (saved === 'women' || saved === 'men' || saved === 'kids') return saved;
+      } catch {}
+    }
+    return 'women';
+  });
+
+  const handleAudienceChange = (nextAudience: AudienceType) => {
+    setAudience(nextAudience);
+    try {
+      localStorage.setItem('glamgo_audience', nextAudience);
+    } catch {}
+  };
+
+  const [isSafetyModalOpen, setIsSafetyModalOpen] = useState(false);
+
   // Rotating search placeholder timer
   useEffect(() => {
     const timer = setInterval(() => {
@@ -343,6 +375,34 @@ export const App: React.FC = () => {
   useEffect(() => {
     saveProductCart(productCartItems);
   }, [productCartItems]);
+
+  const nextAppointmentInfo = useMemo(() => {
+    if (!isAuthenticated || !user) return null;
+    if (activeServiceCart) {
+      return {
+        id: activeServiceCart.package.id,
+        serviceTitle: activeServiceCart.package.name,
+        artistName: activeServiceCart.artist.name,
+        dateTime: `${activeServiceCart.date} • ${activeServiceCart.timeSlot}`,
+      };
+    }
+    return {
+      id: 'past-01',
+      serviceTitle: 'Signature Sabyasachi Bridal HD Package',
+      artistName: 'Tanya Grewal',
+      dateTime: 'Tomorrow • 10:00 AM',
+    };
+  }, [isAuthenticated, user, activeServiceCart]);
+
+  const handleBuildCustomPackage = (selectedServices: DetailedService[]) => {
+    if (selectedServices.length === 0) return;
+    const primary = selectedServices[0];
+    handleBookDetailedService(primary);
+    toast.success(
+      `Custom package of ${selectedServices.length} services configured! 15% discount applied.`,
+      'Package Built'
+    );
+  };
 
   // Wishlist toggle handler
   const handleToggleWishlist = (artistId: string) => {
@@ -642,9 +702,16 @@ export const App: React.FC = () => {
       toast.info('Tap the Heart icon on any master artist or service to save them to your personal lookbook.', 'Favorites');
     } else if (route === 'offers') {
       setSelectedCategoryListing(null);
-      const el = document.getElementById('offers-carousel-section');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-      else window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveNavRoute('offers');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (route === 'safety') {
+      setIsSafetyModalOpen(true);
+    } else if (route === 'refer') {
+      setActiveNavRoute('offers');
+      toast.success(
+        'Refer a friend: They get 20% off, you earn ₹500 wallet credits upon completion!',
+        'Refer & Earn'
+      );
     } else if (route === 'profile') {
       if (!isAuthenticated) {
         handleOpenAuth('login');
@@ -760,10 +827,8 @@ export const App: React.FC = () => {
                 }}
                 onOpenOffers={() => {
                   setSelectedCategoryListing(null);
-                  const el = document.getElementById('offers-carousel-section');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  else window.scrollTo({ top: 0, behavior: 'smooth' });
-                  toast.success('Exclusive Offer: Code WEDDING2026 active for 15% off royal bridal couture!', 'Special Offer');
+                  setActiveNavRoute('offers');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 onOpenNotifications={() => {
                   toast.info(
@@ -782,6 +847,10 @@ export const App: React.FC = () => {
                   activeNavRoute === 'profile' ? 'profile' : 'home'
                 }
                 onSelectBottomNavTab={(tab) => handleNavRoute(tab)}
+                audience={audience}
+                onChangeAudience={handleAudienceChange}
+                onSelectCategory={(slug) => setSelectedCategoryListing(slug)}
+                nextAppointment={nextAppointmentInfo}
               >
                 {/* Greeting Header (Logged-in only) */}
                 {isAuthenticated && user && (
@@ -797,18 +866,33 @@ export const App: React.FC = () => {
                   </div>
                 )}
 
-                {selectedCategoryListing ? (
-                  /* Category & Service Listing Screen (PRD SVC-1..7) */
+                {activeNavRoute === 'offers' ? (
+                  /* Dedicated Offers & Coupon Privileges Page */
+                  <OffersPage
+                    onBackToHome={() => {
+                      setActiveNavRoute('home');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    onApplyCoupon={(code) => {
+                      toast.success(`Coupon code ${code} applied successfully!`, 'Voucher Activated');
+                      setActiveNavRoute('home');
+                    }}
+                  />
+                ) : selectedCategoryListing ? (
+                  /* Urban Company 3-Column Category & Service Listing Screen */
                   <CategoryListingPage
                     categorySlug={selectedCategoryListing}
                     onBackToHome={() => setSelectedCategoryListing(null)}
                     onOpenServiceDetail={(srv) => setSelectedServiceForDetail(srv)}
                     onBookService={(srv) => handleBookDetailedService(srv)}
                     cartServiceId={activeServiceCart?.package.id}
+                    activeCart={activeServiceCart}
+                    onOpenCart={() => setIsBookingDrawerOpen(true)}
                     onAddToCart={(srv) => handleBookDetailedService(srv)}
+                    onRemoveFromCart={handleClearService}
                   />
                 ) : mode === 'shop' ? (
-                  /* Dedicated Backstage Products Catalog (PRD SHOP-1..6) */
+                  /* Dedicated Backstage Products Catalog */
                   <ProductCatalog
                     products={MOCK_PRODUCTS}
                     selectedCategory={selectedProductCategory}
@@ -822,219 +906,119 @@ export const App: React.FC = () => {
                     }}
                   />
                 ) : (
-                  /* Main Customer Marketplace Home (PRD HOME-1..9) */
-                  <div className="space-y-2 pb-28">
-                    {/* 1. Location Pill & Sticky Search Bar with Rotating Placeholder */}
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-2 sm:p-2.5 rounded-2xl sm:rounded-full border border-mist shadow-xs">
-                        {/* Interactive Location Pill */}
-                        <button
-                          type="button"
-                          onClick={() => setIsLocationPickerOpen(true)}
-                          className="flex items-center gap-2 px-3.5 py-2 rounded-xl sm:rounded-full bg-soft-ivory hover:bg-blush/40 border border-mist text-xs font-semibold text-ink transition-colors cursor-pointer text-left"
-                        >
-                          <div className="w-5 h-5 rounded-full bg-blush flex items-center justify-center text-rose-plum shrink-0">
-                            <MapPin className="w-3 h-3 text-rose-plum" />
-                          </div>
-                          <div className="min-w-0">
-                            <span className="text-[10px] uppercase font-bold text-mauve-grey tracking-wider block">Service Location</span>
-                            <span className="truncate block max-w-[180px] sm:max-w-[220px]">{currentLocation.name}</span>
-                          </div>
-                          <ChevronDown className="w-3.5 h-3.5 text-mauve-grey shrink-0 ml-auto sm:ml-1" />
-                        </button>
-
-                        {/* Rotating Pill Search Bar */}
-                        <button
-                          type="button"
-                          onClick={() => setIsSearchOpen(true)}
-                          className="flex-1 flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl sm:rounded-full bg-white hover:bg-blush/20 border border-mist hover:border-rose-plum/30 text-xs text-mauve-grey shadow-2xs transition-all cursor-pointer group"
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <Search className="w-4 h-4 text-rose-plum shrink-0 group-hover:scale-110 transition-transform" />
-                            <span className="truncate font-normal text-ink">
-                              Search &quot;<span className="font-semibold text-rose-plum">{TRENDING_SEARCHES[rotatingSearchIndex]}</span>&quot; in {currentLocation.area}
-                            </span>
-                          </div>
-                          <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-semibold text-rose-plum bg-blush px-2.5 py-0.5 rounded-full shrink-0">
-                            <Sparkles className="w-3 h-3" />
-                            <span>Explore All</span>
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* 2. In the Spotlight (Urban Company style rail) */}
-                    <div id="spotlight-rail-section">
-                      <SpotlightRail
-                        items={marketplaceService.getSpotlightItems()}
-                        onSelectCategory={(cat) => setSelectedCategoryListing(cat)}
-                        onBookItem={(item) => {
-                          if (item.serviceId) {
-                            const srv = marketplaceService.getServiceById(item.serviceId);
-                            if (srv) {
-                              setSelectedServiceForDetail(srv);
-                              return;
-                            }
-                          }
-                          setSelectedCategoryListing(item.category);
-                        }}
+                  /* Main Customer Marketplace Home (Exact 10 Section Hierarchy) */
+                  <div className="space-y-6 pb-6">
+                    {/* a) Hero Section: Headlines, Search Bar, Quick Chips, Photo Collage & Stat Strip */}
+                    <div id="hero-section">
+                      <HeroHome
+                        currentLocation={currentLocation}
+                        onOpenSearch={() => setIsSearchOpen(true)}
+                        onOpenLocationSheet={() => setIsLocationPickerOpen(true)}
+                        onSelectCategory={(slug) => setSelectedCategoryListing(slug)}
+                        audience={audience}
                       />
                     </div>
 
-                    {/* 3. 2x4 Category Grid (72px Circular Icons on Blush - PRD HOME-4) */}
-                    <div id="category-grid-section">
-                      <CategoryGrid
-                        categories={MARKETPLACE_CATEGORIES}
-                        selectedCategory={selectedCategory}
-                        onSelectCategory={(cat) => setSelectedCategoryListing(cat)}
+                    {/* b) Category Tiles: 2x4 Photo Tiles for Selected Audience */}
+                    <div id="category-tiles-section">
+                      <CategoryTiles
+                        audience={audience}
+                        onSelectCategory={(slug) => setSelectedCategoryListing(slug)}
+                        onViewAll={() => setSelectedCategoryListing('all')}
                       />
                     </div>
 
-                    {/* 4. Book Again Rail for Returning Users (PRD HOME-5) */}
-                    <BookAgainRail
-                      bookings={defaultPastBookings}
-                      onBookAgain={handleBookAgain}
-                    />
-
-                    {/* 4.5. Urban Company & Yes Madam Inspired: Save with Curated Salon Packages & Combos */}
-                    <div id="salon-packages-rail-section">
-                      <SalonPackagesRail
-                        packages={marketplaceService.getValuePackages()}
-                        onSelectPackage={handleSelectValuePackage}
-                        onBookPackage={handleBookValuePackage}
-                        isPackageAdded={(pkgId) => activeServiceCart?.package.id === pkgId}
-                      />
-                    </div>
-
-                    {/* 5. Occasion Chips Rail */}
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-                      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-                        {[
-                          { label: 'Wedding Season', cat: 'bridal', icon: Crown },
-                          { label: 'Party Glam', cat: 'makeup', icon: Sparkles },
-                          { label: 'Festive Radiance', cat: 'skin', icon: Droplets },
-                          { label: 'Blowdry & Curls', cat: 'hair', icon: Scissors },
-                          { label: 'Gel Couture', cat: 'nails', icon: Gem },
-                          { label: 'Spa & Relaxation', cat: 'spa', icon: Flower2 },
-                          { label: 'Groom Styling', cat: 'mens', icon: UserCheck },
-                        ].map((occ) => {
-                          const Icon = occ.icon;
-                          return (
-                            <button
-                              key={occ.label}
-                              type="button"
-                              onClick={() => setSelectedCategoryListing(occ.cat)}
-                              className="px-3.5 py-1.5 rounded-full bg-white hover:bg-blush/60 border border-mist text-xs font-semibold text-ink whitespace-nowrap shadow-xs hover:border-rose-plum/30 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 font-sans"
-                            >
-                              <Icon className="w-3.5 h-3.5 text-rose-plum" />
-                              <span>{occ.label}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 6. Most Booked Services Rail with Steppers & Savings Tags (PRD HOME-6) */}
-                    <MostBookedRail
-                      services={marketplaceService.getMostBookedServices()}
-                      cartQuantities={
-                        activeServiceCart?.package.id ? { [activeServiceCart.package.id]: 1 } : {}
-                      }
-                      onAddService={handleBookDetailedService}
-                      onUpdateQuantity={(id, q) => {
-                        if (q === 0) handleClearService();
-                      }}
-                      onSelectService={(srv) => setSelectedServiceForDetail(srv)}
-                    />
-
-                    {/* 7. Top-Rated Professionals Rail (PRD HOME-7) */}
-                    <div id="top-pros-rail">
-                      <TopProsRail
-                        artists={marketplaceService.getTopProfessionals()}
-                        favorites={favorites}
-                        onToggleFavorite={handleToggleFavoritePro}
-                        onSelectArtist={setSelectedArtistForModal}
-                      />
-                    </div>
-
-                    {/* 7.5. Master Artist & Salon Service Suites with Live Filters */}
-                    <div id="artist-services-suites-section">
-                      <ArtistServicesExplorer
-                        artists={MOCK_ARTISTS}
-                        onBookPackage={handleBookPackage}
-                        onSelectArtistProfile={setSelectedArtistForModal}
-                      />
-                    </div>
-
-                    {/* 8. Bridal Packages Rail with Champagne Gold Accent (PRD HOME-8) */}
-                    <BridalPackagesRail
-                      packages={marketplaceService.getBridalPackages()}
-                      onSelectPackage={(pkg) => setSelectedServiceForDetail(pkg)}
-                      onBookNow={(pkg) => handleBookDetailedService(pkg)}
-                    />
-
-                    {/* 9. Curated Products Rail */}
-                    <div id="curated-products-rail">
-                      <ProductRail
-                        products={MOCK_PRODUCTS}
-                        onAddToCart={handleAddToCart}
-                        onViewAll={() => {
-                          setSelectedProductCategory('all');
-                          setActiveNavRoute('shop');
-                          setMode('shop');
-                          setMobileActiveTab('shop');
+                    {/* c) First-Time Offer Strip: 3 Small Cards */}
+                    <div id="first-time-offers-section">
+                      <FirstTimeOfferStrip
+                        onOpenOffers={() => {
+                          setSelectedCategoryListing(null);
+                          setActiveNavRoute('offers');
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
+                        onApplyCode={(code) =>
+                          toast.success(`Code ${code} copied! Use during checkout.`, 'Offer Applied')
+                        }
                       />
                     </div>
 
-                    {/* 10. Four-Point Trust Strip (PRD HOME-9) */}
-                    <div id="trust-strip-section">
-                      <TrustStrip />
+                    {/* d) "Create your own package": Mini Builder Card with Savings Meter */}
+                    <div id="package-builder-section">
+                      <PackageBuilderCard
+                        onBuildPackage={handleBuildCustomPackage}
+                      />
                     </div>
 
-                    {/* 11. Full Master Stylist Directory & Filter Explorer */}
-                    <section id="discovery-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-mist mt-6">
-                      <div className="flex items-baseline justify-between mb-6">
-                        <div>
-                          <span className="text-xs font-semibold uppercase tracking-wider text-rose-plum block">
-                            Full Artisan Roster
-                          </span>
-                          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-ink">
-                            Browse All Master Makeup Artists &amp; Stylists
-                          </h2>
-                        </div>
-                        <span className="text-xs text-mauve-grey">
-                          {filteredArtists.length} verified professionals
-                        </span>
-                      </div>
-
-                      <FilterBar
-                        filters={filters}
-                        onToggleFilter={handleToggleFilter}
-                        onSortChange={(sort) => setFilters((prev) => ({ ...prev, sort }))}
-                        totalResults={filteredArtists.length}
+                    {/* e) Most Booked Services Row & Top-Rated Professionals Row */}
+                    <div id="most-booked-section" className="space-y-6">
+                      <MostBookedRail
+                        services={marketplaceService.getMostBookedServices()}
+                        cartQuantities={
+                          activeServiceCart?.package.id ? { [activeServiceCart.package.id]: 1 } : {}
+                        }
+                        onAddService={handleBookDetailedService}
+                        onUpdateQuantity={(id, q) => {
+                          if (q === 0) handleClearService();
+                        }}
+                        onSelectService={(srv) => setSelectedServiceForDetail(srv)}
                       />
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
-                        {isLoadingSkeletons || isSearchingPros
-                          ? Array.from({ length: 4 }).map((_, i) => <ArtistCardSkeleton key={i} />)
-                          : filteredArtists.map((artist, index) => (
-                              <ArtistCard
-                                key={artist.id}
-                                artist={artist}
-                                isPriority={index < 2}
-                                isWishlisted={wishlist.has(artist.id)}
-                                onToggleWishlist={handleToggleWishlist}
-                                onSelectArtist={setSelectedArtistForModal}
-                              />
-                            ))}
+                      <div id="top-pros-rail">
+                        <TopProsRail
+                          artists={marketplaceService.getTopProfessionals()}
+                          favorites={favorites}
+                          onToggleFavorite={handleToggleFavoritePro}
+                          onSelectArtist={setSelectedArtistForModal}
+                        />
                       </div>
-                    </section>
+                    </div>
+
+                    {/* f) "Why Glamgo": 4 Icon Cards + "Products we use" Brand Placeholder Strip */}
+                    <div id="why-glamgo-section">
+                      <WhyGlamgoStrip
+                        onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
+                      />
+                    </div>
+
+                    {/* g) Real Reviews Carousel (Swipe, No Autoplay) */}
+                    <div id="reviews-carousel-section">
+                      <ReviewCarousel
+                        onViewAllReviews={() =>
+                          toast.info('Displaying 45,000+ verified customer reviews across metros.')
+                        }
+                      />
+                    </div>
+
+                    {/* h) Bridal & Occasion Banner: One Large Rounded Card */}
+                    <div id="bridal-banner-section">
+                      <BridalBannerCard
+                        onSelectCategory={(slug) => setSelectedCategoryListing(slug)}
+                      />
+                    </div>
+
+                    {/* i) "How It Works": 3 Steps with Icons */}
+                    <div id="how-it-works-section">
+                      <HowItWorksStrip />
+                    </div>
+
+                    {/* j) Marketplace Comprehensive Footer */}
+                    <div id="footer-section">
+                      <Footer
+                        onNavigatePortal={handleNavigatePortal}
+                        onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
+                        onOpenHelp={() => window.open('mailto:support@glamgo.in', '_blank')}
+                      />
+                    </div>
                   </div>
                 )}
               </AppShell>
             )}
+
+            {/* Safety Promise Modal Dialog */}
+            <SafetyPromiseModal
+              isOpen={isSafetyModalOpen}
+              onClose={() => setIsSafetyModalOpen(false)}
+            />
 
             {/* PORTAL 2: Beauty Professional Studio Dashboard */}
             {activePortal === 'pro' && (

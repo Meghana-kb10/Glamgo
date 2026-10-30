@@ -294,6 +294,17 @@ export const ArtistProfileModal: React.FC<ArtistProfileModalProps> = ({
                     {artist.name}
                   </h2>
                   <p className="text-xs sm:text-sm text-white/90">{artist.title}</p>
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[10px] text-white/90">
+                    <span className="bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded font-medium">
+                      {artist.experienceYears}+ Yrs Exp
+                    </span>
+                    <span className="bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded font-medium">
+                      CIDESCO Certified
+                    </span>
+                    <span className="bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded font-medium">
+                      Languages: English, Hindi, Kannada
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -871,7 +882,7 @@ export const ArtistProfileModal: React.FC<ArtistProfileModalProps> = ({
             rightIcon={<ArrowRight className="w-4 h-4" />}
             className="rounded-full px-6 py-2.5 text-xs sm:text-sm font-semibold"
           >
-            Book Appointment
+            Check Availability
           </Button>
         </div>
 

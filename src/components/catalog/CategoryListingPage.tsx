@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -8,11 +8,13 @@ import {
   Plus,
   Minus,
   Sparkles,
-  SlidersHorizontal,
   Home,
   Building2,
   CalendarCheck,
   ChevronDown,
+  ShieldCheck,
+  ShoppingBag,
+  ArrowRight,
   Info,
 } from 'lucide-react';
 import {
@@ -20,9 +22,11 @@ import {
   MARKETPLACE_CATEGORIES,
   marketplaceService,
 } from '../../services/marketplaceService';
+import { VariantPickerSheet, ServiceVariantOption } from './VariantPickerSheet';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { trackEvent } from '../../services/analyticsService';
+import { CartItemService } from '../../types';
 
 interface CategoryListingPageProps {
   categorySlug: string;
@@ -30,7 +34,9 @@ interface CategoryListingPageProps {
   onOpenServiceDetail: (service: DetailedService) => void;
   onBookService: (service: DetailedService) => void;
   cartServiceId?: string;
-  onAddToCart?: (service: DetailedService) => void;
+  activeCart?: CartItemService | null;
+  onOpenCart?: () => void;
+  onAddToCart?: (service: DetailedService, variant?: ServiceVariantOption) => void;
   onRemoveFromCart?: (serviceId: string) => void;
 }
 
@@ -44,6 +50,8 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
   onOpenServiceDetail,
   onBookService,
   cartServiceId,
+  activeCart,
+  onOpenCart,
   onAddToCart,
   onRemoveFromCart,
 }) => {
@@ -57,13 +65,13 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
         name: 'All Categories',
         tagline: 'Luxury salon, hair & aesthetic experiences',
         iconName: 'Sparkles',
-        imageUrl: '',
+        imageUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=600&q=80',
         subcategories: ['All', 'Bridal', 'Makeup', 'Hair', 'Skin', 'Nails', 'Spa'],
       }
     );
   }, [categorySlug]);
 
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string>(
+  const [activeSubcategory, setActiveSubcategory] = useState<string>(
     currentCategory.subcategories[0] || 'All'
   );
   const [sortBy, setSortBy] = useState<SortOption>('recommended');
@@ -71,6 +79,9 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
   const [priceFilter, setPriceFilter] = useState<PriceFilter>('all');
   const [onlyAvailableToday, setOnlyAvailableToday] = useState(false);
   const [onlyHighRating, setOnlyHighRating] = useState(false);
+
+  // Variant picker state
+  const [variantModalService, setVariantModalService] = useState<DetailedService | null>(null);
 
   // Quantities for stepper
   const [cartQuantities, setCartQuantities] = useState<Record<string, number>>(() => {
@@ -83,41 +94,24 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
     );
   }, [categorySlug]);
 
-  // Filtered & Sorted Services
-  const filteredServices = useMemo(() => {
+  // Group services by subcategory for Urban Company scroll-spy view
+  const groupedServices = useMemo(() => {
     let result = [...allServices];
 
-    // Subcategory Filter
-    if (
-      selectedSubcategory &&
-      !selectedSubcategory.toLowerCase().startsWith('all')
-    ) {
-      const sub = selectedSubcategory.toLowerCase();
-      result = result.filter(
-        (s) =>
-          s.title.toLowerCase().includes(sub) ||
-          s.category.toLowerCase().includes(sub) ||
-          s.description.toLowerCase().includes(sub)
-      );
-    }
-
-    // Service Mode Filter
+    // Mode Filter
     if (modeFilter !== 'all') {
       result = result.filter(
         (s) => s.serviceMode === modeFilter || s.serviceMode === 'HYBRID'
       );
     }
-
     // Available Today
     if (onlyAvailableToday) {
       result = result.filter((s) => s.isAvailableToday);
     }
-
     // 4.8+ Rating
     if (onlyHighRating) {
       result = result.filter((s) => s.rating >= 4.8);
     }
-
     // Price Filter
     if (priceFilter === 'under3k') {
       result = result.filter((s) => s.price < 3000);
@@ -136,10 +130,37 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
       result.sort((a, b) => b.price - a.price);
     }
 
-    return result;
+    // Organize into groups
+    const groups: { title: string; services: DetailedService[] }[] = [];
+    const subcats = currentCategory.subcategories.filter((s) => !s.toLowerCase().startsWith('all'));
+
+    if (subcats.length === 0) {
+      groups.push({ title: currentCategory.name, services: result });
+    } else {
+      subcats.forEach((sub) => {
+        const subLower = sub.toLowerCase();
+        const matched = result.filter(
+          (s) =>
+            s.title.toLowerCase().includes(subLower) ||
+            s.description.toLowerCase().includes(subLower) ||
+            s.category.toLowerCase().includes(subLower)
+        );
+        if (matched.length > 0) {
+          groups.push({ title: sub, services: matched });
+        }
+      });
+      // Fallback if some services were not captured by subcategory keywords
+      const capturedIds = new Set(groups.flatMap((g) => g.services.map((s) => s.id)));
+      const remaining = result.filter((s) => !capturedIds.has(s.id));
+      if (remaining.length > 0) {
+        groups.push({ title: 'Popular Services', services: remaining });
+      }
+    }
+
+    return groups;
   }, [
     allServices,
-    selectedSubcategory,
+    currentCategory,
     modeFilter,
     onlyAvailableToday,
     onlyHighRating,
@@ -147,16 +168,40 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
     sortBy,
   ]);
 
-  const handleSubcategoryClick = (sub: string) => {
-    setSelectedSubcategory(sub);
-    trackEvent('category_viewed', { category: categorySlug, subcategory: sub });
+  // Scroll to section when subcategory clicked
+  const handleScrollToSubcategory = (title: string) => {
+    setActiveSubcategory(title);
+    const element = document.getElementById(`subcat-${title.replace(/\s+/g, '-').toLowerCase()}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
-  const handleAdd = (e: React.MouseEvent, srv: DetailedService) => {
+  const handleAddClick = (e: React.MouseEvent, srv: DetailedService) => {
     e.stopPropagation();
+    // If service has options (e.g. hair, waxing, skin), open variant picker
+    if (['hair', 'waxing', 'skin'].includes(srv.category)) {
+      setVariantModalService(srv);
+      return;
+    }
     setCartQuantities((prev) => ({ ...prev, [srv.id]: 1 }));
     if (onAddToCart) onAddToCart(srv);
     else onBookService(srv);
+  };
+
+  const handleVariantConfirmed = (
+    srv: DetailedService,
+    selectedVariant: ServiceVariantOption,
+    finalPrice: number
+  ) => {
+    setCartQuantities((prev) => ({ ...prev, [srv.id]: 1 }));
+    const modifiedService: DetailedService = {
+      ...srv,
+      price: finalPrice,
+      durationMinutes: srv.durationMinutes + selectedVariant.durationDeltaMinutes,
+    };
+    if (onAddToCart) onAddToCart(modifiedService, selectedVariant);
+    else onBookService(modifiedService);
   };
 
   const handleIncrement = (e: React.MouseEvent, srvId: string) => {
@@ -178,10 +223,12 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
     });
   };
 
+  const totalServicesCount = groupedServices.reduce((sum, g) => sum + g.services.length, 0);
+
   return (
     <div className="min-h-screen bg-soft-ivory pb-28">
-      {/* Top Category Hero Banner */}
-      <div className="bg-gradient-to-b from-blush/60 to-soft-ivory border-b border-mist px-4 sm:px-6 lg:px-8 pt-4 pb-6">
+      {/* Category Header Hero */}
+      <div className="bg-white border-b border-mist px-4 sm:px-6 lg:px-8 pt-4 pb-5">
         <div className="max-w-7xl mx-auto">
           {/* Back button */}
           <button
@@ -193,40 +240,40 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             <span>Back to Home</span>
           </button>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-rose-plum block">
-                Glamgo Marketplace Catalog
+              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum block">
+                Glamgo Certified Salon Menus
               </span>
-              <h1 className="font-serif text-2xl sm:text-4xl font-bold text-ink">
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">
                 {currentCategory.name}
               </h1>
-              <p className="text-xs sm:text-sm text-mauve-grey mt-1">
-                {currentCategory.tagline}
+              <p className="text-xs sm:text-sm text-mauve-grey mt-0.5">
+                {currentCategory.tagline} • 100% genuine sealed mono-dose kits
               </p>
             </div>
 
             <div className="text-xs font-mono text-mauve-grey">
-              {filteredServices.length} {filteredServices.length === 1 ? 'service' : 'services'} available
+              {totalServicesCount} {totalServicesCount === 1 ? 'service' : 'services'} available
             </div>
           </div>
 
-          {/* Subcategory Scroll Strip */}
-          <div className="mt-5 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-            {currentCategory.subcategories.map((sub) => {
-              const isSelected = selectedSubcategory === sub;
+          {/* Mobile sub-category chips */}
+          <div className="mt-4 flex lg:hidden items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            {groupedServices.map((g) => {
+              const isSelected = activeSubcategory === g.title;
               return (
                 <button
-                  key={sub}
+                  key={g.title}
                   type="button"
-                  onClick={() => handleSubcategoryClick(sub)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  onClick={() => handleScrollToSubcategory(g.title)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-rose-plum text-white shadow-xs'
-                      : 'bg-white hover:bg-blush/50 text-mauve-grey border border-mist'
+                      : 'bg-soft-ivory hover:bg-blush/50 text-mauve-grey border border-mist'
                   }`}
                 >
-                  {sub}
+                  {g.title}
                 </button>
               );
             })}
@@ -234,22 +281,22 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
         </div>
       </div>
 
-      {/* Sticky Filter Bar */}
-      <div className="sticky top-14 sm:top-16 z-20 bg-white/95 backdrop-blur-md border-b border-mist shadow-xs px-4 sm:px-6 lg:px-8 py-3">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
+      {/* Filter / Sort Sticky Bar */}
+      <div className="sticky top-14 sm:top-16 z-20 bg-white/95 backdrop-blur-md border-b border-mist shadow-xs px-4 sm:px-6 lg:px-8 py-2.5">
+        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
           {/* Sort Selector */}
           <div className="relative shrink-0">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="appearance-none bg-soft-ivory border border-mist rounded-xl px-3 py-1.5 pr-8 text-xs font-semibold text-ink focus:outline-none focus:ring-1 focus:ring-rose-plum cursor-pointer"
+              className="appearance-none bg-soft-ivory border border-mist rounded-xl px-3 py-1.5 pr-7 font-semibold text-ink focus:outline-none focus:ring-1 focus:ring-rose-plum cursor-pointer"
             >
               <option value="recommended">Sort: Recommended</option>
               <option value="rating">Sort: Top Rated</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-mauve-grey absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-mauve-grey absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           {/* Service Mode Chips */}
@@ -258,7 +305,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             onClick={() =>
               setModeFilter((prev) => (prev === 'AT_VENUE' ? 'all' : 'AT_VENUE'))
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               modeFilter === 'AT_VENUE'
                 ? 'bg-rose-plum text-white border-rose-plum'
                 : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
@@ -273,21 +320,21 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             onClick={() =>
               setModeFilter((prev) => (prev === 'IN_STUDIO' ? 'all' : 'IN_STUDIO'))
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               modeFilter === 'IN_STUDIO'
                 ? 'bg-rose-plum text-white border-rose-plum'
                 : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
             }`}
           >
             <Building2 className="w-3.5 h-3.5" />
-            <span>At Studio</span>
+            <span>In Studio</span>
           </button>
 
-          {/* Rating 4.8+ */}
+          {/* 4.8+ Rating */}
           <button
             type="button"
             onClick={() => setOnlyHighRating((prev) => !prev)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               onlyHighRating
                 ? 'bg-champagne-gold/20 text-ink border-champagne-gold'
                 : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
@@ -301,7 +348,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
           <button
             type="button"
             onClick={() => setOnlyAvailableToday((prev) => !prev)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               onlyAvailableToday
                 ? 'bg-emerald-50 text-emerald-800 border-emerald-400'
                 : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
@@ -310,193 +357,301 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             <CalendarCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Available Today</span>
           </button>
-
-          {/* Price Range Filter */}
-          <div className="relative shrink-0">
-            <select
-              value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value as PriceFilter)}
-              className="appearance-none bg-soft-ivory border border-mist rounded-xl px-3 py-1.5 pr-8 text-xs font-semibold text-ink focus:outline-none focus:ring-1 focus:ring-rose-plum cursor-pointer"
-            >
-              <option value="all">Price: All</option>
-              <option value="under3k">Under ₹3,000</option>
-              <option value="3kto10k">₹3,000 – ₹10,000</option>
-              <option value="above10k">Above ₹10,000</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-mauve-grey absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
         </div>
       </div>
 
-      {/* Main Services Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {filteredServices.length === 0 ? (
-          <div className="py-16 text-center max-w-md mx-auto">
-            <div className="w-16 h-16 rounded-full bg-blush flex items-center justify-center mx-auto mb-4 text-rose-plum">
-              <Sparkles className="w-8 h-8" />
-            </div>
-            <h3 className="font-serif text-xl font-bold text-ink">
-              No services match your filters
-            </h3>
-            <p className="text-xs text-mauve-grey mt-1 mb-5">
-              Try adjusting your subcategory, rating, or price preferences to see more master services.
-            </p>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => {
-                setSelectedSubcategory('All');
-                setModeFilter('all');
-                setPriceFilter('all');
-                setOnlyAvailableToday(false);
-                setOnlyHighRating(false);
-              }}
-            >
-              Reset All Filters
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredServices.map((service) => {
-              const qty = cartQuantities[service.id] || 0;
-              const hasDiscount = service.originalPrice > service.price;
-
+      {/* 3-COLUMN URBAN COMPANY LAYOUT (Desktop >=1024px) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* COLUMN 1 (Desktop Left Rail): Sticky Sub-Category Rail with Scroll-Spy */}
+          <aside className="hidden lg:block lg:col-span-3 sticky top-32 space-y-1 bg-white p-3 rounded-2xl border border-mist shadow-xs">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-mauve-grey px-2 py-1 block">
+              Sub-Categories
+            </span>
+            {groupedServices.map((group) => {
+              const isSelected = activeSubcategory === group.title;
               return (
-                <div
-                  key={service.id}
-                  onClick={() => onOpenServiceDetail(service)}
-                  className="group bg-white rounded-2xl border border-mist shadow-xs hover:shadow-card hover:border-rose-plum/40 transition-all duration-200 overflow-hidden flex flex-col cursor-pointer"
+                <button
+                  key={group.title}
+                  type="button"
+                  onClick={() => handleScrollToSubcategory(group.title)}
+                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left ${
+                    isSelected
+                      ? 'bg-blush text-rose-plum font-bold shadow-2xs'
+                      : 'text-ink/80 hover:text-ink hover:bg-soft-ivory'
+                  }`}
                 >
-                  {/* Card Image Banner */}
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-blush/20">
-                    <img
-                      src={service.imageUrl}
-                      alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-
-                    {/* Top Badges */}
-                    <div className="absolute top-3 inset-x-3 flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-ink shadow-xs">
-                        {service.serviceMode === 'AT_VENUE'
-                          ? 'At-Home Service'
-                          : service.serviceMode === 'IN_STUDIO'
-                          ? 'In Studio'
-                          : 'Home & Studio'}
-                      </span>
-
-                      {service.isMostBooked && (
-                        <Badge type="bestseller" text="Most Booked" />
-                      )}
-                    </div>
-
-                    {/* Savings Tag */}
-                    {hasDiscount && (
-                      <div className="absolute bottom-3 left-3 bg-emerald-600 text-white font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md shadow-xs">
-                        Save ₹{service.savingsAmount.toLocaleString('en-IN')}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      {/* Meta stats */}
-                      <div className="flex items-center gap-3 text-xs text-mauve-grey mb-1.5 font-medium">
-                        <div className="flex items-center gap-1 text-ink font-semibold">
-                          <Star className="w-3.5 h-3.5 fill-champagne-gold text-champagne-gold" />
-                          <span>{service.rating.toFixed(2)}</span>
-                          <span className="text-mauve-grey font-normal">
-                            ({service.reviewCount})
-                          </span>
-                        </div>
-                        <span>•</span>
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-rose-plum" />
-                          <span>{service.durationMinutes} mins</span>
-                        </div>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="font-serif text-base sm:text-lg font-bold text-ink line-clamp-1 group-hover:text-rose-plum transition-colors">
-                        {service.title}
-                      </h3>
-
-                      {/* Inclusions summary */}
-                      <ul className="mt-2.5 space-y-1 text-xs text-mauve-grey">
-                        {service.whatIsIncluded.slice(0, 2).map((inc, i) => (
-                          <li key={i} className="flex items-start gap-1.5 line-clamp-1">
-                            <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                            <span>{inc}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Bottom Pricing & Actions */}
-                    <div className="mt-4 pt-3.5 border-t border-mist flex items-center justify-between">
-                      <div>
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="font-mono text-lg sm:text-xl font-bold text-ink">
-                            ₹{service.price.toLocaleString('en-IN')}
-                          </span>
-                          {hasDiscount && (
-                            <span className="text-xs text-mauve-grey line-through font-mono">
-                              ₹{service.originalPrice.toLocaleString('en-IN')}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[10px] text-mauve-grey block">
-                          Taxes & hygiene kit estimated
-                        </span>
-                      </div>
-
-                      {/* Stepper or Add Button */}
-                      {qty > 0 ? (
-                        <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex items-center border border-rose-plum rounded-xl overflow-hidden bg-blush/40 shadow-xs"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => handleDecrement(e, service.id)}
-                            className="w-8 h-8 flex items-center justify-center text-rose-plum hover:bg-rose-plum/10 transition-colors cursor-pointer"
-                            aria-label="Decrease quantity"
-                          >
-                            <Minus className="w-3.5 h-3.5" />
-                          </button>
-                          <span className="w-7 text-center font-mono font-bold text-xs text-ink">
-                            {qty}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={(e) => handleIncrement(e, service.id)}
-                            className="w-8 h-8 flex items-center justify-center text-rose-plum hover:bg-rose-plum/10 transition-colors cursor-pointer"
-                            aria-label="Increase quantity"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={(e) => handleAdd(e, service)}
-                          leftIcon={<Plus className="w-3.5 h-3.5" />}
-                          className="rounded-xl px-4 py-1.5 text-xs font-semibold"
-                        >
-                          Add
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  <span className="truncate">{group.title}</span>
+                  <span className="text-[10px] font-mono text-mauve-grey shrink-0 ml-2">
+                    {group.services.length}
+                  </span>
+                </button>
               );
             })}
-          </div>
-        )}
+          </aside>
+
+          {/* COLUMN 2 (Center): Service List Grouped Under Sub-Category Headings */}
+          <main className="lg:col-span-6 space-y-8">
+            {groupedServices.length === 0 ? (
+              <div className="py-16 text-center max-w-md mx-auto bg-white rounded-2xl p-6 border border-mist">
+                <Sparkles className="w-8 h-8 text-rose-plum mx-auto mb-2" />
+                <h3 className="font-serif text-lg font-bold text-ink">
+                  No services match these filters
+                </h3>
+                <p className="text-xs text-mauve-grey mt-1 mb-4">
+                  Adjust your filter chips or reset to see all available services.
+                </p>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => {
+                    setModeFilter('all');
+                    setPriceFilter('all');
+                    setOnlyAvailableToday(false);
+                    setOnlyHighRating(false);
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            ) : (
+              groupedServices.map((group) => (
+                <section
+                  key={group.title}
+                  id={`subcat-${group.title.replace(/\s+/g, '-').toLowerCase()}`}
+                  className="space-y-4"
+                >
+                  {/* Sub-category Heading */}
+                  <div className="flex items-baseline justify-between border-b border-mist/80 pb-2">
+                    <h2 className="font-heading font-bold text-lg text-ink">
+                      {group.title}
+                    </h2>
+                    <span className="text-xs text-mauve-grey">
+                      {group.services.length} items
+                    </span>
+                  </div>
+
+                  {/* Service Cards */}
+                  <div className="space-y-4">
+                    {group.services.map((service) => {
+                      const qty = cartQuantities[service.id] || 0;
+                      const hasDiscount = service.originalPrice > service.price;
+                      const hasVariants = ['hair', 'waxing', 'skin'].includes(service.category);
+
+                      return (
+                        <div
+                          key={service.id}
+                          onClick={() => onOpenServiceDetail(service)}
+                          className="p-4 sm:p-5 rounded-2xl bg-white border border-mist shadow-2xs hover:border-rose-plum/30 hover:shadow-card transition-all flex flex-col sm:flex-row gap-4 justify-between cursor-pointer group"
+                        >
+                          {/* Left details info */}
+                          <div className="flex-1 min-w-0 space-y-2">
+                            {/* Service title & Rating */}
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ink bg-champagne-gold/15 px-2 py-0.5 rounded">
+                                  <Star className="w-3 h-3 fill-champagne-gold text-champagne-gold" />
+                                  <span>{service.rating.toFixed(2)}</span>
+                                  <span className="text-mauve-grey font-normal font-mono">
+                                    ({service.reviewCount})
+                                  </span>
+                                </span>
+
+                                {service.isMostBooked && (
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2 py-0.5 rounded-full">
+                                    Most Booked
+                                  </span>
+                                )}
+                              </div>
+
+                              <h3 className="font-heading font-bold text-sm sm:text-base text-ink group-hover:text-rose-plum transition-colors leading-tight">
+                                {service.title}
+                              </h3>
+                            </div>
+
+                            {/* Duration & Price */}
+                            <div className="flex items-baseline gap-2 font-mono">
+                              <span className="text-xs font-semibold text-rose-plum bg-blush/60 px-2 py-0.5 rounded">
+                                {service.durationMinutes} mins
+                              </span>
+                              <span className="text-sm sm:text-base font-bold text-ink">
+                                ₹{service.price}
+                              </span>
+                              {hasDiscount && (
+                                <span className="text-xs text-mauve-grey line-through">
+                                  ₹{service.originalPrice}
+                                </span>
+                              )}
+                              {hasDiscount && (
+                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                                  Save ₹{service.savingsAmount}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* 2-3 Bullet Highlights */}
+                            <ul className="space-y-1 pt-1 text-xs text-mauve-grey">
+                              {service.whatIsIncluded.slice(0, 3).map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-1.5">
+                                  <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                                  <span className="line-clamp-1">{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+
+                            {/* Sealed single-use note */}
+                            <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-medium pt-1">
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span>Products: sealed, single-use</span>
+                            </div>
+
+                            {/* View details link */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenServiceDetail(service);
+                              }}
+                              className="text-[11px] font-bold text-rose-plum hover:text-deep-plum inline-flex items-center gap-1 cursor-pointer pt-1"
+                            >
+                              <span>View details</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          {/* Right: Service photo + Round Add Button */}
+                          <div className="relative w-full sm:w-36 shrink-0 flex sm:flex-col items-center justify-between sm:justify-start gap-3">
+                            <div className="relative aspect-[4/3] w-28 sm:w-full rounded-xl overflow-hidden bg-blush/20 border border-mist shadow-2xs">
+                              <img
+                                src={service.imageUrl}
+                                alt={service.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                loading="lazy"
+                              />
+                            </div>
+
+                            {/* Add / Stepper Button */}
+                            <div className="w-auto sm:w-full flex justify-end sm:justify-center">
+                              {qty > 0 ? (
+                                <div
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="flex items-center border border-rose-plum rounded-full overflow-hidden bg-blush/40 shadow-xs"
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleDecrement(e, service.id)}
+                                    className="w-7 h-7 flex items-center justify-center text-rose-plum hover:bg-rose-plum/10 transition-colors cursor-pointer"
+                                    aria-label="Decrease quantity"
+                                  >
+                                    <Minus className="w-3 h-3" />
+                                  </button>
+                                  <span className="w-6 text-center font-mono font-bold text-xs text-ink">
+                                    {qty}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleIncrement(e, service.id)}
+                                    className="w-7 h-7 flex items-center justify-center text-rose-plum hover:bg-rose-plum/10 transition-colors cursor-pointer"
+                                    aria-label="Increase quantity"
+                                  >
+                                    <Plus className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleAddClick(e, service)}
+                                  className="px-4 py-1.5 rounded-full bg-white hover:bg-blush border border-rose-plum text-rose-plum font-bold text-xs shadow-xs hover:shadow transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>{hasVariants ? 'Add +' : 'Add'}</span>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))
+            )}
+          </main>
+
+          {/* COLUMN 3 (Desktop Right): Sticky Cart & Safe Assurance Card */}
+          <aside className="hidden lg:block lg:col-span-3 sticky top-32 space-y-4">
+            {/* Sticky Cart Summary */}
+            <div className="p-4 rounded-2xl bg-white border border-mist shadow-xs space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-mist/80">
+                <span className="font-heading font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
+                  <ShoppingBag className="w-4 h-4 text-rose-plum" />
+                  <span>Your Cart</span>
+                </span>
+                <span className="text-[11px] font-mono font-semibold text-rose-plum">
+                  {activeCart ? '1 item' : '0 items'}
+                </span>
+              </div>
+
+              {activeCart ? (
+                <div className="space-y-3">
+                  <div className="text-xs">
+                    <p className="font-bold text-ink truncate">
+                      {activeCart.package.name}
+                    </p>
+                    <p className="text-[11px] text-mauve-grey font-mono mt-0.5">
+                      {activeCart.date} • {activeCart.timeSlot}
+                    </p>
+                    <p className="font-bold text-rose-plum mt-1">
+                      ₹{activeCart.package.price.toLocaleString('en-IN')}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={onOpenCart}
+                    className="w-full py-2.5 rounded-xl bg-rose-plum text-white font-bold text-xs hover:bg-deep-plum transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <span>View Cart &amp; Checkout</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="py-4 text-center">
+                  <p className="text-xs text-mauve-grey">
+                    No services in cart yet.
+                  </p>
+                  <p className="text-[11px] text-mauve-grey/80 mt-0.5">
+                    Click &apos;Add&apos; on any service to start booking.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Safe & Hygienic Assurance Box */}
+            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 space-y-2 text-xs text-emerald-900">
+              <div className="flex items-center gap-1.5 font-bold">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Safe &amp; Hygienic Delivery</span>
+              </div>
+              <ul className="space-y-1 text-[11px] text-emerald-800">
+                <li>• Barcode-sealed mono-dose kits</li>
+                <li>• Hospital-grade tool sterilization</li>
+                <li>• Start OTP verification on arrival</li>
+              </ul>
+            </div>
+          </aside>
+
+        </div>
       </div>
+
+      {/* Variant Picker Sheet */}
+      <VariantPickerSheet
+        isOpen={Boolean(variantModalService)}
+        onClose={() => setVariantModalService(null)}
+        service={variantModalService}
+        onConfirmSelection={handleVariantConfirmed}
+      />
     </div>
   );
 };

@@ -1521,15 +1521,20 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                       </Button>
                     </div>
 
-                    {/* Trust Badges */}
-                    <div className="pt-2 border-t border-mist/80 flex items-center justify-between text-[10px] text-mauve-grey font-sans">
-                      <span className="flex items-center gap-1">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" /> 100% Verified
-                      </span>
-                      <span>•</span>
-                      <span>Zero Hidden Fees</span>
-                      <span>•</span>
-                      <span>Free Rescheduling</span>
+                    {/* Trust Badges & Start OTP note */}
+                    <div className="pt-2 border-t border-mist/80 space-y-1.5 text-[10px] text-mauve-grey font-sans">
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1 font-semibold text-emerald-800">
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Verified Professional
+                        </span>
+                        <span>•</span>
+                        <span>Zero Hidden Fees</span>
+                        <span>•</span>
+                        <span>Free Rescheduling</span>
+                      </div>
+                      <p className="text-[10px] text-ink font-medium bg-blush/40 px-2 py-1 rounded-md text-center">
+                        Note: Your professional will share a start OTP upon arrival before beginning service.
+                      </p>
                     </div>
                   </div>
                 </div>

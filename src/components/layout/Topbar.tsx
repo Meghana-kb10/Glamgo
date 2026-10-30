@@ -6,14 +6,19 @@ import {
   Tag,
   Bell,
   Search as SearchIcon,
+  ChevronDown,
+  Grid,
 } from 'lucide-react';
 import { LocationPicker } from './LocationPicker';
 import { GlobalSearch } from './GlobalSearch';
 import { CartButton } from './CartButton';
 import { UserMenu } from './UserMenu';
+import { AnnouncementBar } from './AnnouncementBar';
+import { AudienceSwitcher } from './AudienceSwitcher';
+import { MegaMenu } from './MegaMenu';
 import { LocationItem, DetailedService } from '../../services/marketplaceService';
 import { Artist, Product } from '../../types';
-import { MOTION_GESTURES } from '../../motion/tokens';
+import { AudienceType } from '../../config/marketing';
 
 export interface TopbarProps {
   onToggleMobileMenu: () => void;
@@ -32,6 +37,9 @@ export interface TopbarProps {
   onSelectService?: (service: DetailedService) => void;
   onSelectArtist?: (artist: Artist) => void;
   onSelectProduct?: (product: Product) => void;
+  audience?: AudienceType;
+  onChangeAudience?: (audience: AudienceType) => void;
+  onSelectCategory?: (categorySlug: string) => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -51,9 +59,12 @@ export const Topbar: React.FC<TopbarProps> = ({
   onSelectService,
   onSelectArtist,
   onSelectProduct,
+  audience = 'women',
+  onChangeAudience,
+  onSelectCategory,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
   // Monitor scroll for glass effect & elevation
   useEffect(() => {
@@ -68,19 +79,22 @@ export const Topbar: React.FC<TopbarProps> = ({
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-200 ${
         isScrolled
-          ? 'bg-white/85 backdrop-blur-md border-b border-mist shadow-xs'
+          ? 'bg-white/95 backdrop-blur-md border-b border-mist shadow-xs'
           : 'bg-white border-b border-mist/80'
       }`}
     >
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-[72px] flex items-center justify-between gap-2 sm:gap-4">
+      {/* 1. Slim Announcement Bar Above Topbar */}
+      <AnnouncementBar />
+
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-[68px] flex items-center justify-between gap-2 sm:gap-4 relative">
         
-        {/* Left Section: Menu icon (mobile/tablet only) + Logo */}
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        {/* Left Section: Menu icon (mobile/tablet only) + Logo + Audience Switcher + MegaMenu trigger */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
             type="button"
             onClick={onToggleMobileMenu}
             aria-label="Open navigation drawer"
-            className="w-11 h-11 flex lg:hidden items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-10 h-10 flex lg:hidden items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -90,20 +104,52 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onLogoClick}
             aria-label="Glamgo Home"
-            className="flex items-center gap-2.5 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum rounded-xl p-1"
+            className="flex items-center gap-2 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum rounded-xl p-0.5"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-rose-plum flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-rose-plum flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+              <Sparkles className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-bold text-xl sm:text-2xl text-ink tracking-tight group-hover:text-rose-plum transition-colors">
-                Glamgo
-              </span>
-            </div>
+            <span className="font-heading font-bold text-lg sm:text-xl text-ink tracking-tight group-hover:text-rose-plum transition-colors">
+              Glamgo
+            </span>
           </button>
 
-          {/* Location Pill (Hidden on narrow mobile, shown on sm+) */}
-          <div className="hidden sm:block">
+          {/* Audience Switcher (Women | Men | Kids) next to Logo */}
+          {onChangeAudience && (
+            <div className="flex items-center">
+              <AudienceSwitcher
+                currentAudience={audience}
+                onChangeAudience={onChangeAudience}
+              />
+            </div>
+          )}
+
+          {/* Desktop "Services" MegaMenu Trigger */}
+          <div className="hidden lg:block relative">
+            <button
+              type="button"
+              onClick={() => setIsMegaMenuOpen((prev) => !prev)}
+              onMouseEnter={() => setIsMegaMenuOpen(true)}
+              aria-expanded={isMegaMenuOpen}
+              aria-haspopup="true"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+                isMegaMenuOpen
+                  ? 'bg-rose-plum text-white border-rose-plum'
+                  : 'bg-soft-ivory text-ink hover:text-rose-plum border-mist hover:border-rose-plum/30'
+              }`}
+            >
+              <Grid className="w-3.5 h-3.5" />
+              <span>Services</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                  isMegaMenuOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Location Pill (Hidden on narrow mobile, shown on md+) */}
+          <div className="hidden md:block">
             <LocationPicker
               currentLocation={currentLocation}
               onSelectLocation={onSelectLocation}
@@ -113,7 +159,7 @@ export const Topbar: React.FC<TopbarProps> = ({
         </div>
 
         {/* Center: Global Search Bar (desktop) */}
-        <div className="hidden md:flex flex-1 justify-center px-4 max-w-xl">
+        <div className="hidden lg:flex flex-1 justify-center px-2 max-w-md">
           <GlobalSearch
             onSelectService={onSelectService}
             onSelectArtist={onSelectArtist}
@@ -129,7 +175,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onOpenSearchModal}
             aria-label="Search services and products"
-            className="w-11 h-11 md:hidden flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer"
+            className="w-10 h-10 lg:hidden flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer"
           >
             <SearchIcon className="w-5 h-5" />
           </button>
@@ -140,9 +186,9 @@ export const Topbar: React.FC<TopbarProps> = ({
             onClick={onOpenOffers}
             aria-label="Exclusive Offers & Discounts"
             title="Special Offers"
-            className="w-11 h-11 hidden sm:flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-10 h-10 hidden sm:flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
           >
-            <Tag className="w-5 h-5" />
+            <Tag className="w-4.5 h-4.5" />
           </button>
 
           {/* Notification bell with unread dot */}
@@ -150,9 +196,9 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onOpenNotifications}
             aria-label="Notifications, 1 unread message"
-            className="w-11 h-11 hidden lg:flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-10 h-10 hidden xl:flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-4.5 h-4.5" />
             <span
               className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-rose-plum ring-2 ring-white"
               aria-hidden="true"
@@ -173,6 +219,21 @@ export const Topbar: React.FC<TopbarProps> = ({
             }}
           />
         </div>
+
+        {/* Desktop MegaMenu Panel */}
+        <MegaMenu
+          isOpen={isMegaMenuOpen}
+          onClose={() => setIsMegaMenuOpen(false)}
+          audience={audience}
+          onSelectCategory={(slug) => {
+            if (onSelectCategory) onSelectCategory(slug);
+            setIsMegaMenuOpen(false);
+          }}
+          onSelectSubService={(slug) => {
+            if (onSelectCategory) onSelectCategory(slug);
+            setIsMegaMenuOpen(false);
+          }}
+        />
 
       </div>
     </header>
