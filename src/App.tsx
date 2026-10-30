@@ -7,7 +7,6 @@ import { FilterBar, FilterState } from './components/FilterBar';
 import { ArtistCard } from './components/ArtistCard';
 import { ProductCard } from './components/ProductCard';
 import { ArtistCardSkeleton, ProductCardSkeleton } from './components/SkeletonLoader';
-import { DevSkeletonToggle } from './components/DevSkeletonToggle';
 import { PortalSwitcher } from './components/PortalSwitcher';
 import { PullToRefresh } from './components/PullToRefresh';
 import { useSseEvents } from './hooks/useSseEvents';
@@ -1153,14 +1152,6 @@ export const App: React.FC = () => {
         service={selectedServiceForDetail}
         onBookService={(srv) => handleBookDetailedService(srv)}
       />
-
-      {/* Dev Skeleton Toggle (bottom-left, visible on active portals) */}
-      {activePortal !== 'landing' && (
-        <DevSkeletonToggle
-          isLoading={isLoadingSkeletons}
-          onToggle={() => setIsLoadingSkeletons(!isLoadingSkeletons)}
-        />
-      )}
 
       {/* Floating Ecosystem Portal Switcher (bottom-center, visible on active portals) */}
       {activePortal !== 'landing' && (
