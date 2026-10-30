@@ -54,13 +54,13 @@ export const SalonPackagesRail: React.FC<SalonPackagesRailProps> = ({
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header with UC/YesMadam style savings accent */}
+      {/* Header with Glamgo signature savings accent */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div className="space-y-1.5 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 shadow-2xs">
             <PackageCheck className="w-3.5 h-3.5 text-emerald-700" />
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
-              Urban Company &amp; Yes Madam Benchmark
+              Glamgo Gold Standard &amp; Savings Guarantee
             </span>
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-ink tracking-tight">
@@ -173,7 +173,7 @@ export const SalonPackagesRail: React.FC<SalonPackagesRailProps> = ({
                       ))}
                     </div>
 
-                    {/* Yes Madam Style Sealed Kit Guarantee Pill */}
+                    {/* Glamgo Single-Use Sealed Kit Guarantee Pill */}
                     <div className="p-2.5 rounded-xl bg-blush/35 border border-rose-plum/20 flex items-center gap-2 text-[11px] text-ink font-sans">
                       <ShieldCheck className="w-4 h-4 text-rose-plum shrink-0" />
                       <span className="line-clamp-1 font-medium">{pkg.hygieneProtocol}</span>

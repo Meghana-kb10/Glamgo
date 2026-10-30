@@ -475,7 +475,7 @@ export const CURATED_SERVICES: DetailedService[] = [
       'Charlotte Tilbury Magic Cream & Flawless Filter',
       'Huda Beauty Faux Filter High Coverage Foundation',
       'Dior Backstage Glow Face Palette',
-      'Urban Decay All Nighter Extra Hold Setting Spray',
+      'Charlotte Tilbury Airbrush Flawless Setting Spray',
       'MAC Retro Matte Liquid Lipcolour in Ruby Woo / Velvet Teddy',
     ],
     isMostBooked: true,

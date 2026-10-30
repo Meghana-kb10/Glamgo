@@ -600,7 +600,7 @@ export const App: React.FC = () => {
       faqs: [
         {
           question: 'Are all products genuine and sealed?',
-          answer: 'Yes! In line with Urban Company & Yes Madam standards, 100% of products are individual factory-sealed mono-packs opened directly in front of you.',
+          answer: 'Yes! In line with Glamgo Haute Beauté standards, 100% of products are individual factory-sealed mono-packs opened directly in front of you.',
         },
         {
           question: 'Can I customize any service in the package?',
@@ -641,7 +641,7 @@ export const App: React.FC = () => {
       faqs: [
         {
           question: 'Are all products genuine and sealed?',
-          answer: 'Yes! In line with Urban Company & Yes Madam standards, 100% of products are individual factory-sealed mono-packs opened directly in front of you.',
+          answer: 'Yes! In line with Glamgo Haute Beauté standards, 100% of products are individual factory-sealed mono-packs opened directly in front of you.',
         },
       ],
       byopOptionAvailable: true,
@@ -879,7 +879,7 @@ export const App: React.FC = () => {
                     }}
                   />
                 ) : selectedCategoryListing ? (
-                  /* Urban Company 3-Column Category & Service Listing Screen */
+                  /* Glamgo 3-Column Category & Service Listing Screen */
                   <CategoryListingPage
                     categorySlug={selectedCategoryListing}
                     onBackToHome={() => setSelectedCategoryListing(null)}

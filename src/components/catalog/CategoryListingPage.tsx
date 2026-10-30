@@ -94,7 +94,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
     );
   }, [categorySlug]);
 
-  // Group services by subcategory for Urban Company scroll-spy view
+  // Group services by subcategory for scroll-spy view
   const groupedServices = useMemo(() => {
     let result = [...allServices];
 
@@ -360,7 +360,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
         </div>
       </div>
 
-      {/* 3-COLUMN URBAN COMPANY LAYOUT (Desktop >=1024px) */}
+      {/* 3-COLUMN LAYOUT (Desktop >=1024px: Left Rail + Center Services + Right Sticky Cart) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           

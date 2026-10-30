@@ -76,7 +76,7 @@ export const TrustStrip: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-mist pb-4">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2.5 py-0.5 rounded-full inline-block mb-1">
-            Urban Company &amp; Yes Madam Standard
+            Glamgo Gold Standard Assurance
           </span>
           <h3 className="font-serif text-xl sm:text-2xl font-bold text-ink">
             The Glamgo Luxury Salon &amp; Hygiene Promise
@@ -179,7 +179,7 @@ export const TrustStrip: React.FC = () => {
                       7-Point Salon Hygiene &amp; Quality Promise
                     </h3>
                     <p className="text-xs text-mauve-grey">
-                      Modeled on Urban Company &amp; Yes Madam gold standards
+                      Certified hospital-grade sterilization and sealed single-use kit guarantee
                     </p>
                   </div>
                 </div>

@@ -174,7 +174,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </p>
           </div>
 
-          {/* Yes Madam Inspired: Product Delivery Mode (All-Inclusive vs Bring Your Own Product) */}
+          {/* Glamgo Signature: Product Delivery Mode (All-Inclusive vs Bring Your Own Product) */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-blush/35 to-soft-ivory border border-rose-plum/25 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-1.5">
@@ -182,7 +182,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                 <span>Product Transparency Mode</span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2 py-0.5 rounded-md">
-                Yes Madam Benchmark
+                Glamgo Transparency Guarantee
               </span>
             </div>
 
@@ -227,7 +227,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Urban Company Signature: Step-by-Step Procedure Timeline */}
+          {/* Glamgo Signature: Step-by-Step Procedure Timeline */}
           {service.procedureSteps && service.procedureSteps.length > 0 && (
             <div className="p-5 rounded-2xl bg-white border border-mist space-y-4">
               <div className="flex items-center justify-between">
@@ -235,7 +235,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                   Step-by-Step Treatment Procedure ({service.procedureSteps.length} Steps)
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
-                  Urban Company Benchmark
+                  Glamgo Atelier Protocol
                 </span>
               </div>
 
@@ -258,7 +258,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </div>
           )}
 
-          {/* Urban Company Signature: Consumables vs Customer Requirements */}
+          {/* Glamgo Signature: Consumables vs Customer Requirements */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/60 space-y-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
