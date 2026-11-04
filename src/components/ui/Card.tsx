@@ -3,7 +3,7 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 
 export interface CardProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode;
-  variant?: 'surface' | 'blush' | 'flat';
+  variant?: 'surface' | 'cream' | 'flat' | 'blush';
   isInteractive?: boolean;
 }
 
@@ -15,9 +15,10 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    surface: 'bg-white border border-mist shadow-card',
-    blush: 'bg-blush/40 border border-mist shadow-card',
-    flat: 'bg-white border border-mist',
+    surface: 'bg-card border border-border shadow-warm-card',
+    cream: 'bg-bg-alt border border-border shadow-warm-sm',
+    flat: 'bg-card border border-border',
+    blush: 'bg-accent-soft/50 border border-border shadow-warm-sm',
   };
 
   return (
@@ -25,9 +26,9 @@ export const Card: React.FC<CardProps> = ({
       whileHover={isInteractive ? { y: -2, transition: { duration: 0.15 } } : undefined}
       whileTap={isInteractive ? { scale: 0.99 } : undefined}
       className={`
-        rounded-2xl overflow-hidden transition-all
+        rounded-[18px] overflow-hidden transition-all
         ${variantStyles[variant]}
-        ${isInteractive ? 'cursor-pointer' : ''}
+        ${isInteractive ? 'cursor-pointer hover:border-border-strong' : ''}
         ${className}
       `}
       {...props}

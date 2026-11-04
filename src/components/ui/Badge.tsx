@@ -10,8 +10,8 @@ export interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
   if (type === 'verified') {
     return (
-      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-accent/10 text-emerald-accent border border-emerald-accent/20 ${className}`}>
-        <ShieldCheck className="w-3 h-3 text-emerald-accent" />
+      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-success/15 text-success border border-success/30 ${className}`}>
+        <ShieldCheck className="w-3 h-3 text-success" />
         <span>{text || 'Verified Pro'}</span>
       </span>
     );
@@ -19,8 +19,8 @@ export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
 
   if (type === 'bestseller') {
     return (
-      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-champagne-gold/15 text-champagne-gold border border-champagne-gold/30 ${className}`}>
-        <Sparkles className="w-3 h-3 text-champagne-gold" />
+      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-fill text-accent-pressed border border-border-strong ${className}`}>
+        <Sparkles className="w-3 h-3 text-accent" />
         <span>{text || 'Bestseller'}</span>
       </span>
     );
@@ -28,8 +28,8 @@ export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
 
   if (type === 'offer') {
     return (
-      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blush text-rose-plum border border-rose-plum/20 ${className}`}>
-        <Tag className="w-3 h-3 text-rose-plum" />
+      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-soft text-accent border border-accent/25 ${className}`}>
+        <Tag className="w-3 h-3 text-accent" />
         <span>{text || 'Offer'}</span>
       </span>
     );
@@ -37,15 +37,15 @@ export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
 
   if (type === 'rating') {
     return (
-      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-white border border-mist shadow-xs text-ink ${className}`}>
-        <Star className="w-3 h-3 fill-champagne-gold text-champagne-gold" />
+      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-card border border-border shadow-warm-sm text-text ${className}`}>
+        <Star className="w-3 h-3 fill-star text-star" />
         <span>{text}</span>
       </span>
     );
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-mist text-mauve-grey ${className}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-fill text-text-muted border border-border ${className}`}>
       {text}
     </span>
   );

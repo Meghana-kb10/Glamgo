@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { AlertCircle } from 'lucide-react';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -15,13 +16,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full flex flex-col space-y-1.5 text-left">
         {label && (
-          <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wider text-mauve-grey">
+          <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wider text-text-muted">
             {label}
           </label>
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="absolute left-3.5 pointer-events-none text-mauve-grey">
+            <div className="absolute left-3.5 pointer-events-none text-text-muted">
               {leftIcon}
             </div>
           )}
@@ -29,29 +30,35 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`
-              w-full h-12 bg-white text-ink text-sm rounded-xl border transition-colors
-              placeholder:text-mauve-grey/60 focus:outline-none
+              w-full h-12 bg-card text-text text-sm rounded-xl border transition-colors
+              placeholder:text-text-muted/70 focus:outline-none
               ${leftIcon ? 'pl-11' : 'pl-4'}
-              ${rightIcon ? 'pr-11' : 'pr-4'}
+              ${rightIcon || error ? 'pr-11' : 'pr-4'}
               ${
                 error
-                  ? 'border-coral-red focus:border-coral-red focus:ring-2 focus:ring-coral-red/20'
-                  : 'border-mist focus:border-rose-plum focus:ring-2 focus:ring-rose-plum/15'
+                  ? 'border-error focus:border-error focus:ring-2 focus:ring-error/20'
+                  : 'border-border-strong hover:border-text-muted/60 focus:border-accent focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-card'
               }
               ${className}
             `}
             {...props}
           />
-          {rightIcon && (
-            <div className="absolute right-3.5 flex items-center text-mauve-grey">
+          {error ? (
+            <div className="absolute right-3.5 flex items-center text-error pointer-events-none">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+          ) : rightIcon ? (
+            <div className="absolute right-3.5 flex items-center text-text-muted">
               {rightIcon}
             </div>
-          )}
+          ) : null}
         </div>
         {error ? (
-          <span className="text-xs font-medium text-coral-red">{error}</span>
+          <span className="text-xs font-medium text-error flex items-center gap-1 mt-0.5">
+            <span>{error}</span>
+          </span>
         ) : helperText ? (
-          <span className="text-xs text-mauve-grey">{helperText}</span>
+          <span className="text-xs text-text-muted mt-0.5">{helperText}</span>
         ) : null}
       </div>
     );

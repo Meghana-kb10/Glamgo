@@ -28,23 +28,23 @@ export const Chip: React.FC<ChipProps> = ({
       disabled={disabled}
       className={`
         inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs sm:text-sm font-medium
-        transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum
+        transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2
         min-h-[40px] cursor-pointer border
         ${
           selected
-            ? 'bg-rose-plum text-white border-rose-plum shadow-sm'
-            : 'bg-white text-ink border-mist hover:border-rose-plum/40 hover:bg-blush/20'
+            ? 'bg-fill text-accent border-accent shadow-warm-sm font-semibold'
+            : 'bg-card text-text border-border hover:border-border-strong hover:bg-fill/40'
         }
         ${disabled ? 'opacity-40 cursor-not-allowed' : ''}
         ${className}
       `}
     >
-      {icon && <span className="shrink-0">{icon}</span>}
+      {icon && <span className={`shrink-0 ${selected ? 'text-accent' : 'text-text-muted'}`}>{icon}</span>}
       <span>{label}</span>
       {count !== undefined && (
         <span
           className={`text-[11px] px-1.5 py-0.5 rounded-full font-mono ${
-            selected ? 'bg-white/20 text-white' : 'bg-blush text-rose-plum'
+            selected ? 'bg-accent-soft text-accent' : 'bg-fill text-text-muted'
           }`}
         >
           {count}

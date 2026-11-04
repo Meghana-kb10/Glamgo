@@ -1,76 +1,74 @@
+@import './tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --bg-canvas: #FAF7F5;          /* Alabaster Silk */
-    --bg-surface: #F3ECE7;         /* Pearl Cream */
-    --bg-surface-hover: #F7EAE4;   /* Warm Blush Tint */
-    --text-primary: #181311;       /* Obsidian Espresso */
-    --text-secondary: #4A3D36;     /* High-contrast Muted Cocoa */
-    --brand-accent: #C87D65;       /* Editorial Rose Gold */
-    --accent-gold: #D4AF37;        /* Champagne Gold */
-    --status-sage: #2E6F40;        /* Botanical Sage */
-    --status-urgency: #B42318;     /* Velvet Crimson */
-  }
-
   body {
-    background-color: var(--bg-canvas);
-    color: var(--text-primary);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
   }
+
+  /* Accessible Warm Selection */
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--text);
+  }
+
+  /* Form controls outline visibility (WCAG AA non-text >= 3:1) */
+  input, select, textarea {
+    border-color: var(--border);
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent), 0 0 0 5px var(--accent-soft);
+  }
 }
 
-/* Glassmorphism Surface Token:
-   rgba(250, 247, 245, 0.80) with backdrop-filter: blur(16px) and 1px solid rgba(200, 125, 101, 0.16)
-*/
+/* Glassmorphism Warm Surface Tokens */
 .glass-panel {
-  background: rgba(250, 247, 245, 0.80);
+  background: rgba(255, 253, 248, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(200, 125, 101, 0.16);
-}
-
-.glass-panel-dark {
-  background: rgba(24, 19, 17, 0.85);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(200, 125, 101, 0.22);
+  border: 1px solid var(--border);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 254, 251, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(200, 125, 101, 0.18);
-  box-shadow: 0 4px 20px -2px rgba(24, 19, 17, 0.05);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-warm-sm);
 }
 
-/* Custom Luxury Scrollbars */
+/* Custom Warm Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-alt);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(200, 125, 101, 0.25);
+  background: var(--fill);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(200, 125, 101, 0.5);
+  background: var(--border-strong);
 }
 
-/* Warm Champagne Shimmer for Skeletons */
+/* Warm Sand-to-Cream Shimmer for Skeletons */
+.skeleton-shimmer,
 .champagne-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(243, 236, 231, 0.6) 0%,
-    rgba(212, 175, 55, 0.18) 50%,
-    rgba(243, 236, 231, 0.6) 100%
+    #EFE4D0 0%,
+    #F7F0E3 50%,
+    #EFE4D0 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite ease-in-out;
@@ -90,46 +88,71 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Explicit Core Brand Utilities */
-.bg-soft-ivory {
-  background-color: #FFFBF8 !important;
+/* Explicit Core Brand Utilities using CSS Variables */
+.bg-soft-ivory,
+.bg-ivory {
+  background-color: var(--bg) !important;
 }
-.bg-blush {
-  background-color: #FCE7F0 !important;
+.bg-cream,
+.bg-bg-alt {
+  background-color: var(--bg-alt) !important;
 }
-.bg-ink {
-  background-color: #1F1A1D !important;
+.bg-sand,
+.bg-fill {
+  background-color: var(--fill) !important;
 }
-.bg-mist {
-  background-color: #EDE4E8 !important;
+.bg-card {
+  background-color: var(--card) !important;
 }
-.text-ink {
-  color: #1F1A1D !important;
+.bg-blush,
+.bg-accent-soft {
+  background-color: var(--accent-soft) !important;
 }
-.text-mauve-grey {
-  color: #6E6369 !important;
+.bg-ink,
+.bg-espresso {
+  background-color: var(--text) !important;
 }
-.border-mist {
-  border-color: #EDE4E8 !important;
+.bg-mist,
+.bg-linen {
+  background-color: var(--border) !important;
 }
-.bg-rose-plum {
-  background-color: #B8336A !important;
+.text-ink,
+.text-espresso {
+  color: var(--text) !important;
 }
-.bg-deep-plum {
-  background-color: #7A1F4A !important;
+.text-mauve-grey,
+.text-taupe {
+  color: var(--text-muted) !important;
 }
-.text-rose-plum {
-  color: #B8336A !important;
+.border-mist,
+.border-linen {
+  border-color: var(--border) !important;
 }
-.border-rose-plum {
-  border-color: #B8336A !important;
+.bg-rose-plum,
+.bg-accent {
+  background-color: var(--accent) !important;
 }
-.bg-champagne-gold {
-  background-color: #C9A25B !important;
+.bg-deep-plum,
+.bg-accent-pressed {
+  background-color: var(--accent-pressed) !important;
 }
-.text-champagne-gold {
-  color: #C9A25B !important;
+.text-rose-plum,
+.text-accent {
+  color: var(--accent) !important;
 }
-.border-champagne-gold {
-  border-color: #C9A25B !important;
+.border-rose-plum,
+.border-accent {
+  border-color: var(--accent) !important;
+}
+.bg-champagne-gold,
+.bg-star {
+  background-color: var(--star) !important;
+}
+.text-champagne-gold,
+.text-star {
+  color: var(--star) !important;
+}
+.border-champagne-gold,
+.border-star {
+  border-color: var(--star) !important;
 }

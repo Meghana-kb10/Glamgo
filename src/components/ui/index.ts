@@ -5,3 +5,4 @@ export * from './Input';
 export * from './BottomSheet';
 export * from './Badge';
 export * from './Skeleton';
+export * from './UiShowcase';

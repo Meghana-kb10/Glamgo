@@ -40,6 +40,7 @@ import { HowItWorksStrip } from './components/home/HowItWorksStrip';
 import { Footer } from './components/layout/Footer';
 import { SafetyPromiseModal } from './components/home/SafetyPromiseModal';
 import { OffersPage } from './components/offers/OffersPage';
+import { UiShowcase } from './components/ui/UiShowcase';
 import { AudienceType } from './config/marketing';
 import {
   marketplaceService,
@@ -866,7 +867,9 @@ export const App: React.FC = () => {
                   </div>
                 )}
 
-                {activeNavRoute === 'offers' ? (
+                {activeNavRoute === 'ui' || (typeof window !== 'undefined' && window.location.search.includes('ui=true')) ? (
+                  <UiShowcase />
+                ) : activeNavRoute === 'offers' ? (
                   /* Dedicated Offers & Coupon Privileges Page */
                   <OffersPage
                     onBackToHome={() => {

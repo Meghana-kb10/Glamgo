@@ -1,0 +1,40 @@
+:root {
+  /* Surface & Background */
+  --bg: #FFFDF8;             /* Ivory: page background, topbar, sidebar */
+  --bg-alt: #F7F0E3;         /* Cream: alternating sections, banners, footer */
+  --fill: #EFE4D0;           /* Sand: chips, selected states, skeleton base, hover fills */
+  --card: #FFFEFB;           /* Warm White: cards, sheets, modals, inputs */
+
+  /* Borders */
+  --border: #E8DDCB;         /* Linen: standard subtle card & divider borders */
+  --border-strong: #CDBFA8;  /* Linen Strong: prominent dividers & boundary borders */
+  --border-field: #8E7D6A;   /* Field Outline: >= 3:1 WCAG AA non-text contrast for inputs */
+
+  /* Typography */
+  --text: #2B2420;           /* Espresso: headings and body text */
+  --text-muted: #6F6258;     /* Taupe: secondary text, placeholders, metadata */
+
+  /* Accents */
+  --accent: #B8336A;         /* Rose Plum: primary buttons, links, active states, focus ring */
+  --accent-pressed: #7A1F4A; /* Deep Plum: button hover/pressed, high-contrast badges */
+  --accent-soft: #F6E4EA;    /* Light Plum Tint: selected rows, chip backgrounds, soft badges */
+  --star: #C9A25B;           /* Rating stars only */
+
+  /* Semantic Feedback */
+  --success: #1E7F5C;
+  --error: #B3261E;
+  --warning: #A8620A;
+  --warning-text: #8C4D00;
+
+  /* Warm-tinted Shadows */
+  --shadow-warm-sm: 0 2px 8px rgba(80, 60, 40, 0.05);
+  --shadow-warm-card: 0 4px 20px rgba(80, 60, 40, 0.08);
+  --shadow-warm-sheet: 0 -6px 28px rgba(80, 60, 40, 0.12);
+  --shadow-warm-modal: 0 16px 40px rgba(80, 60, 40, 0.14);
+
+  /* Radius Tokens */
+  --radius-button: 14px;
+  --radius-card: 18px;
+  --radius-sheet: 24px;
+  --radius-chip: 9999px;
+}

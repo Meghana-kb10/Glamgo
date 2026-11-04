@@ -23,20 +23,20 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-heading font-medium transition-all select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer whitespace-nowrap shrink-0';
+  const baseStyles = 'inline-flex items-center justify-center font-heading font-medium transition-all select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer whitespace-nowrap shrink-0';
 
   const sizeStyles = {
-    sm: 'h-9 px-3.5 text-xs rounded-xl gap-1.5 min-h-[36px]',
-    md: 'h-11 px-5 text-sm rounded-xl gap-2 min-h-[44px]',
-    lg: 'h-[52px] px-6 text-base rounded-xl gap-2.5 min-h-[52px]',
+    sm: 'h-9 px-3.5 text-xs rounded-[14px] gap-1.5 min-h-[36px]',
+    md: 'h-11 px-5 text-sm rounded-[14px] gap-2 min-h-[44px]',
+    lg: 'h-[52px] px-6 text-base rounded-[14px] gap-2.5 min-h-[52px]',
   };
 
   const variantStyles = {
-    primary: 'bg-rose-plum text-white hover:bg-deep-plum active:bg-deep-plum shadow-sm',
-    secondary: 'bg-transparent border border-rose-plum text-rose-plum hover:bg-blush/40 active:bg-blush/60',
-    ghost: 'bg-transparent text-rose-plum hover:bg-blush/30 active:bg-blush/50',
-    gold: 'bg-champagne-gold text-white hover:bg-amber-accent active:bg-amber-accent shadow-sm',
-    danger: 'bg-coral-red text-white hover:opacity-90 active:opacity-100 shadow-sm',
+    primary: 'bg-accent text-white hover:bg-accent-pressed active:bg-accent-pressed shadow-warm-sm',
+    secondary: 'bg-transparent border-[1.5px] border-accent text-accent hover:bg-accent-soft active:bg-accent-soft/80',
+    ghost: 'bg-transparent text-accent hover:bg-accent-soft active:bg-accent-soft/80',
+    gold: 'bg-star text-white hover:brightness-95 active:brightness-90 shadow-warm-sm',
+    danger: 'bg-error text-white hover:opacity-90 active:opacity-100 shadow-warm-sm',
   };
 
   return (
@@ -50,12 +50,6 @@ export const Button: React.FC<ButtonProps> = ({
         ${fullWidth ? 'w-full' : ''}
         ${className}
       `}
-      style={{
-        ...(variant === 'primary' ? { backgroundColor: '#B8336A', color: '#FFFFFF' } : {}),
-        ...(variant === 'gold' ? { backgroundColor: '#C9A25B', color: '#FFFFFF' } : {}),
-        ...(variant === 'danger' ? { backgroundColor: '#D6455D', color: '#FFFFFF' } : {}),
-        ...props.style,
-      }}
       {...props}
     >
       {isLoading ? (
