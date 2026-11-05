@@ -4,7 +4,6 @@ import { Tag, Check, AlertCircle, X, Sparkles, ArrowRight } from 'lucide-react';
 import { AVAILABLE_COUPONS, Coupon, couponService } from '../../services/couponService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
 
 interface CouponSheetProps {
   isOpen: boolean;
@@ -44,11 +43,11 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Apply Coupon &amp; Offers">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Apply Coupon & Offers">
       <div className="space-y-4 pb-4">
         {/* Manual Coupon Code Input */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-mauve-grey mb-1.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-1.5">
             Enter Promo Code
           </label>
           <div className="flex items-center gap-2">
@@ -61,7 +60,7 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
                   setErrorMsg(null);
                 }}
                 placeholder="e.g. GLAM100"
-                className="w-full h-11 px-3.5 text-sm font-semibold uppercase tracking-wider text-ink bg-white border border-mist rounded-xl focus:outline-none focus:border-rose-plum focus:ring-2 focus:ring-rose-plum/15 placeholder:text-mauve-grey/50 placeholder:normal-case"
+                className="w-full h-11 px-3.5 text-sm font-semibold uppercase tracking-wider text-text bg-card border border-border rounded-xl focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 placeholder:text-text-muted/50 placeholder:normal-case"
               />
             </div>
             <Button
@@ -76,14 +75,14 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
           </div>
 
           {errorMsg && (
-            <p className="mt-1.5 text-xs text-coral-red flex items-center gap-1 font-medium">
+            <p className="mt-1.5 text-xs text-error flex items-center gap-1 font-medium">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{errorMsg}</span>
             </p>
           )}
 
           {successMsg && (
-            <p className="mt-1.5 text-xs text-emerald-800 flex items-center gap-1 font-semibold">
+            <p className="mt-1.5 text-xs text-success flex items-center gap-1 font-semibold">
               <Check className="w-3.5 h-3.5" />
               <span>{successMsg}</span>
             </p>
@@ -92,16 +91,16 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
 
         {/* Currently Applied Coupon Banner */}
         {appliedCoupon && (
-          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-success/10 border border-success/30 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-success/20 text-success flex items-center justify-center">
                 <Check className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-xs font-bold text-emerald-900 tracking-wide">
+                <p className="text-xs font-bold text-text tracking-wide">
                   {appliedCoupon.code} Applied
                 </p>
-                <p className="text-[11px] text-emerald-700">
+                <p className="text-[11px] text-text-muted">
                   {appliedCoupon.description}
                 </p>
               </div>
@@ -109,7 +108,7 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
             <button
               type="button"
               onClick={onRemoveCoupon}
-              className="text-xs font-semibold text-coral-red hover:underline cursor-pointer"
+              className="text-xs font-semibold text-error hover:underline cursor-pointer"
             >
               Remove
             </button>
@@ -118,7 +117,7 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
 
         {/* Available Coupons List */}
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-mauve-grey mb-2.5">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2.5">
             Available Offers for You
           </h4>
 
@@ -132,34 +131,34 @@ export const CouponSheet: React.FC<CouponSheetProps> = ({
                   key={coupon.code}
                   className={`p-3.5 rounded-2xl border transition-all ${
                     isCurrent
-                      ? 'border-emerald-600 bg-emerald-50/50 ring-1 ring-emerald-600/20'
-                      : 'border-mist bg-white hover:border-rose-plum/30'
+                      ? 'border-accent bg-accent-soft/40 ring-1 ring-accent/30'
+                      : 'border-border bg-card hover:border-accent/40 shadow-warm-xs'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-blush text-rose-plum border border-rose-plum/20">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-accent-soft text-accent border border-accent/20">
                           {coupon.code}
                         </span>
                         {coupon.tag && (
-                          <span className="text-[10px] font-semibold text-champagne-gold uppercase tracking-wider">
+                          <span className="text-[10px] font-semibold text-accent uppercase tracking-wider">
                             {coupon.tag}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs font-bold text-ink">{coupon.title}</p>
-                      <p className="text-[11px] text-mauve-grey mt-0.5 leading-relaxed font-sans">
+                      <p className="text-xs font-bold text-text">{coupon.title}</p>
+                      <p className="text-[11px] text-text-muted mt-0.5 leading-relaxed font-sans">
                         {coupon.description}
                       </p>
-                      <p className="text-[10px] text-mauve-grey/80 mt-1 font-sans">
+                      <p className="text-[10px] text-text-muted/80 mt-1 font-sans">
                         Min. booking value: ₹{coupon.minOrderValue.toLocaleString('en-IN')}
                       </p>
                     </div>
 
                     <div>
                       {isCurrent ? (
-                        <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1">
+                        <span className="text-xs font-semibold text-success flex items-center gap-1">
                           <Check className="w-3.5 h-3.5" /> Applied
                         </span>
                       ) : (

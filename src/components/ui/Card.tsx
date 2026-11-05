@@ -3,7 +3,7 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 
 export interface CardProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode;
-  variant?: 'surface' | 'cream' | 'flat' | 'blush';
+  variant?: 'surface' | 'cream' | 'flat' | 'soft';
   isInteractive?: boolean;
 }
 
@@ -17,8 +17,8 @@ export const Card: React.FC<CardProps> = ({
   const variantStyles = {
     surface: 'bg-card border border-border shadow-warm-card',
     cream: 'bg-bg-alt border border-border shadow-warm-sm',
-    flat: 'bg-card border border-border',
-    blush: 'bg-accent-soft/50 border border-border shadow-warm-sm',
+    flat: 'bg-card border border-border shadow-warm-sm',
+    soft: 'bg-accent-soft/50 border border-border shadow-warm-sm',
   };
 
   return (

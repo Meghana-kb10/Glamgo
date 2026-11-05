@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { AudienceType, AUDIENCE_DATA } from '../../config/marketing';
 
@@ -19,16 +18,19 @@ export const CategoryTiles: React.FC<CategoryTilesProps> = ({
   const tiles = currentAudienceData.categories.slice(0, 8);
 
   return (
-    <section aria-labelledby="category-tiles-title" className="py-6">
+    <section
+      aria-labelledby="category-tiles-title"
+      className="p-5 sm:p-7 rounded-[22px] bg-bg-alt border border-border/80 shadow-warm-sm"
+    >
       {/* Section Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-rose-plum block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
             Tailored for {currentAudienceData.label}
           </span>
           <h2
             id="category-tiles-title"
-            className="font-serif text-xl sm:text-2xl font-bold text-ink"
+            className="font-serif text-xl sm:text-2xl font-bold text-text"
           >
             Explore Categories
           </h2>
@@ -37,7 +39,7 @@ export const CategoryTiles: React.FC<CategoryTilesProps> = ({
         <button
           type="button"
           onClick={() => (onViewAll ? onViewAll() : onSelectCategory('all'))}
-          className="text-xs font-semibold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer"
+          className="text-xs font-semibold text-accent hover:text-accent-pressed flex items-center gap-1 cursor-pointer"
         >
           <span>See all</span>
           <ChevronRight className="w-3.5 h-3.5" />
@@ -47,34 +49,33 @@ export const CategoryTiles: React.FC<CategoryTilesProps> = ({
       {/* 2x4 Photo Tiles Grid (2 cols mobile, 4 cols desktop) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {tiles.map((cat, idx) => (
-          <motion.div
+          <div
             key={cat.id}
-            whileHover={{ scale: 1.04 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
             onClick={() => onSelectCategory(cat.slug)}
-            className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-2xs border border-mist hover:border-rose-plum/30 bg-blush/20"
+            className="group relative aspect-[4/3] rounded-[18px] overflow-hidden cursor-pointer shadow-warm-sm border border-border hover:border-accent/40 bg-card hover:scale-[1.04] active:scale-[0.98] transition-transform duration-200"
           >
             {/* Background Photo */}
             <img
               src={cat.imageUrl}
               alt={cat.name}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              loading={idx < 4 ? 'eager' : 'lazy'}
+              loading="lazy"
+              decoding="async"
             />
 
             {/* Subtle Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-text/85 via-text/30 to-transparent" />
 
             {/* Label Overlay */}
             <div className="absolute inset-x-3 bottom-3 text-white">
               <h3 className="font-heading font-bold text-sm sm:text-base leading-tight drop-shadow-xs">
                 {cat.name}
               </h3>
-              <p className="text-[11px] text-white/80 line-clamp-1 mt-0.5 font-normal">
+              <p className="text-[11px] text-white/85 line-clamp-1 mt-0.5 font-normal">
                 {cat.tagline}
               </p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

@@ -154,30 +154,30 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
   return (
     <section id="artist-services-suites" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* 1. Header with Eyebrow */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-mist pb-5">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-5">
         <div className="max-w-2xl space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blush border border-mist shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-rose-plum" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-plum">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft border border-border shadow-warm-xs">
+            <Sparkles className="w-3.5 h-3.5 text-accent" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-accent-pressed">
               Bespoke Studio &amp; Artisan Suites
             </span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-ink tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-text tracking-tight">
             Explore All Services by Master Artist or Salon
           </h2>
-          <p className="text-xs sm:text-sm text-mauve-grey font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-text-muted font-sans leading-relaxed">
             Choose a verified artisan or luxury salon below to view their comprehensive service catalog, filter by your exact beauty requirements, and reserve your dedicated session.
           </p>
         </div>
 
-        <span className="text-xs text-mauve-grey font-sans hidden md:block">
+        <span className="text-xs text-text-muted font-sans hidden md:block">
           {artists.length} verified ateliers available for online booking
         </span>
       </div>
 
       {/* 2. Interactive Artist / Salon Selection Rail */}
       <div className="space-y-3">
-        <span className="text-xs uppercase font-bold tracking-wider text-mauve-grey block">
+        <span className="text-xs uppercase font-bold tracking-wider text-text-muted block">
           Select Master Artist or Salon:
         </span>
         <div className="flex items-center gap-3 overflow-x-auto pb-2 no-scrollbar">
@@ -195,33 +195,33 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                 }}
                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-200 cursor-pointer shrink-0 text-left select-none ${
                   isSelected
-                    ? 'bg-white border-rose-plum shadow-luxury ring-2 ring-rose-plum/20'
-                    : 'bg-white/80 hover:bg-white border-mist shadow-2xs hover:border-mist'
+                    ? 'bg-card border-accent shadow-warm ring-2 ring-accent/20'
+                    : 'bg-card hover:bg-fill/40 border-border shadow-warm-xs'
                 }`}
               >
                 <img
                   src={artist.avatar}
                   alt={artist.name}
-                  className="w-12 h-12 rounded-xl object-cover border border-mist shrink-0"
+                  className="w-12 h-12 rounded-xl object-cover border border-border shrink-0"
                 />
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="font-heading text-sm font-bold text-ink truncate">
+                    <span className="font-heading text-sm font-bold text-text truncate">
                       {artist.name}
                     </span>
                     {artist.isVerified && (
-                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <ShieldCheck className="w-4 h-4 text-success shrink-0" />
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-mauve-grey mt-0.5">
-                    <div className="flex items-center gap-1 text-ink font-semibold">
-                      <Star className="w-3 h-3 fill-champagne-gold text-champagne-gold" />
+                  <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5">
+                    <div className="flex items-center gap-1 text-text font-semibold">
+                      <Star className="w-3 h-3 fill-star text-star" />
                       <span>{artist.rating.toFixed(2)}</span>
                     </div>
                     <span>•</span>
                     <span className="truncate">{artist.location.split(',')[0]}</span>
                     <span>•</span>
-                    <span className="text-rose-plum font-semibold">
+                    <span className="text-accent font-semibold">
                       {artist.packages?.length || 0} Services
                     </span>
                   </div>
@@ -233,45 +233,45 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
       </div>
 
       {/* 3. Selected Artist Identity Showcase Strip */}
-      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-r from-blush/35 via-white to-blush/20 border border-champagne-gold/30 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
+      <div className="rounded-3xl p-5 sm:p-6 bg-bg-alt border border-border flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-warm-xs">
         <div className="flex items-start sm:items-center gap-4">
           <div className="relative shrink-0">
             <img
               src={activeArtist.avatar}
               alt={activeArtist.name}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-champagne-gold shadow-md"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-star shadow-warm-md"
             />
             {activeArtist.isVerified && (
-              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-card shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-success" />
               </div>
             )}
           </div>
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-rose-plum text-white px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-accent text-white px-2.5 py-0.5 rounded-full">
                 Active Atelier
               </span>
-              <span className="text-xs text-mauve-grey font-mono">{activeArtist.handle}</span>
+              <span className="text-xs text-text-muted font-mono">{activeArtist.handle}</span>
             </div>
-            <h3 className="font-serif text-xl sm:text-2xl font-bold text-ink">
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-text">
               {activeArtist.name}
             </h3>
-            <p className="text-xs text-mauve-grey max-w-xl font-sans line-clamp-2">
+            <p className="text-xs text-text-muted max-w-xl font-sans line-clamp-2">
               {activeArtist.bio}
             </p>
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-ink font-sans">
-              <span className="flex items-center gap-1 text-emerald-700 font-semibold">
+            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-text font-sans">
+              <span className="flex items-center gap-1 text-success font-semibold">
                 <Check className="w-3.5 h-3.5" />
                 {activeArtist.hygieneScore}
               </span>
-              <span className="text-mauve-grey">•</span>
-              <span className="flex items-center gap-1 text-mauve-grey">
-                <MapPin className="w-3.5 h-3.5 text-rose-plum" />
+              <span className="text-text-muted">•</span>
+              <span className="flex items-center gap-1 text-text-muted">
+                <MapPin className="w-3.5 h-3.5 text-accent" />
                 {activeArtist.location}
               </span>
-              <span className="text-mauve-grey">•</span>
-              <span className="text-mauve-grey">{activeArtist.experienceYears}+ years experience</span>
+              <span className="text-text-muted">•</span>
+              <span className="text-text-muted">{activeArtist.experienceYears}+ years experience</span>
             </div>
           </div>
         </div>
@@ -280,10 +280,10 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
           <button
             type="button"
             onClick={() => onSelectArtistProfile(activeArtist)}
-            className="px-4 py-2.5 rounded-xl bg-white hover:bg-blush/50 border border-mist text-xs font-semibold text-ink hover:text-rose-plum transition-all shadow-2xs shrink-0 flex items-center gap-2 self-start md:self-auto cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-card hover:bg-fill border border-border text-xs font-semibold text-text hover:text-accent-pressed transition-all shadow-warm-xs shrink-0 flex items-center gap-2 self-start md:self-auto cursor-pointer"
           >
             <span>View Full Portfolio &amp; Reviews</span>
-            <ExternalLink className="w-3.5 h-3.5 text-rose-plum" />
+            <ExternalLink className="w-3.5 h-3.5 text-accent" />
           </button>
         )}
       </div>
@@ -293,26 +293,26 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search within this artist */}
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-mauve-grey" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={`Search in ${activeArtist.name}'s service menu...`}
-              className="w-full h-10 pl-9 pr-4 rounded-xl bg-white border border-mist text-xs text-ink placeholder:text-mauve-grey focus:outline-none focus:border-rose-plum focus:ring-1 focus:ring-rose-plum transition-all shadow-2xs font-sans"
+              className="w-full h-10 pl-9 pr-4 rounded-xl bg-card border border-border text-xs text-text placeholder:text-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-warm-xs font-sans"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-3 justify-end">
             {/* Service Mode Filter */}
-            <div className="flex items-center bg-white p-1 rounded-xl border border-mist shadow-2xs text-xs font-semibold">
+            <div className="flex items-center bg-fill p-1 rounded-xl border border-border shadow-warm-xs text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setSelectedMode('all')}
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                   selectedMode === 'all'
-                    ? 'bg-rose-plum text-white shadow-2xs'
-                    : 'text-mauve-grey hover:text-ink'
+                    ? 'bg-accent text-white shadow-xs'
+                    : 'text-text-muted hover:text-text'
                 }`}
               >
                 All Modes
@@ -322,8 +322,8 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                 onClick={() => setSelectedMode('AT_VENUE')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                   selectedMode === 'AT_VENUE'
-                    ? 'bg-rose-plum text-white shadow-2xs'
-                    : 'text-mauve-grey hover:text-ink'
+                    ? 'bg-accent text-white shadow-xs'
+                    : 'text-text-muted hover:text-text'
                 }`}
               >
                 <Home className="w-3.5 h-3.5" />
@@ -334,8 +334,8 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                 onClick={() => setSelectedMode('IN_STUDIO')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                   selectedMode === 'IN_STUDIO'
-                    ? 'bg-rose-plum text-white shadow-2xs'
-                    : 'text-mauve-grey hover:text-ink'
+                    ? 'bg-accent text-white shadow-xs'
+                    : 'text-text-muted hover:text-text'
                 }`}
               >
                 <Building2 className="w-3.5 h-3.5" />
@@ -348,7 +348,7 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="h-10 px-3.5 rounded-xl bg-white border border-mist text-xs font-semibold text-ink focus:outline-none focus:border-rose-plum transition-all cursor-pointer shadow-2xs font-sans"
+                className="h-10 px-3.5 rounded-xl bg-card border border-border text-xs font-semibold text-text focus:outline-none focus:border-accent transition-all cursor-pointer shadow-warm-xs font-sans"
               >
                 <option value="recommended">Recommended</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -371,15 +371,15 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                 onClick={() => setSelectedCategory(tab.id)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs transition-all cursor-pointer font-sans shrink-0 ${
                   isSelected
-                    ? 'bg-rose-plum text-white font-semibold shadow-xs'
-                    : 'bg-white hover:bg-blush/40 border border-mist text-ink hover:text-rose-plum font-medium'
+                    ? 'bg-accent text-white font-semibold shadow-xs'
+                    : 'bg-card hover:bg-fill border border-border text-text hover:text-accent-pressed font-medium'
                 }`}
               >
                 <span>{tab.label}</span>
                 {count !== undefined && (
                   <span
                     className={`text-[11px] font-mono ${
-                      isSelected ? 'text-white/90' : 'text-mauve-grey'
+                      isSelected ? 'text-white/90' : 'text-text-muted'
                     }`}
                   >
                     ({count})
@@ -393,10 +393,10 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
 
       {/* 5. Service Packages Grid */}
       {filteredPackages.length === 0 ? (
-        <div className="py-16 text-center space-y-3 bg-white rounded-3xl border border-mist p-8 shadow-xs">
-          <Filter className="w-10 h-10 mx-auto text-mist" />
-          <h4 className="font-heading text-lg font-bold text-ink">No matching services found</h4>
-          <p className="text-xs text-mauve-grey max-w-sm mx-auto font-sans">
+        <div className="py-16 text-center space-y-3 bg-card rounded-3xl border border-border p-8 shadow-warm-xs">
+          <Filter className="w-10 h-10 mx-auto text-border" />
+          <h4 className="font-heading text-lg font-bold text-text">No matching services found</h4>
+          <p className="text-xs text-text-muted max-w-sm mx-auto font-sans">
             No services matched your current category or search criteria for {activeArtist.name}. Try selecting "All Services" or clearing your search.
           </p>
           <button
@@ -406,7 +406,7 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
               setSelectedMode('all');
               setSearchQuery('');
             }}
-            className="px-4 py-2 rounded-xl bg-rose-plum text-white text-xs font-semibold hover:bg-deep-plum transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent-pressed transition-colors cursor-pointer"
           >
             Reset Filters
           </button>
@@ -419,32 +419,32 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
             return (
               <div
                 key={pkg.id}
-                className="group bg-white rounded-3xl border border-mist hover:border-champagne-gold/60 shadow-card hover:shadow-luxury transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                className="group bg-card rounded-3xl border border-border hover:border-accent/40 shadow-warm hover:shadow-warm-md transition-all duration-300 overflow-hidden flex flex-col justify-between"
               >
                 {/* 1. High-End Editorial Photography Header */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-mist/20">
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-fill">
                   <img
                     src={pkg.imageUrl || activeArtist.coverImage}
                     alt={pkg.name}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-text/80 via-text/20 to-transparent" />
 
                   {/* Luxury Tag on Image */}
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-ink/75 backdrop-blur-md text-champagne-gold border border-champagne-gold/30 shadow-xs">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-text/75 backdrop-blur-md text-star border border-star/30 shadow-xs">
                       {pkg.isPopular ? 'Most Booked' : pkg.tier}
                     </span>
                   </div>
 
                   {/* Duration & Service Mode Overlay Pill */}
                   <div className="absolute bottom-3 inset-x-3 flex items-center justify-between text-white/95 text-[11px] font-medium z-10">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-ink/65 backdrop-blur-md border border-white/10">
-                      <Clock className="w-3.5 h-3.5 text-champagne-gold" />
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-text/65 backdrop-blur-md border border-white/10">
+                      <Clock className="w-3.5 h-3.5 text-star" />
                       <span className="font-mono">{pkg.durationMinutes} mins</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-ink/65 backdrop-blur-md border border-white/10 text-white/90">
+                    <span className="px-2.5 py-1 rounded-full bg-text/65 backdrop-blur-md border border-white/10 text-white/90">
                       {pkg.serviceMode === 'IN_STUDIO' ? 'Studio Visit' : 'At-Home Service'}
                     </span>
                   </div>
@@ -453,19 +453,19 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                 {/* 2. Card Body Content */}
                 <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <h4 className="font-serif text-lg font-bold text-ink group-hover:text-rose-plum transition-colors line-clamp-1">
+                    <h4 className="font-serif text-lg font-bold text-text group-hover:text-accent transition-colors line-clamp-1">
                       {pkg.name}
                     </h4>
 
-                    <p className="text-xs text-mauve-grey line-clamp-2 leading-relaxed font-sans">
+                    <p className="text-xs text-text-muted line-clamp-2 leading-relaxed font-sans">
                       {pkg.description}
                     </p>
 
                     {/* Curated Inclusions Preview */}
-                    <div className="pt-2 space-y-1.5 text-xs text-ink/90 font-sans">
+                    <div className="pt-2 space-y-1.5 text-xs text-text/90 font-sans">
                       {pkg.inclusions.slice(0, 2).map((inc, i) => (
-                        <div key={i} className="flex items-start gap-2 text-[11px] text-mauve-grey leading-tight">
-                          <span className="text-rose-plum font-bold shrink-0 mt-0.5">•</span>
+                        <div key={i} className="flex items-start gap-2 text-[11px] text-text-muted leading-tight">
+                          <span className="text-accent font-bold shrink-0 mt-0.5">•</span>
                           <span className="line-clamp-1">{inc}</span>
                         </div>
                       ))}
@@ -476,7 +476,7 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                       <button
                         type="button"
                         onClick={() => setExpandedPackageId(isExpanded ? null : pkg.id)}
-                        className="text-[11px] font-semibold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer transition-colors pt-1"
+                        className="text-[11px] font-semibold text-accent hover:text-accent-pressed flex items-center gap-1 cursor-pointer transition-colors pt-1"
                       >
                         <span>{isExpanded ? 'Hide Extra Details' : `+${pkg.inclusions.length - 2} More Inclusions & Formulations`}</span>
                         {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -490,14 +490,14 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={spatialSpring}
-                          className="space-y-2 pt-2 border-t border-mist/60 overflow-hidden text-xs"
+                          className="space-y-2 pt-2 border-t border-border/60 overflow-hidden text-xs"
                         >
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum block">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-accent block">
                             Formulations Used:
                           </span>
                           <div className="flex flex-wrap gap-1">
                             {pkg.productsUsed.map((prod, i) => (
-                              <span key={i} className="text-[10px] bg-blush/60 px-2 py-0.5 rounded-md text-ink">
+                              <span key={i} className="text-[10px] bg-accent-soft px-2 py-0.5 rounded-md text-accent-pressed">
                                 {prod}
                               </span>
                             ))}
@@ -508,12 +508,12 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                   </div>
 
                   {/* 3. Pricing & Booking Action */}
-                  <div className="pt-4 border-t border-mist flex items-center justify-between gap-3">
+                  <div className="pt-4 border-t border-border flex items-center justify-between gap-3">
                     <div>
-                      <span className="text-[10px] text-mauve-grey uppercase font-bold tracking-wider block">
+                      <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">
                         Session Fee
                       </span>
-                      <span className="font-serif text-xl sm:text-2xl font-bold text-ink tabular-nums">
+                      <span className="font-serif text-xl sm:text-2xl font-bold text-text tabular-nums">
                         ₹{pkg.price.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -521,7 +521,7 @@ export const ArtistServicesExplorer: React.FC<ArtistServicesExplorerProps> = ({
                     <button
                       type="button"
                       onClick={(e) => handleBook(e, pkg)}
-                      className="h-10 px-4 rounded-xl bg-rose-plum hover:bg-deep-plum text-white text-xs font-semibold flex items-center gap-2 shadow-xs hover:shadow-luxury transition-all cursor-pointer group/btn"
+                      className="h-10 px-4 rounded-xl bg-accent hover:bg-accent-pressed text-white text-xs font-semibold flex items-center gap-2 shadow-xs hover:shadow-warm transition-all cursor-pointer group/btn"
                     >
                       <span>Book with {activeArtist.name.split(' ')[0]}</span>
                       <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5" />

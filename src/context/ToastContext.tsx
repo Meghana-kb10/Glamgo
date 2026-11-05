@@ -72,7 +72,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     <ToastContext.Provider value={{ toasts, showToast, removeToast, success, error, info }}>
       {children}
       
-      {/* Floating Champagne Toast Portal */}
+      {/* Floating Toast Notification Portal */}
       <aside 
         aria-label="Notification alerts"
         className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none"
@@ -99,15 +99,15 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={MOTION_PRIMITIVES.spatial}
-                className="pointer-events-auto bg-white border border-stone-200/90 rounded-2xl shadow-xl p-3.5 flex items-start gap-3 backdrop-blur-md"
+                className="pointer-events-auto bg-card border border-border rounded-2xl shadow-warm-lg p-3.5 flex items-start gap-3 backdrop-blur-md"
               >
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
                     isSuccess
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+                      ? 'bg-success/15 text-success border border-success/30'
                       : isError
-                      ? 'bg-red-50 text-red-700 border border-red-200/60'
-                      : 'bg-stone-900 text-[#D4AF37]'
+                      ? 'bg-error/15 text-error border border-error/30'
+                      : 'bg-accent text-white'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -115,11 +115,11 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
                 <div className="flex-1 min-w-0 pr-1">
                   {toast.title && (
-                    <div className="text-[13px] font-semibold text-stone-900 leading-snug">
+                    <div className="text-[13px] font-semibold text-text leading-snug">
                       {toast.title}
                     </div>
                   )}
-                  <p className="text-xs text-stone-600 mt-0.5 leading-relaxed font-sans">
+                  <p className="text-xs text-text-muted mt-0.5 leading-relaxed font-sans">
                     {toast.message}
                   </p>
                 </div>
@@ -129,7 +129,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                   type="button"
                   onClick={() => removeToast(toast.id)}
                   aria-label="Dismiss notification"
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors shrink-0 cursor-pointer"
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-text-muted hover:text-text hover:bg-fill transition-colors shrink-0 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </motion.button>

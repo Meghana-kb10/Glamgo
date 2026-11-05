@@ -26,16 +26,19 @@ export const WhyGlamgoStrip: React.FC<WhyGlamgoStripProps> = ({
   };
 
   return (
-    <section aria-labelledby="why-glamgo-title" className={`py-8 ${className}`}>
+    <section
+      aria-labelledby="why-glamgo-title"
+      className={`p-5 sm:p-7 rounded-[22px] bg-bg-alt border border-border/80 shadow-warm-sm ${className}`}
+    >
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-6">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-rose-plum block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
             The Glamgo Standard
           </span>
           <h2
             id="why-glamgo-title"
-            className="font-serif text-xl sm:text-2xl font-bold text-ink"
+            className="font-serif text-xl sm:text-2xl font-bold text-text"
           >
             Why Glamgo
           </h2>
@@ -44,7 +47,7 @@ export const WhyGlamgoStrip: React.FC<WhyGlamgoStripProps> = ({
           <button
             type="button"
             onClick={onOpenSafetyPromise}
-            className="text-xs font-semibold text-rose-plum hover:text-deep-plum cursor-pointer"
+            className="text-xs font-semibold text-accent hover:text-accent-pressed cursor-pointer"
           >
             Read our 7-point safety protocol →
           </button>
@@ -58,22 +61,22 @@ export const WhyGlamgoStrip: React.FC<WhyGlamgoStripProps> = ({
           return (
             <div
               key={card.id}
-              className="p-5 rounded-2xl bg-white border border-mist shadow-2xs hover:shadow-card hover:border-rose-plum/30 transition-all flex flex-col justify-between"
+              className="p-5 rounded-[18px] bg-card border border-border shadow-warm-card hover:shadow-warm-md hover:border-accent/40 transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-blush flex items-center justify-center text-rose-plum mb-3.5">
+                <div className="w-10 h-10 rounded-[14px] bg-fill flex items-center justify-center text-accent-pressed mb-3.5">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="font-heading font-bold text-sm text-ink mb-1.5 leading-snug">
+                <h3 className="font-heading font-bold text-sm text-text mb-1.5 leading-snug">
                   {card.title}
                 </h3>
-                <p className="text-xs text-mauve-grey leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   {card.description}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-mist/60 flex items-center gap-1.5 text-[11px] font-bold text-emerald-700">
-                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <div className="mt-4 pt-3 border-t border-border flex items-center gap-1.5 text-[11px] font-bold text-success-text">
+                <Check className="w-3.5 h-3.5 text-success shrink-0" />
                 <span>{card.bullet}</span>
               </div>
             </div>
@@ -82,12 +85,12 @@ export const WhyGlamgoStrip: React.FC<WhyGlamgoStripProps> = ({
       </div>
 
       {/* "Products we use" Strip of Neutral Grey Box Placeholders */}
-      <div className="mt-8 pt-6 border-t border-mist/80">
+      <div className="mt-8 pt-6 border-t border-border">
         <div className="text-center mb-4">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-mauve-grey block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted block">
             Products We Use
           </span>
-          <p className="text-xs text-mauve-grey mt-0.5">
+          <p className="text-xs text-text-muted mt-0.5">
             Only genuine, salon-exclusive formulations in sealed single-use units
           </p>
         </div>
@@ -97,10 +100,10 @@ export const WhyGlamgoStrip: React.FC<WhyGlamgoStripProps> = ({
             <div
               key={brand.id}
               title={`${brand.name} - ${brand.description}`}
-              className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200/80 border border-gray-200/90 text-gray-700 font-medium text-xs tracking-tight transition-colors flex items-center gap-2 select-none"
+              className="px-4 py-2.5 rounded-[14px] bg-card hover:bg-fill border border-border text-text-muted font-medium text-xs tracking-tight transition-colors flex items-center gap-2 select-none shadow-warm-sm"
             >
-              <div className="w-2 h-2 rounded-full bg-gray-400" />
-              <span className="font-heading font-semibold">{brand.name}</span>
+              <div className="w-2 h-2 rounded-full bg-border-strong" />
+              <span className="font-heading font-semibold text-text">{brand.name}</span>
             </div>
           ))}
         </div>

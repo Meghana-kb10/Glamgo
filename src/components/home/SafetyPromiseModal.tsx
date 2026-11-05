@@ -55,7 +55,7 @@ export const SafetyPromiseModal: React.FC<SafetyPromiseModalProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-ink/50 backdrop-blur-xs cursor-pointer"
+          className="fixed inset-0 bg-text/60 backdrop-blur-xs cursor-pointer"
         />
 
         {/* Modal Dialog */}
@@ -64,19 +64,19 @@ export const SafetyPromiseModal: React.FC<SafetyPromiseModalProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-6 sm:p-8 z-10 max-h-[90vh] overflow-y-auto no-scrollbar"
+          className="relative w-full max-w-2xl bg-card rounded-[24px] border border-border shadow-warm-modal p-6 sm:p-8 z-10 max-h-[90vh] overflow-y-auto no-scrollbar"
         >
           {/* Header */}
-          <div className="flex items-start justify-between gap-4 pb-4 border-b border-mist">
+          <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
             <div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Our Safety Promise</span>
               </div>
-              <h2 className="font-serif text-2xl font-bold text-ink">
+              <h2 className="font-heading text-2xl font-bold text-text">
                 Haute Beauté Hygiene &amp; Trust Protocol
               </h2>
-              <p className="text-xs text-mauve-grey mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 Every service adheres to hospital-grade sterilization and sealed authentic formulas.
               </p>
             </div>
@@ -85,7 +85,7 @@ export const SafetyPromiseModal: React.FC<SafetyPromiseModalProps> = ({
               type="button"
               onClick={onClose}
               aria-label="Close safety promise modal"
-              className="w-8 h-8 rounded-full bg-soft-ivory hover:bg-blush flex items-center justify-center text-ink transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full bg-fill hover:bg-accent-soft hover:text-accent flex items-center justify-center text-text transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -98,15 +98,15 @@ export const SafetyPromiseModal: React.FC<SafetyPromiseModalProps> = ({
               return (
                 <div
                   key={idx}
-                  className="p-4 rounded-2xl bg-soft-ivory border border-mist/80 space-y-1.5"
+                  className="p-4 rounded-[18px] bg-bg-alt border border-border space-y-1.5"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-blush flex items-center justify-center text-rose-plum">
+                  <div className="w-8 h-8 rounded-[12px] bg-accent-soft flex items-center justify-center text-accent">
                     <Icon className="w-4 h-4" />
                   </div>
-                  <h3 className="font-heading font-bold text-xs sm:text-sm text-ink">
+                  <h3 className="font-heading font-bold text-xs sm:text-sm text-text">
                     {pillar.title}
                   </h3>
-                  <p className="text-[11px] text-mauve-grey leading-relaxed">
+                  <p className="text-[11px] text-text-muted leading-relaxed">
                     {pillar.desc}
                   </p>
                 </div>
@@ -115,14 +115,14 @@ export const SafetyPromiseModal: React.FC<SafetyPromiseModalProps> = ({
           </div>
 
           {/* Footer note */}
-          <div className="pt-4 border-t border-mist flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <span className="text-mauve-grey">
+          <div className="pt-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <span className="text-text-muted">
               Questions? Our safety escalation desk is active 24/7.
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto px-5 py-2 rounded-xl bg-rose-plum text-white font-bold hover:bg-deep-plum transition-colors cursor-pointer"
+              className="w-full sm:w-auto px-5 py-2 rounded-[14px] bg-accent text-white font-bold hover:bg-accent-pressed transition-colors cursor-pointer"
             >
               Got it
             </button>

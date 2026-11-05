@@ -22,6 +22,7 @@ export default {
         'accent-soft': 'var(--accent-soft)',
         star: 'var(--star)',
         success: 'var(--success)',
+        'success-text': 'var(--success-text)',
         error: 'var(--error)',
         warning: 'var(--warning)',
         'warning-text': 'var(--warning-text)',

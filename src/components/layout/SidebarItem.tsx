@@ -36,10 +36,10 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
         aria-current={isActive ? 'page' : undefined}
         aria-expanded={hasSubItems ? isExpanded : undefined}
         aria-label={isCollapsed ? (badge !== undefined && badge !== null ? `${label}, ${badge}` : label) : undefined}
-        className={`w-full h-11 flex items-center px-3.5 rounded-xl text-[15px] font-medium transition-all duration-150 cursor-pointer relative select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum ${
+        className={`w-full h-11 flex items-center px-3.5 rounded-xl text-[15px] font-medium transition-all duration-150 cursor-pointer relative select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
           isActive
-            ? 'bg-blush text-rose-plum font-semibold'
-            : 'text-ink hover:bg-blush/40 hover:text-ink'
+            ? 'bg-fill text-accent-pressed font-semibold'
+            : 'text-text hover:bg-fill/40 hover:text-text'
         } ${isCollapsed ? 'justify-center' : 'justify-between'} ${className}`}
       >
         {/* Active 3px plum indicator on left edge */}
@@ -47,14 +47,14 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
           <motion.div
             layoutId="sidebar-active-indicator"
             transition={MOTION_SPRINGS.slider}
-            className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-rose-plum"
+            className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-accent"
           />
         )}
 
         <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
           <Icon
             className={`w-5 h-5 shrink-0 transition-colors ${
-              isActive ? 'text-rose-plum' : 'text-mauve-grey group-hover:text-ink'
+              isActive ? 'text-accent' : 'text-text-muted group-hover:text-text'
             }`}
           />
           {!isCollapsed && (
@@ -69,29 +69,37 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
               <span
                 className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                   isActive
-                    ? 'bg-rose-plum text-white'
-                    : 'bg-blush text-rose-plum'
+                    ? 'bg-accent text-white'
+                    : 'bg-accent-soft text-accent-pressed'
                 }`}
               >
                 {badge}
               </span>
             )}
             {hasSubItems && (
-              <button
-                type="button"
+              <span
+                role="button"
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleExpand?.(e);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onToggleExpand?.(e as any);
+                  }
+                }}
                 aria-label={`Toggle ${label} subcategories`}
-                className="p-1 rounded-md hover:bg-black/5 text-mauve-grey transition-colors cursor-pointer"
+                className="p-1 rounded-md hover:bg-fill/50 text-text-muted transition-colors cursor-pointer"
               >
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    isExpanded ? 'rotate-180 text-rose-plum' : ''
+                    isExpanded ? 'rotate-180 text-accent' : ''
                   }`}
                 />
-              </button>
+              </span>
             )}
           </div>
         )}
@@ -99,17 +107,13 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
 
       {/* Floating Tooltip when in Collapsed Rail Mode */}
       {isCollapsed && (
-        <div
-          role="tooltip"
-          className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center gap-2 whitespace-nowrap bg-ink text-white text-xs font-medium px-2.5 py-1.5 rounded-lg shadow-md transition-opacity duration-150"
-        >
-          <span>{label}</span>
+        <div className="absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-text text-bg text-xs font-semibold whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-50 shadow-warm-modal border border-border">
+          {label}
           {badge !== undefined && badge !== null && (
-            <span className="bg-rose-plum text-white text-[10px] px-1.5 py-0.2 rounded-full">
+            <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-accent text-white text-[10px]">
               {badge}
             </span>
           )}
-          <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-ink" />
         </div>
       )}
     </div>

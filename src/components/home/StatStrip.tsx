@@ -10,48 +10,48 @@ export const StatStrip: React.FC<StatStripProps> = ({ className = '' }) => {
   return (
     <div
       aria-label="Verified service metrics"
-      className={`w-full py-3.5 px-4 sm:px-6 rounded-2xl bg-white/90 border border-mist shadow-xs backdrop-blur-xs flex flex-wrap items-center justify-around gap-4 text-xs font-medium text-ink ${className}`}
+      className={`w-full py-3.5 px-4 sm:px-6 rounded-[18px] bg-card border border-border shadow-warm-card backdrop-blur-xs flex flex-wrap items-center justify-around gap-4 text-xs font-medium text-text ${className}`}
     >
       {/* Stat 1: Rating */}
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-champagne-gold/20 flex items-center justify-center text-champagne-gold shrink-0">
-          <Star className="w-3.5 h-3.5 fill-champagne-gold text-champagne-gold" />
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-star/15 flex items-center justify-center text-star shrink-0">
+          <Star className="w-4 h-4 fill-star text-star" />
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-sm text-ink leading-tight">
+          <span className="font-bold text-sm text-text leading-tight">
             {MARKETING_STATS.averageRating}
           </span>
-          <span className="text-[11px] text-mauve-grey leading-tight">Average rating</span>
+          <span className="text-[11px] text-text-muted leading-tight">Average rating</span>
         </div>
       </div>
 
-      <div className="hidden sm:block w-px h-8 bg-mist" aria-hidden="true" />
+      <div className="hidden sm:block w-px h-8 bg-border" aria-hidden="true" />
 
       {/* Stat 2: Happy Customers */}
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-blush flex items-center justify-center text-rose-plum shrink-0">
-          <Users className="w-3.5 h-3.5 text-rose-plum" />
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
+          <Users className="w-4 h-4 text-accent" />
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-sm text-ink leading-tight">
+          <span className="font-bold text-sm text-text leading-tight">
             {MARKETING_STATS.happyCustomers}
           </span>
-          <span className="text-[11px] text-mauve-grey leading-tight">Happy customers</span>
+          <span className="text-[11px] text-text-muted leading-tight">Happy customers</span>
         </div>
       </div>
 
-      <div className="hidden sm:block w-px h-8 bg-mist" aria-hidden="true" />
+      <div className="hidden sm:block w-px h-8 bg-border" aria-hidden="true" />
 
       {/* Stat 3: Verified Pros */}
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-success/15 flex items-center justify-center text-success shrink-0">
+          <ShieldCheck className="w-4 h-4 text-success" />
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-sm text-ink leading-tight">
+          <span className="font-bold text-sm text-text leading-tight">
             {MARKETING_STATS.verifiedPros}
           </span>
-          <span className="text-[11px] text-mauve-grey leading-tight">Verified professionals</span>
+          <span className="text-[11px] text-text-muted leading-tight">Verified professionals</span>
         </div>
       </div>
     </div>

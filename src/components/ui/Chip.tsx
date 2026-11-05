@@ -32,7 +32,7 @@ export const Chip: React.FC<ChipProps> = ({
         min-h-[40px] cursor-pointer border
         ${
           selected
-            ? 'bg-fill text-accent border-accent shadow-warm-sm font-semibold'
+            ? 'bg-fill text-accent-pressed border-accent shadow-warm-sm font-semibold'
             : 'bg-card text-text border-border hover:border-border-strong hover:bg-fill/40'
         }
         ${disabled ? 'opacity-40 cursor-not-allowed' : ''}
@@ -44,7 +44,7 @@ export const Chip: React.FC<ChipProps> = ({
       {count !== undefined && (
         <span
           className={`text-[11px] px-1.5 py-0.5 rounded-full font-mono ${
-            selected ? 'bg-accent-soft text-accent' : 'bg-fill text-text-muted'
+            selected ? 'bg-accent-soft text-accent-pressed' : 'bg-fill text-text-muted'
           }`}
         >
           {count}

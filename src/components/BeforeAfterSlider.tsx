@@ -31,25 +31,25 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ data }) =>
   };
 
   return (
-    <div className="w-full bg-white rounded-3xl p-5 sm:p-6 border border-rose-gold/20 shadow-luxury">
+    <div className="w-full bg-card rounded-3xl p-5 sm:p-6 border border-border shadow-warm-xs">
       
       {/* Header Info */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-rose-gold bg-rose-blush/60 px-2.5 py-0.5 rounded-full">
-              <Sparkles className="w-3 h-3 text-champagne-dark" />
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-accent bg-accent-soft px-2.5 py-0.5 rounded-full">
+              <Sparkles className="w-3 h-3 text-accent" />
               <span>Couture Makeover Inspection</span>
             </span>
-            <span className="text-xs text-obsidian-subtle">• Drag divider to compare</span>
+            <span className="text-xs text-text-muted">• Drag divider to compare</span>
           </div>
-          <h3 className="font-serif text-xl sm:text-2xl font-bold text-obsidian mt-1">
+          <h3 className="font-heading text-xl sm:text-2xl font-bold text-text mt-1">
             {data.title}
           </h3>
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <div className="px-3 py-1 rounded-full bg-surface-cream text-obsidian font-medium border border-rose-gold/20">
+          <div className="px-3 py-1 rounded-full bg-bg-alt text-text font-medium border border-border">
             Skin: <span className="font-semibold">{data.skinType}</span>
           </div>
         </div>
@@ -63,7 +63,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ data }) =>
         onMouseLeave={() => setIsDragging(false)}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
-        className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden cursor-ew-resize select-none border border-rose-gold/30 shadow-inner group"
+        className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden cursor-ew-resize select-none border border-border shadow-inner group"
       >
         {/* AFTER Image (Full background layer) */}
         <img
@@ -90,38 +90,38 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ data }) =>
 
         {/* Labels Overlay */}
         <div className="absolute top-4 left-4 pointer-events-none z-10">
-          <span className="px-3 py-1 rounded-full bg-obsidian/80 backdrop-blur-md text-white text-[11px] font-medium tracking-wide shadow-md border border-white/20">
+          <span className="px-3 py-1 rounded-full bg-text/80 backdrop-blur-md text-white text-[11px] font-medium tracking-wide shadow-md border border-white/20">
             Bare Skin & Pre-Prep
           </span>
         </div>
 
         <div className="absolute top-4 right-4 pointer-events-none z-10">
-          <span className="px-3 py-1 rounded-full bg-rose-velvet/85 backdrop-blur-md text-white text-[11px] font-medium tracking-wide shadow-md border border-white/20">
+          <span className="px-3 py-1 rounded-full bg-accent-pressed/85 backdrop-blur-md text-white text-[11px] font-medium tracking-wide shadow-md border border-white/20">
             HD Bridal Artistry
           </span>
         </div>
 
-        {/* Physics Gold Divider Line */}
+        {/* Physics Divider Line */}
         <div
           className="absolute inset-y-0 pointer-events-none z-20 flex items-center justify-center"
           style={{ left: `${sliderPosition}%` }}
         >
-          {/* Vertical gold line */}
-          <div className="w-1 h-full bg-gradient-to-b from-champagne via-champagne-light to-champagne shadow-gold-glow -translate-x-1/2" />
+          {/* Vertical line */}
+          <div className="w-1 h-full bg-accent shadow-warm-sm -translate-x-1/2" />
 
           {/* Central Handle Pill */}
           <motion.div
             animate={{ scale: isDragging ? 1.15 : 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="absolute w-10 h-10 rounded-full bg-gradient-to-tr from-champagne-dark via-champagne to-champagne-light text-obsidian shadow-luxury flex items-center justify-center border-2 border-white -translate-x-1/2 cursor-grab active:cursor-grabbing"
+            className="absolute w-10 h-10 rounded-full bg-accent text-white shadow-warm flex items-center justify-center border-2 border-card -translate-x-1/2 cursor-grab active:cursor-grabbing"
           >
-            <ChevronsLeftRight className="w-5 h-5 text-obsidian font-bold" />
+            <ChevronsLeftRight className="w-5 h-5 text-white font-bold" />
           </motion.div>
         </div>
 
         {/* Bottom subtle prompt */}
         <div className="absolute bottom-3 inset-x-0 flex justify-center pointer-events-none z-10">
-          <span className="px-3 py-1 rounded-full bg-white/70 backdrop-blur-md text-obsidian text-[10px] font-medium tracking-wider uppercase border border-rose-gold/20 shadow-sm opacity-80 group-hover:opacity-100 transition-opacity">
+          <span className="px-3 py-1 rounded-full bg-card/80 backdrop-blur-md text-text text-[10px] font-medium tracking-wider uppercase border border-border shadow-xs opacity-80 group-hover:opacity-100 transition-opacity">
             Drag Handle Left / Right to Inspect Skin Texture & Pores
           </span>
         </div>

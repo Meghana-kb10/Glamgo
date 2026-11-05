@@ -127,10 +127,10 @@ export const ProStudioDashboard: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
       {/* Studio Header & Metrics */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-rose-gold/15">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-rose-gold bg-rose-blush/60 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-accent bg-accent-soft px-2.5 py-0.5 rounded-full">
               Partner Pro Studio OS
             </span>
             <span className="text-xs text-emerald-700 font-medium flex items-center gap-1">
@@ -138,22 +138,22 @@ export const ProStudioDashboard: React.FC = () => {
               <span>Calendar Live & Synchronized</span>
             </span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-obsidian mt-1.5">
+          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-text mt-1.5">
             Tanya Grewal Artistry Studio
           </h1>
-          <p className="text-xs sm:text-sm text-obsidian-muted">
+          <p className="text-xs sm:text-sm text-text-muted">
             Manage bridal inquiries, lock weekly slots, and track milestone payouts held in Escrow.
           </p>
         </div>
 
         {/* Quick Tabs */}
-        <div className="flex items-center gap-2 p-1 bg-surface-cream rounded-2xl border border-rose-gold/20">
+        <div className="flex items-center gap-2 p-1 bg-bg-alt rounded-2xl border border-border">
           <button
             onClick={() => setActiveTab('requests')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               activeTab === 'requests'
-                ? 'bg-obsidian text-white shadow-sm'
-                : 'text-obsidian-muted hover:text-obsidian'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-text-muted hover:text-text'
             }`}
           >
             Live Inquiries ({requests.filter((r) => r.status === 'PENDING').length})
@@ -162,8 +162,8 @@ export const ProStudioDashboard: React.FC = () => {
             onClick={() => setActiveTab('calendar')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               activeTab === 'calendar'
-                ? 'bg-obsidian text-white shadow-sm'
-                : 'text-obsidian-muted hover:text-obsidian'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-text-muted hover:text-text'
             }`}
           >
             Weekly Availability Grid
@@ -172,8 +172,8 @@ export const ProStudioDashboard: React.FC = () => {
             onClick={() => setActiveTab('payouts')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               activeTab === 'payouts'
-                ? 'bg-obsidian text-white shadow-sm'
-                : 'text-obsidian-muted hover:text-obsidian'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-text-muted hover:text-text'
             }`}
           >
             Escrow & Earnings
@@ -183,12 +183,12 @@ export const ProStudioDashboard: React.FC = () => {
 
       {/* METRIC CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-rose-gold/20 shadow-luxury">
-          <div className="flex items-center justify-between text-xs text-obsidian-subtle mb-2">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-warm-xs">
+          <div className="flex items-center justify-between text-xs text-text-muted/80 mb-2">
             <span>This Month's Gross Revenue</span>
             <TrendingUp className="w-4 h-4 text-emerald-600" />
           </div>
-          <span className="font-mono text-2xl font-bold text-obsidian block tabular-nums">
+          <span className="font-mono text-2xl font-bold text-text block tabular-nums">
             ₹{payoutsData.gross_revenue.toLocaleString('en-IN')}
           </span>
           <span className="text-[11px] text-emerald-700 font-medium mt-1 block">
@@ -196,21 +196,21 @@ export const ProStudioDashboard: React.FC = () => {
           </span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-rose-gold/20 shadow-luxury">
-          <div className="flex items-center justify-between text-xs text-obsidian-subtle mb-2">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-warm-xs">
+          <div className="flex items-center justify-between text-xs text-text-muted/80 mb-2">
             <span>Escrow Vault (Held Safe)</span>
-            <Lock className="w-4 h-4 text-champagne-dark" />
+            <Lock className="w-4 h-4 text-star" />
           </div>
-          <span className="font-mono text-2xl font-bold text-champagne-dark block tabular-nums">
+          <span className="font-mono text-2xl font-bold text-star block tabular-nums">
             ₹{payoutsData.escrow_held.toLocaleString('en-IN')}
           </span>
-          <span className="text-[11px] text-obsidian-subtle mt-1 block">
+          <span className="text-[11px] text-text-muted/80 mt-1 block">
             {payoutsData.upcoming_events} events pending completion OTP
           </span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-rose-gold/20 shadow-luxury">
-          <div className="flex items-center justify-between text-xs text-obsidian-subtle mb-2">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-warm-xs">
+          <div className="flex items-center justify-between text-xs text-text-muted/80 mb-2">
             <span>Settled to Bank (Net)</span>
             <BadgeCheck className="w-4 h-4 text-emerald-600" />
           </div>
@@ -222,15 +222,15 @@ export const ProStudioDashboard: React.FC = () => {
           </span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-rose-gold/20 shadow-luxury">
-          <div className="flex items-center justify-between text-xs text-obsidian-subtle mb-2">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-warm-xs">
+          <div className="flex items-center justify-between text-xs text-text-muted/80 mb-2">
             <span>Upcoming Bridal Events</span>
-            <CalendarIcon className="w-4 h-4 text-rose-gold" />
+            <CalendarIcon className="w-4 h-4 text-accent" />
           </div>
-          <span className="font-mono text-2xl font-bold text-obsidian block tabular-nums">
+          <span className="font-mono text-2xl font-bold text-text block tabular-nums">
             {payoutsData.total_events} Bookings
           </span>
-          <span className="text-[11px] text-obsidian-subtle mt-1 block">
+          <span className="text-[11px] text-text-muted/80 mt-1 block">
             PostGIS radius filtered
           </span>
         </div>
@@ -241,14 +241,14 @@ export const ProStudioDashboard: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-serif text-xl font-bold text-obsidian">
+              <h2 className="font-heading text-xl font-bold text-text">
                 Real-Time Booking Inquiries
               </h2>
-              <p className="text-xs text-obsidian-muted">
+              <p className="text-xs text-text-muted">
                 Clients who have locked dates and deposited 30% into Escrow awaiting your confirmation.
               </p>
             </div>
-            <span className="text-xs font-mono text-rose-gold font-semibold">
+            <span className="text-xs font-mono text-accent font-semibold">
               Live Redis Locks Active
             </span>
           </div>
@@ -270,12 +270,12 @@ export const ProStudioDashboard: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={spatialSpring}
-                  className={`p-5 rounded-3xl bg-white border flex flex-col justify-between shadow-luxury transition-all ${
+                  className={`p-5 rounded-3xl bg-card border flex flex-col justify-between shadow-warm-xs transition-all ${
                     req.status === 'ACCEPTED'
                       ? 'border-emerald-500 bg-emerald-50/40'
                       : req.status === 'DECLINED'
-                      ? 'border-rose-300 opacity-60 bg-gray-50'
-                      : 'border-rose-gold/25 hover:border-rose-gold/50'
+                      ? 'border-rose-300 opacity-60 bg-bg-alt'
+                      : 'border-border hover:border-border'
                   }`}
                 >
                   <div>
@@ -285,13 +285,13 @@ export const ProStudioDashboard: React.FC = () => {
                         <img
                           src={req.clientAvatar}
                           alt={req.clientName}
-                          className="w-12 h-12 rounded-2xl object-cover border border-rose-gold/30"
+                          className="w-12 h-12 rounded-2xl object-cover border border-border"
                         />
                         <div>
-                          <h4 className="font-serif text-base font-bold text-obsidian">
+                          <h4 className="font-heading text-base font-bold text-text">
                             {req.clientName}
                           </h4>
-                          <span className="text-[11px] text-rose-gold font-medium">
+                          <span className="text-[11px] text-accent font-medium">
                             {req.serviceType}
                           </span>
                         </div>
@@ -306,28 +306,28 @@ export const ProStudioDashboard: React.FC = () => {
                     </div>
 
                     {/* Booking Specs */}
-                    <div className="p-3.5 rounded-2xl bg-surface-cream/60 space-y-2 text-xs border border-rose-gold/15">
+                    <div className="p-3.5 rounded-2xl bg-bg-alt/60 space-y-2 text-xs border border-border">
                       <div className="flex justify-between">
-                        <span className="text-obsidian-subtle">Package:</span>
-                        <span className="font-semibold text-obsidian text-right line-clamp-1">
+                        <span className="text-text-muted/80">Package:</span>
+                        <span className="font-semibold text-text text-right line-clamp-1">
                           {req.packageName}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-obsidian-subtle">Date & Time:</span>
-                        <span className="font-mono font-medium text-obsidian">
+                        <span className="text-text-muted/80">Date & Time:</span>
+                        <span className="font-mono font-medium text-text">
                           {req.date} • {req.time}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-obsidian-subtle">Venue:</span>
-                        <span className="font-medium text-obsidian text-right line-clamp-1">
+                        <span className="text-text-muted/80">Venue:</span>
+                        <span className="font-medium text-text text-right line-clamp-1">
                           {req.venue}
                         </span>
                       </div>
-                      <div className="pt-2 border-t border-rose-gold/15 flex justify-between items-baseline">
-                        <span className="text-obsidian-subtle">Total / Escrow Deposit:</span>
-                        <span className="font-mono text-sm font-bold text-obsidian">
+                      <div className="pt-2 border-t border-border flex justify-between items-baseline">
+                        <span className="text-text-muted/80">Total / Escrow Deposit:</span>
+                        <span className="font-mono text-sm font-bold text-text">
                           ₹{req.amount.toLocaleString('en-IN')}{' '}
                           <span className="text-emerald-700 text-xs">
                             (₹{req.depositPaid.toLocaleString('en-IN')} held)
@@ -338,14 +338,14 @@ export const ProStudioDashboard: React.FC = () => {
                   </div>
 
                   {/* Actions / Status */}
-                  <div className="mt-4 pt-3 border-t border-rose-gold/15">
+                  <div className="mt-4 pt-3 border-t border-border">
                     {req.status === 'PENDING' ? (
                       <div className="flex items-center gap-2">
                         <motion.button
                           whileTap={{ scale: 0.94 }}
                           transition={snappySpring}
                           onClick={(e) => handleAction(req.id, 'ACCEPTED', e)}
-                          className="flex-1 py-2.5 rounded-xl bg-obsidian hover:bg-obsidian-deep text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm"
+                          className="flex-1 py-2.5 rounded-xl bg-accent hover:bg-accent-pressed text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm"
                         >
                           <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
                           <span>Accept & Confirm</span>
@@ -355,7 +355,7 @@ export const ProStudioDashboard: React.FC = () => {
                           whileTap={{ scale: 0.94 }}
                           transition={snappySpring}
                           onClick={(e) => handleAction(req.id, 'DECLINED', e)}
-                          className="px-3 py-2.5 rounded-xl bg-surface-cream text-obsidian-muted hover:text-rose-velvet text-xs font-semibold border border-rose-gold/20"
+                          className="px-3 py-2.5 rounded-xl bg-bg-alt text-text-muted hover:text-accent-pressed text-xs font-semibold border border-border"
                         >
                           <XCircle className="w-3.5 h-3.5" />
                         </motion.button>
@@ -386,9 +386,9 @@ export const ProStudioDashboard: React.FC = () => {
                             <motion.button
                               whileTap={{ scale: 0.95 }}
                               onClick={() => handleOpenInvoice(req)}
-                              className="flex-1 py-1.5 rounded-lg bg-surface-cream hover:bg-rose-blush border border-rose-gold/25 text-obsidian text-[11px] font-semibold flex items-center justify-center gap-1"
+                              className="flex-1 py-1.5 rounded-lg bg-bg-alt hover:bg-accent-soft border border-border text-text text-[11px] font-semibold flex items-center justify-center gap-1"
                             >
-                              <FileText className="w-3 h-3 text-rose-gold" />
+                              <FileText className="w-3 h-3 text-accent" />
                               <span>View Split-Tax Invoice</span>
                             </motion.button>
                             <motion.button
@@ -414,13 +414,13 @@ export const ProStudioDashboard: React.FC = () => {
 
       {/* TAB 2: Weekly Availability Calendar (Click-to-block slots) */}
       {activeTab === 'calendar' && (
-        <div className="p-6 rounded-3xl bg-white border border-rose-gold/20 shadow-luxury space-y-6">
+        <div className="p-6 rounded-3xl bg-card border border-border shadow-warm-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="font-serif text-xl font-bold text-obsidian">
+              <h2 className="font-heading text-xl font-bold text-text">
                 Weekly Availability & Slot Locking
               </h2>
-              <p className="text-xs text-obsidian-muted">
+              <p className="text-xs text-text-muted">
                 Tap any available slot to block it for private travel or personal prep.
               </p>
             </div>
@@ -433,8 +433,8 @@ export const ProStudioDashboard: React.FC = () => {
                   onClick={() => setSelectedDay(day)}
                   className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                     selectedDay === day
-                      ? 'bg-obsidian text-white'
-                      : 'bg-surface-cream text-obsidian hover:bg-rose-blush/60'
+                      ? 'bg-accent text-white'
+                      : 'bg-bg-alt text-text hover:bg-accent-soft'
                   }`}
                 >
                   {day}
@@ -457,14 +457,14 @@ export const ProStudioDashboard: React.FC = () => {
                   onClick={() => handleToggleSlot(slot.id)}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer ${
                     isBooked
-                      ? 'bg-rose-blush/40 border-rose-gold/30 cursor-default'
+                      ? 'bg-accent-soft border-border cursor-default'
                       : isBlocked
-                      ? 'bg-gray-100 border-gray-300 opacity-70'
-                      : 'bg-white hover:border-champagne border-rose-gold/20 shadow-xs'
+                      ? 'bg-fill border-border opacity-70'
+                      : 'bg-card hover:border-border border-border shadow-xs'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-obsidian-subtle">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted/80">
                       {slot.day}
                     </span>
                     <span
@@ -472,7 +472,7 @@ export const ProStudioDashboard: React.FC = () => {
                         isBooked
                           ? 'bg-rose-velvet text-white'
                           : isBlocked
-                          ? 'bg-gray-300 text-gray-700'
+                          ? 'bg-border text-text'
                           : 'bg-emerald-100 text-emerald-800'
                       }`}
                     >
@@ -480,17 +480,17 @@ export const ProStudioDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  <span className="font-mono text-base font-bold text-obsidian block">
+                  <span className="font-mono text-base font-bold text-text block">
                     {slot.time}
                   </span>
 
                   {isBooked ? (
                     <div className="mt-2 text-xs">
-                      <span className="font-semibold text-obsidian block">{slot.clientName}</span>
-                      <span className="text-[11px] text-obsidian-subtle">{slot.serviceName}</span>
+                      <span className="font-semibold text-text block">{slot.clientName}</span>
+                      <span className="text-[11px] text-text-muted/80">{slot.serviceName}</span>
                     </div>
                   ) : isBlocked ? (
-                    <span className="text-[11px] text-gray-500 mt-2 block">
+                    <span className="text-[11px] text-text-muted mt-2 block">
                       Tap to unblock slot
                     </span>
                   ) : (
@@ -507,23 +507,23 @@ export const ProStudioDashboard: React.FC = () => {
 
       {/* TAB 3: Escrow & Payouts Bar Chart Tracker */}
       {activeTab === 'payouts' && (
-        <div className="p-6 rounded-3xl bg-white border border-rose-gold/20 shadow-luxury space-y-6">
+        <div className="p-6 rounded-3xl bg-card border border-border shadow-warm-xs space-y-6">
           <div>
-            <h2 className="font-serif text-xl font-bold text-obsidian">
+            <h2 className="font-heading text-xl font-bold text-text">
               Escrow Protection & Payout Progress
             </h2>
-            <p className="text-xs text-obsidian-muted">
+            <p className="text-xs text-text-muted">
               Glamgo holds client deposits in an RBI-compliant nodal escrow vault. Funds are released within 2 hours of service OTP verification.
             </p>
           </div>
 
           {/* Animated Bar Chart Simulation */}
           <div className="space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-obsidian-subtle block">
+            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted/80 block">
               Recent Payout Cycles
             </span>
 
-            <div className="grid grid-cols-7 gap-2 items-end h-44 pt-6 pb-2 border-b border-rose-gold/20">
+            <div className="grid grid-cols-7 gap-2 items-end h-44 pt-6 pb-2 border-b border-border">
               {[
                 { day: 'Mon', amount: '₹32,000', height: '65%' },
                 { day: 'Tue', amount: '₹18,000', height: '40%' },
@@ -534,29 +534,29 @@ export const ProStudioDashboard: React.FC = () => {
                 { day: 'Sun', amount: '₹38,000', height: '70%' },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center gap-1.5 h-full justify-end group">
-                  <span className="text-[9px] font-mono font-bold text-obsidian opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-[9px] font-mono font-bold text-text opacity-0 group-hover:opacity-100 transition-opacity">
                     {item.amount}
                   </span>
                   <motion.div
                     initial={{ height: 0 }}
                     animate={{ height: item.height }}
                     transition={{ ...spatialSpring, delay: i * 0.05 }}
-                    className="w-full rounded-t-xl bg-gradient-to-t from-obsidian via-rose-gold to-champagne shadow-xs"
+                    className="w-full rounded-t-xl bg-gradient-to-t from-accent via-accent-soft to-fill shadow-xs"
                   />
-                  <span className="text-[10px] font-bold text-obsidian-subtle">{item.day}</span>
+                  <span className="text-[10px] font-bold text-text-muted/80">{item.day}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Live Escrow Ledger Settlement Table (PRD PRO-05) */}
-          <div className="pt-4 border-t border-rose-gold/15 space-y-3">
+          <div className="pt-4 border-t border-border space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-serif text-base font-bold text-obsidian">
+                <h4 className="font-heading text-base font-bold text-text">
                   Direct Bank Transfers &amp; Escrow Ledgers
                 </h4>
-                <p className="text-xs text-obsidian-muted">
+                <p className="text-xs text-text-muted">
                   Live state synchronized with PostgreSQL 16 `escrow_ledger_entries`
                 </p>
               </div>
@@ -565,9 +565,9 @@ export const ProStudioDashboard: React.FC = () => {
               </span>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-rose-gold/15 bg-surface-cream/30">
+            <div className="overflow-x-auto rounded-2xl border border-border bg-bg-alt/30">
               <table className="w-full text-left text-xs">
-                <thead className="bg-surface-cream text-obsidian-subtle uppercase text-[10px] tracking-wider border-b border-rose-gold/15">
+                <thead className="bg-bg-alt text-text-muted/80 uppercase text-[10px] tracking-wider border-b border-border">
                   <tr>
                     <th className="px-4 py-3">Transaction UTR</th>
                     <th className="px-4 py-3">Gross Booking</th>
@@ -580,14 +580,14 @@ export const ProStudioDashboard: React.FC = () => {
                 <tbody className="divide-y divide-rose-gold/10">
                   {payoutsData.recent_transactions.length > 0 ? (
                     payoutsData.recent_transactions.map((tx: any) => (
-                      <tr key={tx.id} className="hover:bg-rose-blush/20 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs font-bold text-obsidian">
+                      <tr key={tx.id} className="hover:bg-accent-soft transition-colors">
+                        <td className="px-4 py-3 font-mono text-xs font-bold text-text">
                           {tx.reference?.slice(0, 16) || tx.id.slice(0, 8)}
                         </td>
-                        <td className="px-4 py-3 font-mono tabular-nums text-obsidian">
+                        <td className="px-4 py-3 font-mono tabular-nums text-text">
                           ₹{Number(tx.gross_amount).toLocaleString('en-IN')}
                         </td>
-                        <td className="px-4 py-3 font-mono tabular-nums text-stone-500">
+                        <td className="px-4 py-3 font-mono tabular-nums text-text-muted">
                           -₹{Number(tx.commission).toLocaleString('en-IN')}
                         </td>
                         <td className="px-4 py-3 font-mono font-bold tabular-nums text-emerald-800">
@@ -604,7 +604,7 @@ export const ProStudioDashboard: React.FC = () => {
                             {tx.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-right text-stone-500 font-mono text-[11px]">
+                        <td className="px-4 py-3 text-right text-text-muted font-mono text-[11px]">
                           {new Date(tx.date || Date.now()).toLocaleDateString('en-IN', {
                             day: 'numeric',
                             month: 'short',
@@ -614,7 +614,7 @@ export const ProStudioDashboard: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-4 py-6 text-center text-stone-500">
+                      <td colSpan={6} className="px-4 py-6 text-center text-text-muted">
                         All eligible bridal milestones have been settled to your verified HDFC bank account.
                       </td>
                     </tr>

@@ -10,8 +10,8 @@ export interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
   if (type === 'verified') {
     return (
-      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-success/15 text-success border border-success/30 ${className}`}>
-        <ShieldCheck className="w-3 h-3 text-success" />
+      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-success/15 text-success-text border border-success/30 ${className}`}>
+        <ShieldCheck className="w-3 h-3 text-success-text" />
         <span>{text || 'Verified Pro'}</span>
       </span>
     );
@@ -20,7 +20,7 @@ export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
   if (type === 'bestseller') {
     return (
       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-fill text-accent-pressed border border-border-strong ${className}`}>
-        <Sparkles className="w-3 h-3 text-accent" />
+        <Sparkles className="w-3 h-3 text-accent-pressed" />
         <span>{text || 'Bestseller'}</span>
       </span>
     );
@@ -28,8 +28,8 @@ export const Badge: React.FC<BadgeProps> = ({ type, text, className = '' }) => {
 
   if (type === 'offer') {
     return (
-      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-soft text-accent border border-accent/25 ${className}`}>
-        <Tag className="w-3 h-3 text-accent" />
+      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-soft text-accent-pressed border border-accent/25 ${className}`}>
+        <Tag className="w-3 h-3 text-accent-pressed" />
         <span>{text || 'Offer'}</span>
       </span>
     );

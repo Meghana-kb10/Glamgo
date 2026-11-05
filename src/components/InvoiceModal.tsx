@@ -99,7 +99,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
   const productCgst = Math.round((productGst / 2) * 100) / 100;
   const productSgst = Math.round((productGst - productCgst) * 100) / 100;
 
-  // Platform Commission Split
+  // Part C: Platform Payout & Escrow Split Ledger
   const serviceCommission = Math.round(serviceGross * 0.18);
   const productCommission = Math.round(productGross * 0.12);
   const totalPlatformFee = serviceCommission + productCommission;
@@ -115,104 +115,112 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-obsidian/75 backdrop-blur-md flex justify-center p-2 sm:p-4 md:p-6 print:p-0 print:bg-white">
-      
-      {/* Modal Container */}
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="invoice-modal-title"
+    >
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="fixed inset-0 bg-text/60 backdrop-blur-sm"
+      />
+
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
         transition={spatialSpring}
-        className="relative w-full max-w-4xl bg-white sm:rounded-3xl shadow-2xl border border-rose-gold/20 overflow-hidden flex flex-col my-auto print:shadow-none print:border-none print:rounded-none"
+        className="relative w-full max-w-3xl bg-card rounded-3xl shadow-warm-lg border border-border overflow-hidden z-10 flex flex-col max-h-[92vh]"
       >
-        {/* Floating Controls Bar (Hidden during print) */}
-        <div className="sticky top-0 z-30 px-6 py-3.5 bg-white/95 backdrop-blur-md border-b border-rose-gold/20 flex items-center justify-between print:hidden">
+        {/* Printable Top Bar */}
+        <div className="px-6 py-4 bg-bg-alt border-b border-border flex items-center justify-between print:hidden shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase font-bold tracking-wider text-rose-gold bg-rose-blush/60 px-2.5 py-0.5 rounded-full">
-              Official Tax Invoice
-            </span>
-            <span className="font-mono text-xs font-bold text-obsidian">
-              {invoiceNo}
-            </span>
+            <FileText className="w-5 h-5 text-accent" />
+            <h2 id="invoice-modal-title" className="font-heading text-sm sm:text-base font-bold text-text">
+              GST Tax Invoice & Payout Ledger
+            </h2>
           </div>
 
           <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              transition={snappySpring}
+            <button
+              type="button"
               onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded-full bg-obsidian hover:bg-obsidian-deep text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold text-text hover:bg-fill transition-colors flex items-center gap-1.5 cursor-pointer shadow-warm-xs"
             >
-              <Printer className="w-3.5 h-3.5 text-champagne-light" />
+              <Printer className="w-3.5 h-3.5 text-accent" />
               <span>Print / Save PDF</span>
-            </motion.button>
-
-            <motion.button
-              whileTap={{ scale: 0.92 }}
+            </button>
+            <button
+              type="button"
               onClick={onClose}
-              className="p-1.5 rounded-full bg-surface-cream hover:bg-rose-blush text-obsidian border border-rose-gold/20 transition-colors"
+              aria-label="Close invoice"
+              className="p-1.5 rounded-full bg-card hover:bg-fill text-text-muted hover:text-text border border-border transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
-            </motion.button>
+            </button>
           </div>
         </div>
 
         {/* Invoice Printable Sheet Content */}
-        <div className="p-6 sm:p-10 space-y-8 print:p-6 text-obsidian font-sans">
+        <div className="p-6 sm:p-10 space-y-8 print:p-6 text-text font-sans overflow-y-auto">
           
           {/* 1. Header & GST Identity */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-rose-gold/20">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-border">
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-serif text-3xl font-bold tracking-tight text-obsidian">
+                <span className="font-heading text-3xl font-bold tracking-tight text-text">
                   GLAMGO
                 </span>
-                <span className="text-[10px] font-mono tracking-widest text-champagne-dark border border-champagne/40 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-mono tracking-widest text-accent border border-accent/30 bg-accent-soft px-2 py-0.5 rounded-md">
                   COUTURE CONCIERGE
                 </span>
               </div>
-              <p className="text-xs text-obsidian-muted mt-1 leading-relaxed">
+              <p className="text-xs text-text-muted mt-1 leading-relaxed">
                 Glamgo Luxury Lifestyle Services Pvt. Ltd.<br />
                 Level 14, Platina Towers, BKC, Bandra East, Mumbai - 400051<br />
-                <strong className="text-obsidian">GSTIN:</strong> 27AABCG9482L1ZX • <strong className="text-obsidian">State:</strong> Maharashtra (27)<br />
-                <span className="text-[11px] text-obsidian-subtle">CIN: U74999MH2026PTC394812 • nodalescrow@glamgo.luxury</span>
+                <strong className="text-text">GSTIN:</strong> 27AABCG9482L1ZX • <strong className="text-text">State:</strong> Maharashtra (27)<br />
+                <span className="text-[11px] text-text-muted">CIN: U74999MH2026PTC394812 • nodalescrow@glamgo.luxury</span>
               </p>
             </div>
 
             <div className="sm:text-right space-y-1 text-xs">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface-cream text-obsidian inline-block">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-fill text-accent-pressed inline-block">
                 TAX INVOICE / RECEIPT
               </span>
               <p className="font-mono text-xs"><strong>Invoice No:</strong> {invoiceNo}</p>
               <p className="font-mono text-xs"><strong>Order Ref:</strong> {orderNo}</p>
               <p className="font-mono text-xs"><strong>Booking ID:</strong> {bookingNo}</p>
               <p className="font-mono text-xs"><strong>Date:</strong> {invoiceDate}</p>
-              <p className="font-mono text-xs text-emerald-700 font-semibold">
+              <p className="font-mono text-xs text-success font-semibold">
                 Payment: ONLINE (UPI / CARDS)
               </p>
             </div>
           </div>
 
           {/* 2. Customer & Place of Supply */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-surface-cream/50 border border-rose-gold/15 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-bg-alt border border-border text-xs">
             <div>
-              <span className="text-[10px] uppercase font-bold text-obsidian-subtle block mb-1">
+              <span className="text-[10px] uppercase font-bold text-text-muted block mb-1">
                 Billed To (Customer):
               </span>
-              <p className="font-bold text-obsidian text-sm">{customerName}</p>
-              <p className="text-obsidian-muted">{customerPhone}</p>
-              <p className="text-obsidian-muted mt-1">{venueAddress}</p>
+              <p className="font-bold text-text text-sm">{customerName}</p>
+              <p className="text-text-muted">{customerPhone}</p>
+              <p className="text-text-muted mt-1">{venueAddress}</p>
             </div>
 
             <div className="sm:text-right">
-              <span className="text-[10px] uppercase font-bold text-obsidian-subtle block mb-1">
+              <span className="text-[10px] uppercase font-bold text-text-muted block mb-1">
                 Place of Supply:
               </span>
-              <p className="font-semibold text-obsidian">Maharashtra (State Code: 27)</p>
-              <p className="text-obsidian-muted">Reverse Charge Applicable: <strong className="text-obsidian">NO</strong></p>
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[11px] font-bold">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+              <p className="font-semibold text-text">Maharashtra (State Code: 27)</p>
+              <p className="text-text-muted">Reverse Charge Applicable: <strong className="text-text">NO</strong></p>
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 text-success border border-success/30 font-mono text-[11px] font-bold">
+                <CheckCircle className="w-3.5 h-3.5 text-success" />
                 <span>Escrow Guarantee Protected</span>
               </div>
             </div>
@@ -220,22 +228,22 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
 
           {/* 3. PART A: SERVICE INVOICE (SAC 999722) */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-rose-gold/20">
+            <div className="flex items-center justify-between pb-2 border-b border-border">
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-obsidian text-white flex items-center justify-center text-[10px] font-bold">
+                <span className="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold">
                   A
                 </span>
-                <h3 className="font-serif text-base font-bold text-obsidian">
+                <h3 className="font-heading text-base font-bold text-text">
                   Part A: Couture Beauty & Wellness Service Invoice
                 </h3>
               </div>
-              <span className="font-mono text-xs text-obsidian-subtle">
-                SAC Code: <strong className="text-obsidian">999722</strong>
+              <span className="font-mono text-xs text-text-muted">
+                SAC Code: <strong className="text-text">999722</strong>
               </span>
             </div>
 
             <table className="w-full text-left text-xs">
-              <thead className="bg-surface-cream/70 text-obsidian-subtle uppercase text-[10px] font-bold">
+              <thead className="bg-bg-alt text-text-muted uppercase text-[10px] font-bold">
                 <tr>
                   <th className="py-2.5 px-3">Service & Verified Artist</th>
                   <th className="py-2.5 px-2 text-center">SAC</th>
@@ -245,27 +253,27 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                   <th className="py-2.5 px-3 text-right">Gross Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-rose-gold/10 font-mono text-xs">
+              <tbody className="divide-y divide-border font-mono text-xs">
                 <tr>
                   <td className="py-3 px-3 font-sans">
-                    <p className="font-bold text-obsidian">{packageName}</p>
-                    <p className="text-[11px] text-obsidian-muted">
+                    <p className="font-bold text-text">{packageName}</p>
+                    <p className="text-[11px] text-text-muted">
                       Artist: {artistName} • Duration: 180 Mins
                     </p>
                     <div className="mt-1 flex items-center gap-2 text-[10px]">
-                      <span className="bg-rose-blush px-2 py-0.5 rounded text-rose-velvet font-mono font-bold">
+                      <span className="bg-accent-soft px-2 py-0.5 rounded text-accent-pressed font-mono font-bold">
                         Check-In OTP: #{checkInOtp}
                       </span>
-                      <span className="text-emerald-700 font-semibold">
+                      <span className="text-success font-semibold">
                         Status: {escrowStatus}
                       </span>
                     </div>
                   </td>
-                  <td className="py-3 px-2 text-center text-obsidian-muted">999722</td>
+                  <td className="py-3 px-2 text-center text-text-muted">999722</td>
                   <td className="py-3 px-2 text-right tabular-nums">₹{serviceBase.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   <td className="py-3 px-2 text-right tabular-nums">₹{serviceCgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   <td className="py-3 px-2 text-right tabular-nums">₹{serviceSgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                  <td className="py-3 px-3 text-right font-bold text-obsidian tabular-nums">
+                  <td className="py-3 px-3 text-right font-bold text-text tabular-nums">
                     ₹{serviceGross.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -275,22 +283,22 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
 
           {/* 4. PART B: RETAIL TAX INVOICE (HSN 3304) */}
           <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between pb-2 border-b border-rose-gold/20">
+            <div className="flex items-center justify-between pb-2 border-b border-border">
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-obsidian text-white flex items-center justify-center text-[10px] font-bold">
+                <span className="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold">
                   B
                 </span>
-                <h3 className="font-serif text-base font-bold text-obsidian">
+                <h3 className="font-heading text-base font-bold text-text">
                   Part B: Retail Luxury Cosmetic Tax Invoice
                 </h3>
               </div>
-              <span className="font-mono text-xs text-obsidian-subtle">
-                HSN Code: <strong className="text-obsidian">3304</strong>
+              <span className="font-mono text-xs text-text-muted">
+                HSN Code: <strong className="text-text">3304</strong>
               </span>
             </div>
 
             <table className="w-full text-left text-xs">
-              <thead className="bg-surface-cream/70 text-obsidian-subtle uppercase text-[10px] font-bold">
+              <thead className="bg-bg-alt text-text-muted uppercase text-[10px] font-bold">
                 <tr>
                   <th className="py-2.5 px-3">Cosmetic SKU & Batch Metadata</th>
                   <th className="py-2.5 px-2 text-center">HSN</th>
@@ -301,7 +309,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                   <th className="py-2.5 px-3 text-right">Gross Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-rose-gold/10 font-mono text-xs">
+              <tbody className="divide-y divide-border font-mono text-xs">
                 {products.map((p, idx) => {
                   const itemGross = p.price * p.quantity;
                   const itemBase = Math.round((itemGross / 1.18) * 100) / 100;
@@ -312,17 +320,17 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                   return (
                     <tr key={idx}>
                       <td className="py-3 px-3 font-sans">
-                        <p className="font-bold text-obsidian">{p.title}</p>
-                        <p className="text-[11px] text-obsidian-muted">
+                        <p className="font-bold text-text">{p.title}</p>
+                        <p className="text-[11px] text-text-muted">
                           Brand: {p.brand} • Batch: <strong className="font-mono">{p.batchNumber}</strong> • Exp: {p.expiryDate}
                         </p>
                       </td>
-                      <td className="py-3 px-2 text-center text-obsidian-muted">{p.hsnCode}</td>
+                      <td className="py-3 px-2 text-center text-text-muted">{p.hsnCode}</td>
                       <td className="py-3 px-2 text-center font-bold">{p.quantity}</td>
                       <td className="py-3 px-2 text-right tabular-nums">₹{itemBase.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                       <td className="py-3 px-2 text-right tabular-nums">₹{itemCgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                       <td className="py-3 px-2 text-right tabular-nums">₹{itemSgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-3 px-3 text-right font-bold text-obsidian tabular-nums">
+                      <td className="py-3 px-3 text-right font-bold text-text tabular-nums">
                         ₹{itemGross.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
@@ -333,54 +341,54 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
           </div>
 
           {/* 5. PART C: PLATFORM SETTLEMENT & ESCROW LEDGER SPLIT */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-surface-cream border border-rose-gold/25 space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-rose-gold/20">
+          <div className="p-4 sm:p-5 rounded-2xl bg-bg-alt border border-border space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-border">
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-champagne-dark text-white flex items-center justify-center text-[10px] font-bold">
+                <span className="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold">
                   C
                 </span>
-                <h4 className="font-serif text-sm font-bold text-obsidian">
+                <h4 className="font-heading text-sm font-bold text-text">
                   Part C: Platform Split Ledger & Partner Disbursement Summary
                 </h4>
               </div>
-              <span className="text-[10px] font-mono uppercase text-champagne-dark font-bold">
+              <span className="text-[10px] font-mono uppercase text-accent font-bold">
                 RBI Compliant Nodal Escrow Model
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3 bg-white rounded-xl border border-rose-gold/15">
-                <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
+              <div className="p-3 bg-card rounded-xl border border-border shadow-warm-xs">
+                <span className="text-[10px] uppercase font-bold text-text-muted block">
                   Total Customer Payment
                 </span>
-                <span className="font-mono text-base font-bold text-obsidian tabular-nums">
+                <span className="font-mono text-base font-bold text-text tabular-nums">
                   ₹{totalGrossPaid.toLocaleString('en-IN')}
                 </span>
-                <span className="text-[10px] text-obsidian-subtle block mt-1">
+                <span className="text-[10px] text-text-muted block mt-1">
                   Paid Deposit: ₹{depositPaidToday.toLocaleString('en-IN')} • Venue Bal: ₹{balanceAtVenue.toLocaleString('en-IN')}
                 </span>
               </div>
 
-              <div className="p-3 bg-white rounded-xl border border-rose-gold/15">
-                <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
+              <div className="p-3 bg-card rounded-xl border border-border shadow-warm-xs">
+                <span className="text-[10px] uppercase font-bold text-text-muted block">
                   Glamgo Platform Fee (18% / 12%)
                 </span>
-                <span className="font-mono text-base font-bold text-rose-gold tabular-nums">
+                <span className="font-mono text-base font-bold text-accent tabular-nums">
                   ₹{totalPlatformFee.toLocaleString('en-IN')}
                 </span>
-                <span className="text-[10px] text-obsidian-subtle block mt-1">
+                <span className="text-[10px] text-text-muted block mt-1">
                   Service Comm: ₹{serviceCommission} • Product Comm: ₹{productCommission}
                 </span>
               </div>
 
-              <div className="p-3 bg-white rounded-xl border border-rose-gold/15">
-                <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
+              <div className="p-3 bg-card rounded-xl border border-border shadow-warm-xs">
+                <span className="text-[10px] uppercase font-bold text-text-muted block">
                   Net Partner Disbursement
                 </span>
-                <span className="font-mono text-base font-bold text-emerald-700 tabular-nums">
+                <span className="font-mono text-base font-bold text-success tabular-nums">
                   ₹{(netArtistPayout + netVendorPayout).toLocaleString('en-IN')}
                 </span>
-                <span className="text-[10px] text-obsidian-subtle block mt-1">
+                <span className="text-[10px] text-text-muted block mt-1">
                   Artist Payout: ₹{netArtistPayout} • Vendor: ₹{netVendorPayout}
                 </span>
               </div>
@@ -388,22 +396,22 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
           </div>
 
           {/* 6. Footer Legal & Signatures */}
-          <div className="pt-4 border-t border-rose-gold/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-obsidian-muted">
+          <div className="pt-4 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-text-muted">
             <div className="space-y-0.5">
-              <p className="font-medium text-obsidian">Terms & Conditions:</p>
-              <p className="text-[11px] text-obsidian-subtle">
+              <p className="font-medium text-text">Terms & Conditions:</p>
+              <p className="text-[11px] text-text-muted">
                 1. Service fees are released from Escrow only upon client OTP verification.<br />
                 2. Unused cosmetics are eligible for white-glove exchange within 7 days.<br />
                 3. This is a computer-generated tax invoice and requires no physical signature.
               </p>
             </div>
 
-            <div className="sm:text-right font-mono text-[11px] text-obsidian">
-              <div className="inline-block p-2 border border-champagne/40 rounded-xl bg-champagne-light/30 text-center">
-                <span className="text-[10px] uppercase font-bold text-champagne-dark block">
+            <div className="sm:text-right font-mono text-[11px] text-text">
+              <div className="inline-block p-2 border border-border rounded-xl bg-fill text-center">
+                <span className="text-[10px] uppercase font-bold text-text-muted block">
                   Authorised Signatory
                 </span>
-                <span className="font-serif italic font-bold text-obsidian text-sm block mt-0.5">
+                <span className="font-heading font-bold text-text text-sm block mt-0.5">
                   Glamgo Finance & Escrow Cell
                 </span>
               </div>

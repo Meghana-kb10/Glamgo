@@ -64,7 +64,7 @@ export const LocationPickerSheet: React.FC<LocationPickerSheetProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-ink/75 backdrop-blur-sm"
+        className="fixed inset-0 bg-text/60 backdrop-blur-sm"
       />
 
       {/* Bottom Sheet on Mobile, Modal on Desktop */}
@@ -73,19 +73,19 @@ export const LocationPickerSheet: React.FC<LocationPickerSheetProps> = ({
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-        className="relative w-full max-w-lg bg-soft-ivory rounded-t-3xl sm:rounded-3xl border border-mist shadow-2xl overflow-hidden z-10 flex flex-col max-h-[85vh]"
+        className="relative w-full max-w-lg bg-card rounded-t-[24px] sm:rounded-[22px] border border-border shadow-warm-sheet overflow-hidden z-10 flex flex-col max-h-[85vh]"
       >
         {/* Header */}
-        <div className="p-5 border-b border-mist bg-white flex items-center justify-between">
+        <div className="p-5 border-b border-border bg-card flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-blush text-rose-plum flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-accent-soft text-accent flex items-center justify-center">
               <Compass className="w-5 h-5" />
             </div>
             <div>
-              <h3 id="location-picker-title" className="font-serif text-base sm:text-lg font-bold text-ink">
+              <h3 id="location-picker-title" className="font-heading text-base sm:text-lg font-bold text-text">
                 Select Your Service Area
               </h3>
-              <p className="text-xs text-mauve-grey">
+              <p className="text-xs text-text-muted">
                 Showing artists &amp; immediate doorstep availability
               </p>
             </div>
@@ -94,22 +94,22 @@ export const LocationPickerSheet: React.FC<LocationPickerSheetProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close location picker"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-mauve-grey hover:text-ink hover:bg-mist/40 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text hover:bg-fill/60 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Search & Custom Pincode Input */}
-        <div className="p-4 border-b border-mist/80 bg-white/70 space-y-3">
+        <div className="p-4 border-b border-border bg-bg-alt/50 space-y-3">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-mauve-grey" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search area, neighborhood, or city..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-mist bg-white text-xs text-ink placeholder:text-mauve-grey focus:outline-none focus:ring-2 focus:ring-rose-plum/30 focus:border-rose-plum"
+              className="w-full pl-10 pr-4 py-2.5 rounded-[14px] border border-border bg-card text-xs text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
             />
           </div>
 
@@ -121,12 +121,12 @@ export const LocationPickerSheet: React.FC<LocationPickerSheetProps> = ({
               value={customPincode}
               onChange={(e) => setCustomPincode(e.target.value.replace(/\D/g, ''))}
               placeholder="Enter 6-digit Pincode (e.g. 560038)"
-              className="flex-1 px-3.5 py-2 rounded-xl border border-mist bg-white text-xs text-ink placeholder:text-mauve-grey focus:outline-none focus:ring-2 focus:ring-rose-plum/30"
+              className="flex-1 px-3.5 py-2 rounded-[14px] border border-border bg-card text-xs text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent"
             />
             <button
               type="submit"
               disabled={customPincode.length !== 6}
-              className="px-4 py-2 rounded-xl bg-rose-plum text-white text-xs font-bold hover:bg-deep-plum disabled:opacity-50 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[14px] bg-accent text-white text-xs font-bold hover:bg-accent-pressed disabled:opacity-50 transition-colors cursor-pointer"
             >
               Apply
             </button>
@@ -135,7 +135,7 @@ export const LocationPickerSheet: React.FC<LocationPickerSheetProps> = ({
 
         {/* Location List */}
         <div className="p-4 overflow-y-auto space-y-2 flex-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-mauve-grey px-1 block mb-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted px-1 block mb-2">
             Popular Neighborhoods in Bengaluru
           </span>
 
@@ -147,23 +147,23 @@ export const LocationPickerSheet: React.FC<LocationPickerSheetProps> = ({
                 key={loc.id}
                 type="button"
                 onClick={() => handleSelect(loc)}
-                className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                className={`w-full p-3.5 rounded-[16px] border text-left flex items-center justify-between transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-rose-plum bg-blush/30 shadow-xs'
-                    : 'border-mist bg-white hover:border-rose-plum/30'
+                    ? 'border-accent bg-accent-soft/40 shadow-warm-xs'
+                    : 'border-border bg-card hover:border-accent/40 hover:bg-bg-alt/30'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isSelected ? 'bg-rose-plum text-white' : 'bg-mist/40 text-mauve-grey'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isSelected ? 'bg-accent text-white' : 'bg-fill text-text-muted'}`}>
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-ink">{loc.name}</p>
-                    <p className="text-[11px] text-mauve-grey">{loc.city} • Pincode {loc.pincode}</p>
+                    <p className="text-xs font-bold text-text">{loc.name}</p>
+                    <p className="text-[11px] text-text-muted">{loc.city} • Pincode {loc.pincode}</p>
                   </div>
                 </div>
                 {isSelected && (
-                  <Check className="w-4 h-4 text-rose-plum" />
+                  <Check className="w-4 h-4 text-accent" />
                 )}
               </button>
             );

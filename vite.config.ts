@@ -16,6 +16,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    sourcemap: true,
     cssCodeSplit: true,
     chunkSizeWarningLimit: 600,
     rollupOptions: {
@@ -25,17 +26,14 @@ export default defineConfig({
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
             }
-            if (id.includes('framer-motion')) {
+            if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils')) {
               return 'vendor-motion';
             }
             if (id.includes('canvas-confetti')) {
               return 'vendor-confetti';
             }
-            if (id.includes('react-dom')) {
-              return 'vendor-react-dom';
-            }
-            if (id.includes('/react/') || id.endsWith('/react')) {
-              return 'vendor-react-core';
+            if (id.includes('react') || id.includes('scheduler')) {
+              return 'vendor-react';
             }
             return 'vendor-utils';
           }

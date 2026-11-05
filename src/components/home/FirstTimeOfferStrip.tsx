@@ -24,12 +24,12 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
   };
 
   return (
-    <section aria-labelledby="first-time-offers-title" className="py-4">
+    <section aria-labelledby="first-time-offers-title" className="py-2">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3.5">
         <h2
           id="first-time-offers-title"
-          className="font-serif text-lg sm:text-xl font-bold text-ink"
+          className="font-serif text-lg sm:text-xl font-bold text-text"
         >
           Glamgo First-Time Privileges
         </h2>
@@ -37,7 +37,7 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
           <button
             type="button"
             onClick={onOpenOffers}
-            className="text-xs font-semibold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer"
+            className="text-xs font-semibold text-accent hover:text-accent-pressed flex items-center gap-1 cursor-pointer"
           >
             <span>All offers</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -46,7 +46,7 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
       </div>
 
       {/* 3 Small Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
         {FIRST_TIME_OFFERS.map((offer) => {
           const Icon = getIcon(offer.iconName);
           return (
@@ -59,21 +59,21 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
                   onOpenOffers();
                 }
               }}
-              className="p-4 rounded-2xl bg-white border border-mist shadow-2xs hover:border-rose-plum/30 hover:shadow-xs transition-all flex items-start gap-3.5 cursor-pointer group"
+              className="p-4 sm:p-5 rounded-[18px] bg-card border border-border shadow-warm-card hover:border-accent/40 hover:shadow-warm-md transition-all flex items-start gap-3.5 cursor-pointer group"
             >
-              <div className="w-10 h-10 rounded-xl bg-blush flex items-center justify-center text-rose-plum shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-[14px] bg-fill flex items-center justify-center text-accent-pressed shrink-0 group-hover:scale-105 transition-transform">
                 <Icon className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-1">
-                  <h3 className="font-heading font-bold text-xs sm:text-sm text-ink group-hover:text-rose-plum transition-colors">
+                  <h3 className="font-heading font-bold text-xs sm:text-sm text-text group-hover:text-accent transition-colors">
                     {offer.title}
                   </h3>
-                  <span className="text-[10px] font-bold text-rose-plum bg-blush/80 px-2 py-0.5 rounded-full shrink-0">
+                  <span className="text-[10px] font-bold text-accent-pressed bg-accent-soft px-2.5 py-0.5 rounded-full shrink-0 border border-accent/20">
                     {offer.tag}
                   </span>
                 </div>
-                <p className="text-[11px] text-mauve-grey mt-0.5 leading-snug">
+                <p className="text-[11px] text-text-muted mt-0.5 leading-snug">
                   {offer.subtitle}
                 </p>
               </div>

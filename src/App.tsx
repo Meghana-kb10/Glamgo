@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Sparkles, X, Search, MapPin, ChevronDown, ChevronRight, Crown, Droplets, Scissors, Gem, Flower2, UserCheck } from 'lucide-react';
 import { AppShell, Topbar } from './components/layout';
-import { HeroSection } from './components/HeroSection';
 import { FilterBar, FilterState } from './components/FilterBar';
 import { ArtistCard } from './components/ArtistCard';
 import { ProductCard } from './components/ProductCard';
@@ -14,33 +13,11 @@ import { spatialSpring } from './constants/motion';
 
 export type MobileTabType = 'home' | 'categories' | 'bookings' | 'shop' | 'profile';
 import { LocationPickerSheet } from './components/home/LocationPickerSheet';
-import { OfferBannerCarousel } from './components/home/OfferBannerCarousel';
-import { SpotlightRail } from './components/home/SpotlightRail';
-import { CategoryGrid } from './components/home/CategoryGrid';
-import { BookAgainRail } from './components/home/BookAgainRail';
-import { SalonPackagesRail } from './components/home/SalonPackagesRail';
-import { MostBookedRail } from './components/home/MostBookedRail';
-import { TopProsRail } from './components/home/TopProsRail';
-import { BridalPackagesRail } from './components/home/BridalPackagesRail';
-import { ArtistServicesExplorer } from './components/home/ArtistServicesExplorer';
-import { ProductRail } from './components/home/ProductRail';
-import { TrustStrip } from './components/home/TrustStrip';
-import { SearchModal } from './components/search/SearchModal';
-import { ServiceDetailModal } from './components/catalog/ServiceDetailModal';
-import { CategoryListingPage } from './components/catalog/CategoryListingPage';
-import { ProductCatalog } from './components/shop/ProductCatalog';
 import { HeroHome } from './components/home/HeroHome';
 import { CategoryTiles } from './components/home/CategoryTiles';
 import { FirstTimeOfferStrip } from './components/home/FirstTimeOfferStrip';
 import { PackageBuilderCard } from './components/home/PackageBuilderCard';
-import { WhyGlamgoStrip } from './components/home/WhyGlamgoStrip';
-import { ReviewCarousel } from './components/home/ReviewCarousel';
-import { BridalBannerCard } from './components/home/BridalBannerCard';
-import { HowItWorksStrip } from './components/home/HowItWorksStrip';
-import { Footer } from './components/layout/Footer';
 import { SafetyPromiseModal } from './components/home/SafetyPromiseModal';
-import { OffersPage } from './components/offers/OffersPage';
-import { UiShowcase } from './components/ui/UiShowcase';
 import { AudienceType } from './config/marketing';
 import {
   marketplaceService,
@@ -80,6 +57,48 @@ const ProductVendorDashboard = React.lazy(() =>
 );
 const AdminCommandCenter = React.lazy(() =>
   import('./components/AdminCommandCenter').then((m) => ({ default: m.AdminCommandCenter }))
+);
+const SearchModal = React.lazy(() =>
+  import('./components/search/SearchModal').then((m) => ({ default: m.SearchModal }))
+);
+const ServiceDetailModal = React.lazy(() =>
+  import('./components/catalog/ServiceDetailModal').then((m) => ({ default: m.ServiceDetailModal }))
+);
+const CategoryListingPage = React.lazy(() =>
+  import('./components/catalog/CategoryListingPage').then((m) => ({ default: m.CategoryListingPage }))
+);
+const ProductCatalog = React.lazy(() =>
+  import('./components/shop/ProductCatalog').then((m) => ({ default: m.ProductCatalog }))
+);
+const OffersPage = React.lazy(() =>
+  import('./components/offers/OffersPage').then((m) => ({ default: m.OffersPage }))
+);
+const MostBookedRail = React.lazy(() =>
+  import('./components/home/MostBookedRail').then((m) => ({ default: m.MostBookedRail }))
+);
+const TopProsRail = React.lazy(() =>
+  import('./components/home/TopProsRail').then((m) => ({ default: m.TopProsRail }))
+);
+const WhyGlamgoStrip = React.lazy(() =>
+  import('./components/home/WhyGlamgoStrip').then((m) => ({ default: m.WhyGlamgoStrip }))
+);
+const ReviewCarousel = React.lazy(() =>
+  import('./components/home/ReviewCarousel').then((m) => ({ default: m.ReviewCarousel }))
+);
+const BridalBannerCard = React.lazy(() =>
+  import('./components/home/BridalBannerCard').then((m) => ({ default: m.BridalBannerCard }))
+);
+const HowItWorksStrip = React.lazy(() =>
+  import('./components/home/HowItWorksStrip').then((m) => ({ default: m.HowItWorksStrip }))
+);
+const Footer = React.lazy(() =>
+  import('./components/layout/Footer').then((m) => ({ default: m.Footer }))
+);
+const UiShowcase = React.lazy(() =>
+  import('./components/ui/UiShowcase').then((m) => ({ default: m.UiShowcase }))
+);
+const CustomerProfileModal = React.lazy(() =>
+  import('./components/profile/CustomerProfileModal').then((m) => ({ default: m.CustomerProfileModal }))
 );
 
 import { MOCK_ARTISTS, MOCK_PRODUCTS } from './data/mockData';
@@ -154,6 +173,23 @@ export const App: React.FC = () => {
 
   // Customer Reservations & Orders Hub Modal (PRD CUST-06)
   const [isBookingsModalOpen, setIsBookingsModalOpen] = useState(false);
+
+  // Customer Profile & Account Modal
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileModalTab, setProfileModalTab] = useState<'profile' | 'addresses' | 'settings' | 'help' | 'terms' | 'privacy' | 'cancellation'>('profile');
+
+  // Offline status telemetry
+  const [isOffline, setIsOffline] = useState(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+  useEffect(() => {
+    const onOnline = () => setIsOffline(false);
+    const onOffline = () => setIsOffline(true);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+    };
+  }, []);
 
   // Auth Modal State & Deferred Checkout Callback
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -717,11 +753,36 @@ export const App: React.FC = () => {
       if (!isAuthenticated) {
         handleOpenAuth('login');
       } else {
-        setIsBookingsModalOpen(true);
+        setProfileModalTab('profile');
+        setIsProfileModalOpen(true);
       }
       setMobileActiveTab('profile');
+    } else if (route === 'addresses') {
+      if (!isAuthenticated) {
+        handleOpenAuth('login');
+      } else {
+        setProfileModalTab('addresses');
+        setIsProfileModalOpen(true);
+      }
+    } else if (route === 'settings') {
+      if (!isAuthenticated) {
+        handleOpenAuth('login');
+      } else {
+        setProfileModalTab('settings');
+        setIsProfileModalOpen(true);
+      }
+    } else if (route === 'terms') {
+      setProfileModalTab('terms');
+      setIsProfileModalOpen(true);
+    } else if (route === 'privacy') {
+      setProfileModalTab('privacy');
+      setIsProfileModalOpen(true);
+    } else if (route === 'cancellation') {
+      setProfileModalTab('cancellation');
+      setIsProfileModalOpen(true);
     } else if (route === 'help') {
-      window.open('mailto:support@glamgo.in', '_blank');
+      setProfileModalTab('help');
+      setIsProfileModalOpen(true);
     } else if (route === 'about') {
       const el = document.getElementById('trust-strip-section');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -739,7 +800,15 @@ export const App: React.FC = () => {
 
   return (
     <LayoutGroup id="glamgo-app">
-      <div className="min-h-screen bg-canvas-light text-obsidian flex flex-col selection:bg-rose-gold/20 selection:text-obsidian pb-24">
+      <div className="min-h-screen bg-bg text-text flex flex-col selection:bg-accent-soft selection:text-accent-pressed pb-24">
+        
+        {/* Offline Status Alert Banner */}
+        {isOffline && (
+          <div className="bg-accent-pressed text-white text-xs font-semibold py-2 px-4 text-center flex items-center justify-center gap-2 z-50">
+            <span className="w-2 h-2 rounded-full bg-star animate-pulse" />
+            <span>You are currently offline. Active slot reservations and bag items remain cached locally.</span>
+          </div>
+        )}
         
         {/* Topbar for non-customer portals (Pro Studio, Vendor, Admin) */}
         {activePortal !== 'landing' && activePortal !== 'customer' && (
@@ -784,7 +853,7 @@ export const App: React.FC = () => {
 
         {/* Main Ecosystem Switcher View with Spatial Page Transitions */}
         <main className="flex-1">
-          <Suspense fallback={<div className="p-8 flex items-center justify-center min-h-[40vh]"><div className="w-8 h-8 rounded-full border-2 border-rose-plum border-t-transparent animate-spin" /></div>}>
+          <Suspense fallback={<div className="p-8 flex items-center justify-center min-h-[40vh]"><div className="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin" /></div>}>
             <AnimatePresence mode="wait">
             {/* PORTAL 0: Modern Project Showcase & Motion Laboratory */}
             {activePortal === 'landing' && (
@@ -809,6 +878,7 @@ export const App: React.FC = () => {
             {/* PORTAL 1: Customer Marketplace wrapped in AppShell */}
             {activePortal === 'customer' && (
               <AppShell
+                key="customer"
                 activeRoute={activeNavRoute}
                 onNavigate={handleNavRoute}
                 currentLocation={currentLocation}
@@ -855,19 +925,19 @@ export const App: React.FC = () => {
               >
                 {/* Greeting Header (Logged-in only) */}
                 {isAuthenticated && user && (
-                  <div className="mb-4 bg-blush/40 border border-mist rounded-2xl p-4 flex items-center justify-between">
+                  <div className="mb-4 bg-bg-alt border border-border rounded-[18px] p-4 flex items-center justify-between shadow-warm-sm">
                     <div>
-                      <h1 className="font-heading text-lg sm:text-xl font-bold text-ink">
+                      <h1 className="font-heading text-lg sm:text-xl font-bold text-text">
                         Good day, {user.fullName.split(' ')[0]}
                       </h1>
-                      <p className="text-xs text-mauve-grey mt-0.5">
+                      <p className="text-xs text-text-muted mt-0.5">
                         What luxury beauty treatment would you like to experience today?
                       </p>
                     </div>
                   </div>
                 )}
 
-                {activeNavRoute === 'ui' || (typeof window !== 'undefined' && window.location.search.includes('ui=true')) ? (
+                {Boolean((import.meta as any).env?.DEV) && (activeNavRoute === 'ui' || (typeof window !== 'undefined' && window.location.search.includes('ui=true'))) ? (
                   <UiShowcase />
                 ) : activeNavRoute === 'offers' ? (
                   /* Dedicated Offers & Coupon Privileges Page */
@@ -910,7 +980,7 @@ export const App: React.FC = () => {
                   />
                 ) : (
                   /* Main Customer Marketplace Home (Exact 10 Section Hierarchy) */
-                  <div className="space-y-6 pb-6">
+                  <div className="space-y-8 sm:space-y-10 pb-6">
                     {/* a) Hero Section: Headlines, Search Bar, Quick Chips, Photo Collage & Stat Strip */}
                     <div id="hero-section">
                       <HeroHome
@@ -954,74 +1024,82 @@ export const App: React.FC = () => {
 
                     {/* e) Most Booked Services Row & Top-Rated Professionals Row */}
                     <div id="most-booked-section" className="space-y-6">
-                      <MostBookedRail
-                        services={marketplaceService.getMostBookedServices()}
-                        cartQuantities={
-                          activeServiceCart?.package.id ? { [activeServiceCart.package.id]: 1 } : {}
-                        }
-                        onAddService={handleBookDetailedService}
-                        onUpdateQuantity={(id, q) => {
-                          if (q === 0) handleClearService();
-                        }}
-                        onSelectService={(srv) => setSelectedServiceForDetail(srv)}
-                      />
+                      <Suspense fallback={null}>
+                        <MostBookedRail
+                          services={marketplaceService.getMostBookedServices()}
+                          cartQuantities={
+                            activeServiceCart?.package.id ? { [activeServiceCart.package.id]: 1 } : {}
+                          }
+                          onAddService={handleBookDetailedService}
+                          onUpdateQuantity={(id, q) => {
+                            if (q === 0) handleClearService();
+                          }}
+                          onSelectService={(srv) => setSelectedServiceForDetail(srv)}
+                        />
+                      </Suspense>
 
                       <div id="top-pros-rail">
-                        <TopProsRail
-                          artists={marketplaceService.getTopProfessionals()}
-                          favorites={favorites}
-                          onToggleFavorite={handleToggleFavoritePro}
-                          onSelectArtist={setSelectedArtistForModal}
-                        />
+                        <Suspense fallback={null}>
+                          <TopProsRail
+                            artists={marketplaceService.getTopProfessionals()}
+                            favorites={favorites}
+                            onToggleFavorite={handleToggleFavoritePro}
+                            onSelectArtist={setSelectedArtistForModal}
+                          />
+                        </Suspense>
                       </div>
                     </div>
 
                     {/* f) "Why Glamgo": 4 Icon Cards + "Products we use" Brand Placeholder Strip */}
                     <div id="why-glamgo-section">
-                      <WhyGlamgoStrip
-                        onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
-                      />
+                      <Suspense fallback={null}>
+                        <WhyGlamgoStrip
+                          onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
+                        />
+                      </Suspense>
                     </div>
 
                     {/* g) Real Reviews Carousel (Swipe, No Autoplay) */}
                     <div id="reviews-carousel-section">
-                      <ReviewCarousel
-                        onViewAllReviews={() =>
-                          toast.info('Displaying 45,000+ verified customer reviews across metros.')
-                        }
-                      />
+                      <Suspense fallback={null}>
+                        <ReviewCarousel
+                          onViewAllReviews={() =>
+                            toast.info('Displaying 45,000+ verified customer reviews across metros.')
+                          }
+                        />
+                      </Suspense>
                     </div>
 
                     {/* h) Bridal & Occasion Banner: One Large Rounded Card */}
                     <div id="bridal-banner-section">
-                      <BridalBannerCard
-                        onSelectCategory={(slug) => setSelectedCategoryListing(slug)}
-                      />
+                      <Suspense fallback={null}>
+                        <BridalBannerCard
+                          onSelectCategory={(slug) => setSelectedCategoryListing(slug)}
+                        />
+                      </Suspense>
                     </div>
 
                     {/* i) "How It Works": 3 Steps with Icons */}
                     <div id="how-it-works-section">
-                      <HowItWorksStrip />
+                      <Suspense fallback={null}>
+                        <HowItWorksStrip />
+                      </Suspense>
                     </div>
 
                     {/* j) Marketplace Comprehensive Footer */}
                     <div id="footer-section">
-                      <Footer
-                        onNavigatePortal={handleNavigatePortal}
-                        onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
-                        onOpenHelp={() => window.open('mailto:support@glamgo.in', '_blank')}
-                      />
+                      <Suspense fallback={null}>
+                        <Footer
+                          onNavigatePortal={handleNavigatePortal}
+                          onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
+                          onOpenHelp={() => window.open('mailto:support@glamgo.in', '_blank')}
+                        />
+                      </Suspense>
                     </div>
                   </div>
                 )}
               </AppShell>
             )}
-
-            {/* Safety Promise Modal Dialog */}
-            <SafetyPromiseModal
-              isOpen={isSafetyModalOpen}
-              onClose={() => setIsSafetyModalOpen(false)}
-            />
 
             {/* PORTAL 2: Beauty Professional Studio Dashboard */}
             {activePortal === 'pro' && (
@@ -1064,6 +1142,12 @@ export const App: React.FC = () => {
           </AnimatePresence>
           </Suspense>
         </main>
+
+        {/* Safety Promise Modal Dialog */}
+        <SafetyPromiseModal
+          isOpen={isSafetyModalOpen}
+          onClose={() => setIsSafetyModalOpen(false)}
+        />
 
       {/* Shared Element Artist Profile Modal */}
       <Suspense fallback={null}>
@@ -1117,19 +1201,19 @@ export const App: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md bg-white border border-rose-plum/30 rounded-2xl shadow-xl p-3.5 z-40 flex items-center justify-between gap-3"
+          className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md bg-card border border-border rounded-[18px] shadow-warm-lg p-3.5 z-40 flex items-center justify-between gap-3"
           role="status"
           aria-live="polite"
         >
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-xl bg-blush text-rose-plum flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-[12px] bg-accent-soft text-accent flex items-center justify-center shrink-0">
               <Sparkles className="w-4 h-4" />
             </div>
             <div className="overflow-hidden">
-              <p className="text-xs font-bold text-ink truncate">
+              <p className="text-xs font-bold text-text truncate">
                 Resume your booking: {resumePromptDraft.activeService?.package?.name || 'Selected Service'}
               </p>
-              <p className="text-[11px] text-mauve-grey truncate">
+              <p className="text-[11px] text-text-muted truncate">
                 Pick up right where you left off
               </p>
             </div>
@@ -1141,7 +1225,7 @@ export const App: React.FC = () => {
                 setIsBookingDrawerOpen(true);
                 setResumePromptDraft(null);
               }}
-              className="px-3 py-1.5 rounded-lg bg-rose-plum text-white text-xs font-bold hover:bg-deep-plum transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-[12px] bg-accent text-white text-xs font-bold hover:bg-accent-pressed transition-colors cursor-pointer"
             >
               Resume →
             </button>
@@ -1152,7 +1236,7 @@ export const App: React.FC = () => {
                 setResumePromptDraft(null);
               }}
               aria-label="Dismiss resume prompt"
-              className="p-1 rounded-lg text-mauve-grey hover:text-ink cursor-pointer"
+              className="p-1 rounded-lg text-text-muted hover:text-text cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -1180,11 +1264,6 @@ export const App: React.FC = () => {
         )}
       </Suspense>
 
-      {/* First-time Splash Screen & Onboarding Carousel */}
-      <Suspense fallback={null}>
-        <SplashOnboarding />
-      </Suspense>
-
       {/* Customer Post-Booking Management Hub (PRD CUST-06) */}
       <Suspense fallback={null}>
         {isBookingsModalOpen && (
@@ -1192,6 +1271,17 @@ export const App: React.FC = () => {
             isOpen={isBookingsModalOpen}
             onClose={() => setIsBookingsModalOpen(false)}
             onBookAgain={handleBookAgain}
+          />
+        )}
+      </Suspense>
+
+      {/* Customer Profile & Legal Policies Modal */}
+      <Suspense fallback={null}>
+        {isProfileModalOpen && (
+          <CustomerProfileModal
+            isOpen={isProfileModalOpen}
+            onClose={() => setIsProfileModalOpen(false)}
+            initialTab={profileModalTab}
           />
         )}
       </Suspense>
@@ -1205,30 +1295,38 @@ export const App: React.FC = () => {
       />
 
       {/* Phase 4: Live Global Typo-Tolerant Search Modal (PRD HOME-2) */}
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        onSelectService={(srv) => {
-          setSelectedServiceForDetail(srv);
-          setIsSearchOpen(false);
-        }}
-        onSelectArtist={(art) => {
-          setSelectedArtistForModal(art);
-          setIsSearchOpen(false);
-        }}
-        onSelectProduct={(prod) => {
-          handleAddToCart(prod);
-          setIsSearchOpen(false);
-        }}
-      />
+      <Suspense fallback={null}>
+        {isSearchOpen && (
+          <SearchModal
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            onSelectService={(srv) => {
+              setSelectedServiceForDetail(srv);
+              setIsSearchOpen(false);
+            }}
+            onSelectArtist={(art) => {
+              setSelectedArtistForModal(art);
+              setIsSearchOpen(false);
+            }}
+            onSelectProduct={(prod) => {
+              handleAddToCart(prod);
+              setIsSearchOpen(false);
+            }}
+          />
+        )}
+      </Suspense>
 
       {/* Phase 4: Full Service Detail Modal/Sheet (PRD SVC-1..7) */}
-      <ServiceDetailModal
-        isOpen={!!selectedServiceForDetail}
-        onClose={() => setSelectedServiceForDetail(null)}
-        service={selectedServiceForDetail}
-        onBookService={(srv) => handleBookDetailedService(srv)}
-      />
+      <Suspense fallback={null}>
+        {Boolean(selectedServiceForDetail) && (
+          <ServiceDetailModal
+            isOpen={!!selectedServiceForDetail}
+            onClose={() => setSelectedServiceForDetail(null)}
+            service={selectedServiceForDetail}
+            onBookService={(srv) => handleBookDetailedService(srv)}
+          />
+        )}
+      </Suspense>
 
       {/* Floating Ecosystem Portal Switcher (bottom-center, visible on active portals) */}
       {activePortal !== 'landing' && (

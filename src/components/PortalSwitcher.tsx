@@ -36,9 +36,9 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
             transition={snappySpring}
             role="tablist"
             aria-label="Platform Ecosystem Navigation"
-            className="mb-2 p-1.5 rounded-2xl bg-ink/95 backdrop-blur-xl border border-champagne-gold/30 shadow-2xl flex items-center gap-1.5 max-w-full overflow-x-auto scrollbar-none"
+            className="mb-2 p-1.5 rounded-2xl bg-card/95 backdrop-blur-xl border border-border shadow-warm-modal flex items-center gap-1.5 max-w-full overflow-x-auto scrollbar-none"
           >
-            <span className="px-3 text-xs font-bold uppercase tracking-wider text-champagne-gold select-none">
+            <span className="px-3 text-xs font-bold uppercase tracking-wider text-accent select-none">
               Ecosystem:
             </span>
 
@@ -55,11 +55,11 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
                   }}
                   className={`min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide flex items-center gap-1.5 transition-all select-none shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-white text-ink font-bold shadow-xs'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                      ? 'bg-fill text-accent-pressed font-bold border border-accent/20 shadow-warm-xs'
+                      : 'text-text-muted hover:text-text hover:bg-fill/50'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-ink' : 'text-champagne-gold'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-accent-pressed' : 'text-accent'}`} />
                   <span className="whitespace-nowrap">{label}</span>
                 </button>
               );
@@ -68,7 +68,7 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-colors ml-1 cursor-pointer"
+              className="p-1.5 rounded-xl text-text-muted hover:text-text hover:bg-fill transition-colors ml-1 cursor-pointer"
               title="Close Portal Switcher"
               aria-label="Close"
             >
@@ -84,12 +84,12 @@ export const PortalSwitcher: React.FC<PortalSwitcherProps> = ({
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="px-3.5 py-2 rounded-full bg-ink/90 hover:bg-ink text-white text-xs font-medium border border-champagne-gold/40 shadow-xl backdrop-blur-md flex items-center gap-2 cursor-pointer transition-all"
+        className="px-3.5 py-2 rounded-full bg-card hover:bg-fill text-text text-xs font-medium border border-border shadow-warm backdrop-blur-md flex items-center gap-2 cursor-pointer transition-all"
         title="Switch Ecosystem Portal"
       >
-        <Compass className="w-3.5 h-3.5 text-champagne-gold animate-spin-slow" />
+        <Compass className="w-3.5 h-3.5 text-accent animate-spin-slow" />
         <span className="font-semibold">{currentPortalLabel}</span>
-        {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-champagne-gold" /> : <ChevronUp className="w-3.5 h-3.5 text-champagne-gold" />}
+        {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-accent" /> : <ChevronUp className="w-3.5 h-3.5 text-accent" />}
       </motion.button>
     </div>
   );

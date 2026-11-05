@@ -82,27 +82,27 @@ export const ProductVendorDashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Vendor Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-rose-gold/15">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-champagne-dark bg-champagne-light/70 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-star bg-fill px-2.5 py-0.5 rounded-full">
               Vendor Fulfillment Node
             </span>
-            <span className="text-xs text-obsidian-subtle font-mono">
+            <span className="text-xs text-text-muted/80 font-mono">
               Hub ID: BOM-BKC-HUB-04 • POST /api/v1/vendor/inventory
             </span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-obsidian mt-1.5">
+          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-text mt-1.5">
             Luxury Cosmetics Inventory & Dispatch
           </h1>
-          <p className="text-xs sm:text-sm text-obsidian-muted">
+          <p className="text-xs sm:text-sm text-text-muted">
             Track real-time SKU levels bundled with bridal appointments, generate instant Bluedart/Delhivery airway bills.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-2xl bg-white border border-rose-gold/20 shadow-sm text-right">
-            <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
+          <div className="px-4 py-2 rounded-2xl bg-card border border-border shadow-sm text-right">
+            <span className="text-[10px] uppercase font-bold text-text-muted/80 block">
               Auto-Dispatch Mode
             </span>
             <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 justify-end">
@@ -114,24 +114,24 @@ export const ProductVendorDashboard: React.FC = () => {
       </div>
 
       {/* Inventory Table Card */}
-      <div className="bg-white rounded-3xl border border-rose-gold/20 shadow-luxury overflow-hidden">
-        <div className="px-6 py-4 border-b border-rose-gold/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-card rounded-3xl border border-border shadow-warm-xs overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="font-serif text-lg font-bold text-obsidian">
+            <h2 className="font-heading text-lg font-bold text-text">
               Active Cosmetic SKUs & Bundles
             </h2>
-            <span className="text-xs text-obsidian-muted">
+            <span className="text-xs text-text-muted">
               Live database state tied to `products` and `product_variants` tables
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-cream border border-rose-gold/15 text-xs">
-              <Search className="w-3.5 h-3.5 text-rose-gold" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-bg-alt border border-border text-xs">
+              <Search className="w-3.5 h-3.5 text-accent" />
               <input
                 type="text"
                 placeholder="Search SKU code or brand..."
-                className="bg-transparent outline-none text-obsidian text-xs font-medium"
+                className="bg-transparent outline-none text-text text-xs font-medium"
               />
             </div>
           </div>
@@ -140,7 +140,7 @@ export const ProductVendorDashboard: React.FC = () => {
         {/* Table View */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-surface-cream/50 text-obsidian-subtle uppercase text-[10px] tracking-wider border-b border-rose-gold/15">
+            <thead className="bg-bg-alt/50 text-text-muted/80 uppercase text-[10px] tracking-wider border-b border-border">
               <tr>
                 <th className="px-6 py-3.5">SKU & Item Name</th>
                 <th className="px-6 py-3.5">Shade / Size</th>
@@ -161,27 +161,27 @@ export const ProductVendorDashboard: React.FC = () => {
                     : 'IN_STOCK';
 
                 return (
-                  <tr key={v.id} className="hover:bg-surface-cream/30 transition-colors">
+                  <tr key={v.id} className="hover:bg-bg-alt/30 transition-colors">
                     {/* SKU & Brand */}
                     <td className="px-6 py-4">
-                      <span className="font-mono text-[10px] text-obsidian-subtle block">
+                      <span className="font-mono text-[10px] text-text-muted/80 block">
                         {v.sku}
                       </span>
-                      <span className="font-semibold text-obsidian text-sm block">
+                      <span className="font-semibold text-text text-sm block">
                         {prod?.title || 'Luxury Cosmetic Item'}
                       </span>
-                      <span className="text-xs text-rose-gold font-medium">
+                      <span className="text-xs text-accent font-medium">
                         {prod?.brand_name || 'Charlotte Tilbury'}
                       </span>
                     </td>
 
                     {/* Shade / Size */}
-                    <td className="px-6 py-4 text-obsidian-muted font-medium">
+                    <td className="px-6 py-4 text-text-muted font-medium">
                       {v.shade_name ? (
                         <div className="flex items-center gap-1.5">
                           {v.shade_hex && (
                             <span
-                              className="w-3.5 h-3.5 rounded-full border border-gray-300"
+                              className="w-3.5 h-3.5 rounded-full border border-border"
                               style={{ backgroundColor: v.shade_hex }}
                             />
                           )}
@@ -198,24 +198,24 @@ export const ProductVendorDashboard: React.FC = () => {
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           onClick={() => handleAdjustStock(v.id, -1)}
-                          className="p-1 rounded-md bg-surface-cream hover:bg-rose-blush border border-rose-gold/20"
+                          className="p-1 rounded-md bg-bg-alt hover:bg-accent-soft border border-border"
                         >
-                          <Minus className="w-3 h-3 text-obsidian" />
+                          <Minus className="w-3 h-3 text-text" />
                         </motion.button>
 
-                        <span className="font-mono text-sm font-bold text-obsidian w-8 text-center tabular-nums">
+                        <span className="font-mono text-sm font-bold text-text w-8 text-center tabular-nums">
                           {v.stock_quantity}
                         </span>
 
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           onClick={() => handleAdjustStock(v.id, 1)}
-                          className="p-1 rounded-md bg-surface-cream hover:bg-rose-blush border border-rose-gold/20"
+                          className="p-1 rounded-md bg-bg-alt hover:bg-accent-soft border border-border"
                         >
-                          <Plus className="w-3 h-3 text-obsidian" />
+                          <Plus className="w-3 h-3 text-text" />
                         </motion.button>
                       </div>
-                      <span className="text-[10px] text-obsidian-subtle text-center block mt-1">
+                      <span className="text-[10px] text-text-muted/80 text-center block mt-1">
                         {v.reserved_quantity} held in carts
                       </span>
                     </td>
@@ -241,7 +241,7 @@ export const ProductVendorDashboard: React.FC = () => {
                     </td>
 
                     {/* Price */}
-                    <td className="px-6 py-4 font-mono font-bold text-obsidian tabular-nums">
+                    <td className="px-6 py-4 font-mono font-bold text-text tabular-nums">
                       ₹{v.retail_price.toLocaleString('en-IN')}
                     </td>
 
@@ -253,16 +253,16 @@ export const ProductVendorDashboard: React.FC = () => {
                         transition={snappySpring}
                         onClick={(e) => handleGenerateLabel(v.id, e)}
                         disabled={generatingLabelId === v.id}
-                        className="px-3.5 py-1.5 rounded-xl bg-obsidian hover:bg-obsidian-deep text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm transition-all"
+                        className="px-3.5 py-1.5 rounded-xl bg-accent hover:bg-accent-pressed text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm transition-all"
                       >
                         {generatingLabelId === v.id ? (
                           <>
-                            <Sparkles className="w-3.5 h-3.5 text-champagne-light animate-spin" />
+                            <Sparkles className="w-3.5 h-3.5 text-star-light animate-spin" />
                             <span>Calling Logistics API...</span>
                           </>
                         ) : (
                           <>
-                            <FileText className="w-3.5 h-3.5 text-champagne-light" />
+                            <FileText className="w-3.5 h-3.5 text-star-light" />
                             <span>Generate 3PL AWB</span>
                           </>
                         )}
@@ -277,21 +277,21 @@ export const ProductVendorDashboard: React.FC = () => {
       </div>
 
       {/* 3PL Courier Carrier Webhook Simulator (PRD Section 4.3 & VEND-03) */}
-      <div className="p-6 rounded-3xl bg-white border border-rose-gold/20 shadow-luxury space-y-4">
+      <div className="p-6 rounded-3xl bg-card border border-border shadow-warm-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-rose-gold" />
-              <h3 className="font-serif text-lg font-bold text-obsidian">
+              <Truck className="w-4 h-4 text-accent" />
+              <h3 className="font-heading text-lg font-bold text-text">
                 3PL Courier Dispatch &amp; Carrier Webhook Simulator
               </h3>
             </div>
-            <p className="text-xs text-obsidian-muted mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               Simulate carrier status callbacks (`POST /api/v1/webhooks/logistics`). Advancing to `DELIVERED` automatically transitions sub-orders and starts the $T+7$ day escrow payout window.
             </p>
           </div>
 
-          <span className="font-mono text-xs text-obsidian bg-surface-cream px-3 py-1 rounded-xl border border-rose-gold/20 font-semibold self-start sm:self-auto">
+          <span className="font-mono text-xs text-text bg-bg-alt px-3 py-1 rounded-xl border border-border font-semibold self-start sm:self-auto">
             Target AWB: {activeLabel?.awb_number || 'BLR-BD-948102'}
           </span>
         </div>
@@ -302,15 +302,15 @@ export const ProductVendorDashboard: React.FC = () => {
             whileTap={{ scale: 0.96 }}
             onClick={() => handleSimulateCarrierWebhook('PICKED_UP')}
             disabled={simulatingCarrierStatus !== null}
-            className="p-4 rounded-2xl bg-surface-cream hover:bg-rose-blush/40 border border-rose-gold/20 text-left transition-all cursor-pointer"
+            className="p-4 rounded-2xl bg-bg-alt hover:bg-accent-soft border border-border text-left transition-all cursor-pointer"
           >
-            <span className="text-[10px] uppercase font-bold text-rose-gold block mb-1">
+            <span className="text-[10px] uppercase font-bold text-accent block mb-1">
               Step 1: Courier Intake
             </span>
-            <span className="text-xs font-bold text-obsidian block">
+            <span className="text-xs font-bold text-text block">
               Emit "PICKED_UP"
             </span>
-            <span className="text-[11px] text-obsidian-muted block mt-1">
+            <span className="text-[11px] text-text-muted block mt-1">
               Driver scans parcel at BOM warehouse
             </span>
           </motion.button>
@@ -320,15 +320,15 @@ export const ProductVendorDashboard: React.FC = () => {
             whileTap={{ scale: 0.96 }}
             onClick={() => handleSimulateCarrierWebhook('IN_TRANSIT')}
             disabled={simulatingCarrierStatus !== null}
-            className="p-4 rounded-2xl bg-surface-cream hover:bg-rose-blush/40 border border-rose-gold/20 text-left transition-all cursor-pointer"
+            className="p-4 rounded-2xl bg-bg-alt hover:bg-accent-soft border border-border text-left transition-all cursor-pointer"
           >
-            <span className="text-[10px] uppercase font-bold text-champagne-dark block mb-1">
+            <span className="text-[10px] uppercase font-bold text-star block mb-1">
               Step 2: Linehaul Flight
             </span>
-            <span className="text-xs font-bold text-obsidian block">
+            <span className="text-xs font-bold text-text block">
               Emit "IN_TRANSIT"
             </span>
-            <span className="text-[11px] text-obsidian-muted block mt-1">
+            <span className="text-[11px] text-text-muted block mt-1">
               Air express en-route to destination hub
             </span>
           </motion.button>

@@ -76,7 +76,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-ink/75 backdrop-blur-md"
+        className="fixed inset-0 bg-text/70 backdrop-blur-md"
       />
 
       {/* Search Container */}
@@ -84,11 +84,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -20, opacity: 0 }}
-        className="relative w-full max-w-2xl bg-white sm:rounded-3xl border border-mist shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-2xl bg-card sm:rounded-3xl border border-border shadow-warm-lg overflow-hidden z-10 flex flex-col max-h-[90vh]"
       >
         {/* Search Header Input */}
-        <div className="p-4 sm:p-5 border-b border-mist flex items-center gap-3">
-          <Search className="w-5 h-5 text-rose-plum shrink-0" />
+        <div className="p-4 sm:p-5 border-b border-border flex items-center gap-3 bg-card">
+          <Search className="w-5 h-5 text-accent shrink-0" />
           <input
             ref={inputRef}
             type="search"
@@ -100,7 +100,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               }
             }}
             placeholder="Search artists, bridal packages, hair styling, cosmetics..."
-            className="flex-1 bg-transparent text-sm sm:text-base text-ink placeholder:text-mauve-grey focus:outline-none"
+            className="flex-1 bg-transparent text-sm sm:text-base text-text placeholder:text-text-muted focus:outline-none"
             aria-label="Search beauty services, professionals and products"
           />
           {query ? (
@@ -108,7 +108,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               type="button"
               onClick={() => setQuery('')}
               aria-label="Clear search input"
-              className="p-1 rounded-full text-mauve-grey hover:text-ink cursor-pointer"
+              className="p-1 rounded-full text-text-muted hover:text-text cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -117,7 +117,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close search"
-            className="p-1.5 rounded-full hover:bg-mist text-mauve-grey hover:text-ink cursor-pointer flex items-center gap-1 text-xs font-bold"
+            className="p-1.5 rounded-full hover:bg-fill text-text-muted hover:text-text cursor-pointer flex items-center gap-1 text-xs font-bold"
           >
             <X className="w-4 h-4" />
             <span className="hidden sm:inline">ESC</span>
@@ -126,7 +126,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
         {/* Live Filter Tabs (when searching) */}
         {query.trim().length > 0 && (
-          <div className="px-5 py-2.5 bg-soft-ivory border-b border-mist flex items-center gap-2 overflow-x-auto scrollbar-none">
+          <div className="px-5 py-2.5 bg-bg-alt border-b border-border flex items-center gap-2 overflow-x-auto scrollbar-none">
             {[
               { id: 'all', label: `All (${totalMatches})` },
               { id: 'services', label: `Services (${results.services.length})` },
@@ -139,8 +139,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3 py-1 rounded-full text-xs font-bold transition-colors cursor-pointer shrink-0 ${
                   activeTab === tab.id
-                    ? 'bg-rose-plum text-white shadow-xs'
-                    : 'bg-white text-mauve-grey border border-mist hover:text-ink'
+                    ? 'bg-accent text-white shadow-xs'
+                    : 'bg-card text-text-muted border border-border hover:text-text'
                 }`}
               >
                 {tab.label}
@@ -150,7 +150,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         )}
 
         {/* Results Body */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-card">
           {/* Default Screen: Recent & Trending Searches */}
           {!query.trim() && (
             <div className="space-y-6">
@@ -158,14 +158,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {recentSearches.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-xs font-bold uppercase tracking-wider text-mauve-grey flex items-center gap-1.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5" />
                       <span>Recent Searches</span>
                     </span>
                     <button
                       type="button"
                       onClick={handleClearRecent}
-                      className="text-[11px] text-mauve-grey hover:text-coral-red cursor-pointer"
+                      className="text-[11px] text-text-muted hover:text-error cursor-pointer"
                     >
                       Clear All
                     </button>
@@ -176,7 +176,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         key={term}
                         type="button"
                         onClick={() => handleExecuteSearch(term)}
-                        className="px-3 py-1.5 rounded-xl bg-soft-ivory border border-mist text-xs text-ink hover:border-rose-plum/40 hover:text-rose-plum transition-colors cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-bg-alt border border-border text-xs text-text hover:border-accent hover:text-accent transition-colors cursor-pointer"
                       >
                         {term}
                       </button>
@@ -187,8 +187,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
               {/* Trending Searches */}
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-mauve-grey flex items-center gap-1.5 mb-2.5">
-                  <TrendingUp className="w-3.5 h-3.5 text-rose-plum" />
+                <span className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5 mb-2.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-accent" />
                   <span>Trending in Bengaluru</span>
                 </span>
                 <div className="flex flex-wrap gap-2">
@@ -197,9 +197,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                       key={term}
                       type="button"
                       onClick={() => handleExecuteSearch(term)}
-                      className="px-3 py-1.5 rounded-xl bg-white border border-mist text-xs text-ink hover:border-rose-plum hover:bg-blush/20 transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                      className="px-3 py-1.5 rounded-xl bg-card border border-border text-xs text-text hover:border-accent hover:bg-fill transition-colors cursor-pointer flex items-center gap-1.5 shadow-warm-xs"
                     >
-                      <Sparkles className="w-3 h-3 text-champagne-gold" />
+                      <Sparkles className="w-3 h-3 text-star" />
                       <span>{term}</span>
                     </button>
                   ))}
@@ -212,9 +212,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           {query.trim() && (
             <div className="space-y-6" aria-live="polite">
               {totalMatches === 0 && (
-                <div className="py-12 text-center text-mauve-grey space-y-2">
-                  <p className="font-serif text-lg font-bold text-ink">No results for "{query}"</p>
-                  <p className="text-xs text-mauve-grey max-w-sm mx-auto">
+                <div className="py-12 text-center text-text-muted space-y-2">
+                  <p className="font-serif text-lg font-bold text-text">No results for "{query}"</p>
+                  <p className="text-xs text-text-muted max-w-sm mx-auto">
                     Try searching for "Bridal HD", "Blowout", "Facial", or explore our top categories.
                   </p>
                 </div>
@@ -223,7 +223,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {/* Services Section */}
               {(activeTab === 'all' || activeTab === 'services') && results.services.length > 0 && (
                 <div className="space-y-2.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-rose-plum block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-accent block">
                     Services ({results.services.length})
                   </span>
                   <div className="space-y-2">
@@ -234,7 +234,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                           onSelectService(srv);
                           onClose();
                         }}
-                        className="p-3 rounded-2xl bg-white border border-mist hover:border-rose-plum/40 flex items-center justify-between gap-3 transition-colors cursor-pointer group shadow-2xs"
+                        className="p-3 rounded-2xl bg-card border border-border hover:border-accent/40 flex items-center justify-between gap-3 transition-colors cursor-pointer group shadow-warm-xs"
                       >
                         <div className="flex items-center gap-3">
                           <img
@@ -243,19 +243,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                             className="w-12 h-12 rounded-xl object-cover shrink-0"
                           />
                           <div>
-                            <h4 className="text-xs font-bold text-ink group-hover:text-rose-plum transition-colors line-clamp-1">
+                            <h4 className="text-xs font-bold text-text group-hover:text-accent transition-colors line-clamp-1">
                               {srv.title}
                             </h4>
-                            <p className="text-[11px] text-mauve-grey">
+                            <p className="text-[11px] text-text-muted">
                               {srv.durationMinutes} mins • {srv.category}
                             </p>
                           </div>
                         </div>
                         <div className="text-right shrink-0">
-                          <span className="font-serif text-sm font-bold text-ink block">
+                          <span className="font-serif text-sm font-bold text-text block">
                             ₹{srv.price.toLocaleString('en-IN')}
                           </span>
-                          <span className="text-[10px] text-emerald-700 font-bold">
+                          <span className="text-[10px] text-success font-bold">
                             Save ₹{srv.savingsAmount.toLocaleString('en-IN')}
                           </span>
                         </div>
@@ -268,7 +268,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {/* Artists Section */}
               {(activeTab === 'all' || activeTab === 'pros') && results.professionals.length > 0 && (
                 <div className="space-y-2.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-rose-plum block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-accent block">
                     Artists ({results.professionals.length})
                   </span>
                   <div className="space-y-2">
@@ -279,26 +279,26 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                           onSelectArtist(art);
                           onClose();
                         }}
-                        className="p-3 rounded-2xl bg-white border border-mist hover:border-rose-plum/40 flex items-center justify-between gap-3 transition-colors cursor-pointer group shadow-2xs"
+                        className="p-3 rounded-2xl bg-card border border-border hover:border-accent/40 flex items-center justify-between gap-3 transition-colors cursor-pointer group shadow-warm-xs"
                       >
                         <div className="flex items-center gap-3">
                           <img
                             src={art.avatar || art.coverImage}
                             alt={art.name}
-                            className="w-12 h-12 rounded-full object-cover shrink-0 border border-mist"
+                            className="w-12 h-12 rounded-full object-cover shrink-0 border border-border"
                           />
                           <div>
-                            <h4 className="text-xs font-bold text-ink group-hover:text-rose-plum transition-colors">
+                            <h4 className="text-xs font-bold text-text group-hover:text-accent transition-colors">
                               {art.name}
                             </h4>
-                            <p className="text-[11px] text-mauve-grey">
+                            <p className="text-[11px] text-text-muted">
                               {art.title} • {art.location}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 text-xs">
-                          <Star className="w-3.5 h-3.5 text-champagne-gold fill-champagne-gold" />
-                          <span className="font-bold text-ink">{art.rating}</span>
+                          <Star className="w-3.5 h-3.5 text-star fill-star" />
+                          <span className="font-bold text-text">{art.rating}</span>
                         </div>
                       </div>
                     ))}
@@ -309,7 +309,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               {/* Products Section */}
               {(activeTab === 'all' || activeTab === 'products') && results.products.length > 0 && (
                 <div className="space-y-2.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-rose-plum block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-accent block">
                     Cosmetics &amp; Products ({results.products.length})
                   </span>
                   <div className="space-y-2">
@@ -320,24 +320,24 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                           onSelectProduct(prod);
                           onClose();
                         }}
-                        className="p-3 rounded-2xl bg-white border border-mist hover:border-rose-plum/40 flex items-center justify-between gap-3 transition-colors cursor-pointer group shadow-2xs"
+                        className="p-3 rounded-2xl bg-card border border-border hover:border-accent/40 flex items-center justify-between gap-3 transition-colors cursor-pointer group shadow-warm-xs"
                       >
                         <div className="flex items-center gap-3">
                           <img
                             src={prod.image}
                             alt={prod.name}
-                            className="w-12 h-12 rounded-xl object-cover shrink-0 border border-mist"
+                            className="w-12 h-12 rounded-xl object-cover shrink-0 border border-border"
                           />
                           <div>
-                            <h4 className="text-xs font-bold text-ink group-hover:text-rose-plum transition-colors line-clamp-1">
+                            <h4 className="text-xs font-bold text-text group-hover:text-accent transition-colors line-clamp-1">
                               {prod.name}
                             </h4>
-                            <p className="text-[11px] text-mauve-grey">
+                            <p className="text-[11px] text-text-muted">
                               {prod.brand} • {prod.category}
                             </p>
                           </div>
                         </div>
-                        <span className="font-serif text-sm font-bold text-ink">
+                        <span className="font-serif text-sm font-bold text-text">
                           ₹{prod.price.toLocaleString('en-IN')}
                         </span>
                       </div>

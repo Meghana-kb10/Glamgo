@@ -80,51 +80,51 @@ export const AdminCommandCenter: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-rose-gold/15">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-rose-velvet bg-rose-blush px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-accent-pressed bg-accent-soft px-2.5 py-0.5 rounded-full">
               Trust & Safety Command
             </span>
-            <span className="text-xs text-obsidian-subtle font-mono">
+            <span className="text-xs text-text-muted/80 font-mono">
               Root Level Authority • Database table: `escrow_ledgers`
             </span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-obsidian mt-1.5">
+          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-text mt-1.5">
             Admin Governance & KYC Verification
           </h1>
-          <p className="text-xs sm:text-sm text-obsidian-muted">
+          <p className="text-xs sm:text-sm text-text-muted">
             Inspect celebrity credentials, portfolio authenticity, and calibrate marketplace split-commission escrow parameters.
           </p>
         </div>
 
-        <div className="px-4 py-2 rounded-2xl bg-white border border-rose-gold/20 shadow-sm text-right">
-          <span className="text-[10px] uppercase font-bold text-obsidian-subtle block">
+        <div className="px-4 py-2 rounded-2xl bg-card border border-border shadow-sm text-right">
+          <span className="text-[10px] uppercase font-bold text-text-muted/80 block">
             Nodal Escrow Balance
           </span>
-          <span className="font-mono text-base font-bold text-champagne-dark tabular-nums">
+          <span className="font-mono text-base font-bold text-star tabular-nums">
             ₹{totalHeldInEscrow.toLocaleString('en-IN')} Active Float
           </span>
         </div>
       </div>
 
       {/* Real-Time Concurrency Torture & Invariant Telemetry Panel */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-rose-gold/25 shadow-luxury space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-rose-gold/15">
+      <div className="bg-card rounded-3xl p-6 sm:p-8 border border-border shadow-warm-xs space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-rose-gold bg-rose-blush/60 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-rose-gold animate-pulse" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-accent bg-accent-soft px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5 text-accent animate-pulse" />
                 <span>Live Stress-Test Engine</span>
               </span>
-              <span className="text-xs font-mono text-obsidian-subtle">
+              <span className="text-xs font-mono text-text-muted/80">
                 POST /api/v1/admin/diagnostics/concurrency-audit
               </span>
             </div>
-            <h2 className="font-serif text-2xl font-bold text-obsidian mt-1.5">
+            <h2 className="font-heading text-2xl font-bold text-text mt-1.5">
               50-User Simultaneous Stampede & GiST Invariant Engine
             </h2>
-            <p className="text-xs text-obsidian-muted mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               Fires real asynchronous requests against Redis 7 and PostgreSQL 16 to mathematically prove zero double-booking vulnerabilities.
             </p>
           </div>
@@ -135,16 +135,16 @@ export const AdminCommandCenter: React.FC = () => {
             transition={snappySpring}
             onClick={handleRunAudit}
             disabled={isRunningAudit}
-            className="px-5 py-2.5 rounded-2xl bg-obsidian hover:bg-obsidian-deep text-white text-xs font-semibold flex items-center gap-2 shadow-luxury cursor-pointer disabled:opacity-50 shrink-0"
+            className="px-5 py-2.5 rounded-2xl bg-accent hover:bg-accent-pressed text-white text-xs font-semibold flex items-center gap-2 shadow-warm-xs cursor-pointer disabled:opacity-50 shrink-0"
           >
             {isRunningAudit ? (
               <>
-                <Sparkles className="w-4 h-4 text-champagne-light animate-spin" />
+                <Sparkles className="w-4 h-4 text-star-light animate-spin" />
                 <span>Executing 50-User Stampede...</span>
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 text-champagne-light fill-champagne-light" />
+                <Play className="w-4 h-4 text-star fill-star" />
                 <span>Run 50-User Stampede & GiST Audit</span>
               </>
             )}
@@ -185,132 +185,132 @@ export const AdminCommandCenter: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               
               {/* Suite 1 Card */}
-              <div className="p-4 rounded-2xl bg-surface-cream/80 border border-rose-gold/20 flex flex-col justify-between space-y-3">
+              <div className="p-4 rounded-2xl bg-bg-alt/80 border border-border flex flex-col justify-between space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] uppercase font-bold text-obsidian-subtle">Suite 1: Redis Redlock</span>
+                    <span className="text-[10px] uppercase font-bold text-text-muted/80">Suite 1: Redis Redlock</span>
                     <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                       Passed
                     </span>
                   </div>
-                  <h4 className="font-serif text-base font-bold text-obsidian">
+                  <h4 className="font-heading text-base font-bold text-text">
                     50-User Simultaneous Lock
                   </h4>
-                  <p className="text-[11px] text-obsidian-muted mt-1 leading-snug">
+                  <p className="text-[11px] text-text-muted mt-1 leading-snug">
                     Simultaneous slot acquisition under maximum competition.
                   </p>
                 </div>
 
-                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-rose-gold/15">
+                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-border">
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Acquired (200):</span>
+                    <span className="text-text-muted/80">Acquired (200):</span>
                     <strong className="text-emerald-700">{auditResult.suite1_redisStampede.succeeded} Won</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Blocked (409):</span>
-                    <strong className="text-obsidian">{auditResult.suite1_redisStampede.blocked} Defended</strong>
+                    <span className="text-text-muted/80">Blocked (409):</span>
+                    <strong className="text-text">{auditResult.suite1_redisStampede.blocked} Defended</strong>
                   </div>
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-obsidian-subtle">p95 Latency:</span>
-                    <span className="text-obsidian">{auditResult.suite1_redisStampede.p95LatencyMs}ms</span>
+                    <span className="text-text-muted/80">p95 Latency:</span>
+                    <span className="text-text">{auditResult.suite1_redisStampede.p95LatencyMs}ms</span>
                   </div>
                 </div>
               </div>
 
               {/* Suite 2 Card */}
-              <div className="p-4 rounded-2xl bg-surface-cream/80 border border-rose-gold/20 flex flex-col justify-between space-y-3">
+              <div className="p-4 rounded-2xl bg-bg-alt/80 border border-border flex flex-col justify-between space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] uppercase font-bold text-obsidian-subtle">Suite 2: PostGIS GiST</span>
+                    <span className="text-[10px] uppercase font-bold text-text-muted/80">Suite 2: PostGIS GiST</span>
                     <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                       Passed
                     </span>
                   </div>
-                  <h4 className="font-serif text-base font-bold text-obsidian">
+                  <h4 className="font-heading text-base font-bold text-text">
                     Overlapping Slot Exclusion
                   </h4>
-                  <p className="text-[11px] text-obsidian-muted mt-1 leading-snug">
+                  <p className="text-[11px] text-text-muted mt-1 leading-snug">
                     Engine-level `tstzrange` GiST exclusion anti-collision.
                   </p>
                 </div>
 
-                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-rose-gold/15">
+                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-border">
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Collision Guard:</span>
+                    <span className="text-text-muted/80">Collision Guard:</span>
                     <strong className="text-emerald-700">409 Excluded</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Cancellation:</span>
-                    <strong className="text-obsidian">Slot Freed</strong>
+                    <span className="text-text-muted/80">Cancellation:</span>
+                    <strong className="text-text">Slot Freed</strong>
                   </div>
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-obsidian-subtle">Re-Booking:</span>
+                    <span className="text-text-muted/80">Re-Booking:</span>
                     <span className="text-emerald-700 font-bold">200 OK</span>
                   </div>
                 </div>
               </div>
 
               {/* Suite 3 Card */}
-              <div className="p-4 rounded-2xl bg-surface-cream/80 border border-rose-gold/20 flex flex-col justify-between space-y-3">
+              <div className="p-4 rounded-2xl bg-bg-alt/80 border border-border flex flex-col justify-between space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] uppercase font-bold text-obsidian-subtle">Suite 3: Inventory Guard</span>
+                    <span className="text-[10px] uppercase font-bold text-text-muted/80">Suite 3: Inventory Guard</span>
                     <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                       Passed
                     </span>
                   </div>
-                  <h4 className="font-serif text-base font-bold text-obsidian">
+                  <h4 className="font-heading text-base font-bold text-text">
                     Last-Unit SKU Race Guard
                   </h4>
-                  <p className="text-[11px] text-obsidian-muted mt-1 leading-snug">
+                  <p className="text-[11px] text-text-muted mt-1 leading-snug">
                     Zero oversell guarantee with SQL `stock_quantity &gt;= 0`.
                   </p>
                 </div>
 
-                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-rose-gold/15">
+                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-border">
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Concurrent Buyers:</span>
-                    <strong className="text-obsidian">10 Checkouts</strong>
+                    <span className="text-text-muted/80">Concurrent Buyers:</span>
+                    <strong className="text-text">10 Checkouts</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Oversell Prevented:</span>
+                    <span className="text-text-muted/80">Oversell Prevented:</span>
                     <strong className="text-emerald-700">Guaranteed</strong>
                   </div>
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-obsidian-subtle">Stock Bounds:</span>
+                    <span className="text-text-muted/80">Stock Bounds:</span>
                     <span className="text-emerald-700 font-bold">Non-Negative</span>
                   </div>
                 </div>
               </div>
 
               {/* Suite 4 Card */}
-              <div className="p-4 rounded-2xl bg-surface-cream/80 border border-rose-gold/20 flex flex-col justify-between space-y-3">
+              <div className="p-4 rounded-2xl bg-bg-alt/80 border border-border flex flex-col justify-between space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] uppercase font-bold text-obsidian-subtle">Suite 4: Escrow Audit</span>
+                    <span className="text-[10px] uppercase font-bold text-text-muted/80">Suite 4: Escrow Audit</span>
                     <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                       Passed
                     </span>
                   </div>
-                  <h4 className="font-serif text-base font-bold text-obsidian">
+                  <h4 className="font-heading text-base font-bold text-text">
                     Zero-Drift Financial Split
                   </h4>
-                  <p className="text-[11px] text-obsidian-muted mt-1 leading-snug">
+                  <p className="text-[11px] text-text-muted mt-1 leading-snug">
                     Exact 18% & 12% commission split and OTP settlement.
                   </p>
                 </div>
 
-                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-rose-gold/15">
+                <div className="space-y-1.5 font-mono text-xs pt-2 border-t border-border">
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Gross Verified:</span>
-                    <strong className="text-obsidian">₹35,600</strong>
+                    <span className="text-text-muted/80">Gross Verified:</span>
+                    <strong className="text-text">₹35,600</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-obsidian-subtle">Float Drift:</span>
+                    <span className="text-text-muted/80">Float Drift:</span>
                     <strong className="text-emerald-700 font-bold">₹0.00</strong>
                   </div>
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-obsidian-subtle">OTP Release:</span>
+                    <span className="text-text-muted/80">OTP Release:</span>
                     <span className="text-emerald-700 font-bold">Settled</span>
                   </div>
                 </div>
@@ -319,14 +319,14 @@ export const AdminCommandCenter: React.FC = () => {
             </div>
           </motion.div>
         ) : (
-          <div className="p-6 rounded-2xl bg-surface-cream/40 border border-rose-gold/15 text-center text-xs text-obsidian-muted">
-            <span className="inline-block p-2 rounded-xl bg-surface-cream text-rose-gold mb-2">
-              <Zap className="w-5 h-5 text-rose-gold" />
+          <div className="p-6 rounded-2xl bg-bg-alt/40 border border-border text-center text-xs text-text-muted">
+            <span className="inline-block p-2 rounded-xl bg-bg-alt text-accent mb-2">
+              <Zap className="w-5 h-5 text-accent" />
             </span>
-            <p className="font-medium text-obsidian">
+            <p className="font-medium text-text">
               Ready to execute concurrency and mathematical torture suite.
             </p>
-            <p className="text-[11px] text-obsidian-subtle mt-0.5">
+            <p className="text-[11px] text-text-muted/80 mt-0.5">
               Click &quot;Run 50-User Stampede &amp; GiST Audit&quot; to fire 50 concurrent requests against Redis 7 and PostgreSQL 16.
             </p>
           </div>
@@ -340,14 +340,14 @@ export const AdminCommandCenter: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-serif text-xl font-bold text-obsidian">
+                <h2 className="font-heading text-xl font-bold text-text">
                   Artist Portfolio & Credential Approvals
                 </h2>
-                <span className="text-xs text-obsidian-muted">
+                <span className="text-xs text-text-muted">
                   3-stage background check: Government ID, Master Diploma, Raw Video Portfolios
                 </span>
               </div>
-              <span className="text-xs font-mono font-semibold text-rose-gold">
+              <span className="text-xs font-mono font-semibold text-accent">
                 {applicants.filter((a) => a.status === 'PENDING').length} Pending
               </span>
             </div>
@@ -362,12 +362,12 @@ export const AdminCommandCenter: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -60 }}
                     transition={spatialSpring}
-                    className={`p-6 rounded-3xl bg-white border shadow-luxury transition-all ${
+                    className={`p-6 rounded-3xl bg-card border shadow-warm-xs transition-all ${
                       app.status === 'APPROVED'
                         ? 'border-emerald-500 bg-emerald-50/30'
                         : app.status === 'REJECTED'
                         ? 'border-red-300 opacity-50'
-                        : 'border-rose-gold/25'
+                        : 'border-border'
                     }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -376,21 +376,21 @@ export const AdminCommandCenter: React.FC = () => {
                         <img
                           src={app.avatar}
                           alt={app.artistName}
-                          className="w-16 h-16 rounded-2xl object-cover border-2 border-champagne"
+                          className="w-16 h-16 rounded-2xl object-cover border-2 border-border"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-serif text-lg font-bold text-obsidian">
+                            <h3 className="font-heading text-lg font-bold text-text">
                               {app.artistName}
                             </h3>
-                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-surface-cream text-obsidian">
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-bg-alt text-text">
                               {app.category}
                             </span>
                           </div>
-                          <span className="text-xs text-obsidian-muted block mt-0.5">
+                          <span className="text-xs text-text-muted block mt-0.5">
                             {app.city} • {app.experienceYears} Years Documented Experience
                           </span>
-                          <span className="text-xs text-rose-gold font-mono flex items-center gap-1 mt-1">
+                          <span className="text-xs text-accent font-mono flex items-center gap-1 mt-1">
                             <Instagram className="w-3.5 h-3.5" />
                             <span>{app.instagramHandle}</span>
                           </span>
@@ -415,7 +415,7 @@ export const AdminCommandCenter: React.FC = () => {
                               whileTap={{ scale: 0.94 }}
                               transition={snappySpring}
                               onClick={(e) => handleKycDecision(app.id, 'REJECTED', e)}
-                              className="px-3 py-2 rounded-xl bg-surface-cream hover:bg-red-50 text-obsidian-muted hover:text-red-700 text-xs font-semibold border border-rose-gold/20"
+                              className="px-3 py-2 rounded-xl bg-bg-alt hover:bg-red-50 text-text-muted hover:text-red-700 text-xs font-semibold border border-border"
                             >
                               <XCircle className="w-3.5 h-3.5" />
                             </motion.button>
@@ -435,31 +435,31 @@ export const AdminCommandCenter: React.FC = () => {
                     </div>
 
                     {/* Verification Docs Strip */}
-                    <div className="mt-4 pt-4 border-t border-rose-gold/15 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                      <div className="p-2.5 rounded-xl bg-surface-cream/60 flex items-center gap-2">
+                    <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div className="p-2.5 rounded-xl bg-bg-alt/60 flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                         <div>
-                          <span className="text-[10px] text-obsidian-subtle uppercase block font-semibold">
+                          <span className="text-[10px] text-text-muted/80 uppercase block font-semibold">
                             Government ID
                           </span>
-                          <span className="font-mono font-medium text-obsidian">{app.idProof}</span>
+                          <span className="font-mono font-medium text-text">{app.idProof}</span>
                         </div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-surface-cream/60 flex items-center gap-2">
-                        <FileBadge className="w-4 h-4 text-champagne-dark shrink-0" />
+                      <div className="p-2.5 rounded-xl bg-bg-alt/60 flex items-center gap-2">
+                        <FileBadge className="w-4 h-4 text-star shrink-0" />
                         <div>
-                          <span className="text-[10px] text-obsidian-subtle uppercase block font-semibold">
+                          <span className="text-[10px] text-text-muted/80 uppercase block font-semibold">
                             Accreditation
                           </span>
-                          <span className="font-medium text-obsidian line-clamp-1">{app.certificate}</span>
+                          <span className="font-medium text-text line-clamp-1">{app.certificate}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Portfolio Thumbnail Proofs */}
                     <div className="mt-3 flex items-center gap-2">
-                      <span className="text-[10px] font-semibold uppercase text-obsidian-subtle mr-1">
+                      <span className="text-[10px] font-semibold uppercase text-text-muted/80 mr-1">
                         Submitted Looks:
                       </span>
                       {app.portfolioSamples.map((img, idx) => (
@@ -467,7 +467,7 @@ export const AdminCommandCenter: React.FC = () => {
                           key={idx}
                           src={img}
                           alt="Proof"
-                          className="w-12 h-12 rounded-lg object-cover border border-rose-gold/30 cursor-pointer hover:scale-105 transition-transform"
+                          className="w-12 h-12 rounded-lg object-cover border border-border cursor-pointer hover:scale-105 transition-transform"
                         />
                       ))}
                     </div>
@@ -479,11 +479,11 @@ export const AdminCommandCenter: React.FC = () => {
           </div>
 
           {/* Real Database Escrow Ledgers Table */}
-          <div className="p-6 rounded-3xl bg-white border border-rose-gold/20 shadow-luxury space-y-4">
+          <div className="p-6 rounded-3xl bg-card border border-border shadow-warm-xs space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-rose-gold" />
-                <h3 className="font-serif text-lg font-bold text-obsidian">
+                <Receipt className="w-4 h-4 text-accent" />
+                <h3 className="font-heading text-lg font-bold text-text">
                   Live Database Table: `escrow_ledgers`
                 </h3>
               </div>
@@ -494,7 +494,7 @@ export const AdminCommandCenter: React.FC = () => {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-surface-cream/50 text-obsidian-subtle uppercase text-[10px] tracking-wider border-b border-rose-gold/15">
+                <thead className="bg-bg-alt/50 text-text-muted/80 uppercase text-[10px] tracking-wider border-b border-border">
                   <tr>
                     <th className="px-4 py-2.5">Ledger ID</th>
                     <th className="px-4 py-2.5">Gross Booking</th>
@@ -504,13 +504,13 @@ export const AdminCommandCenter: React.FC = () => {
                     <th className="px-4 py-2.5 text-right">Tax Audit</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-rose-gold/10 font-mono">
+                <tbody className="divide-y divide-border font-mono">
                   {ledgers.length > 0 ? (
                     ledgers.map((l) => (
-                      <tr key={l.id} className="hover:bg-surface-cream/30">
-                        <td className="px-4 py-3 text-obsidian font-semibold">{l.id.slice(0, 16)}...</td>
-                        <td className="px-4 py-3 text-obsidian">₹{l.gross_amount.toLocaleString('en-IN')}</td>
-                        <td className="px-4 py-3 text-rose-gold">₹{l.platform_commission.toLocaleString('en-IN')}</td>
+                      <tr key={l.id} className="hover:bg-bg-alt/30">
+                        <td className="px-4 py-3 text-text font-semibold">{l.id.slice(0, 16)}...</td>
+                        <td className="px-4 py-3 text-text">₹{l.gross_amount.toLocaleString('en-IN')}</td>
+                        <td className="px-4 py-3 text-accent">₹{l.platform_commission.toLocaleString('en-IN')}</td>
                         <td className="px-4 py-3 text-emerald-700 font-bold">₹{l.net_payout_amount.toLocaleString('en-IN')}</td>
                         <td className="px-4 py-3 text-center">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -530,9 +530,9 @@ export const AdminCommandCenter: React.FC = () => {
                               });
                               setIsInvoiceOpen(true);
                             }}
-                            className="px-2.5 py-1 rounded-lg bg-surface-cream hover:bg-rose-blush border border-rose-gold/25 text-obsidian text-[11px] font-sans font-semibold inline-flex items-center gap-1 shadow-2xs"
+                            className="px-2.5 py-1 rounded-lg bg-bg-alt hover:bg-accent-soft border border-border text-text text-[11px] font-sans font-semibold inline-flex items-center gap-1 shadow-2xs"
                           >
-                            <FileText className="w-3 h-3 text-rose-gold" />
+                            <FileText className="w-3 h-3 text-accent" />
                             <span>Invoice</span>
                           </motion.button>
                         </td>
@@ -540,7 +540,7 @@ export const AdminCommandCenter: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-4 py-4 text-center text-obsidian-subtle font-sans">
+                      <td colSpan={6} className="px-4 py-4 text-center text-text-muted/80 font-sans">
                         No active transactions yet. Complete a checkout in the Customer Portal to observe live ledger rows.
                       </td>
                     </tr>
@@ -553,18 +553,18 @@ export const AdminCommandCenter: React.FC = () => {
 
         {/* Right Col: Split-Commission Escrow Sliders */}
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-white border border-rose-gold/25 shadow-luxury space-y-6">
+          <div className="p-6 rounded-3xl bg-card border border-border shadow-warm-xs space-y-6">
             <div>
-              <div className="flex items-center gap-1.5 text-rose-gold mb-1">
+              <div className="flex items-center gap-1.5 text-accent mb-1">
                 <Sliders className="w-4 h-4" />
                 <span className="text-[11px] font-semibold uppercase tracking-wider">
                   Escrow Logic Control
                 </span>
               </div>
-              <h3 className="font-serif text-lg font-bold text-obsidian">
+              <h3 className="font-heading text-lg font-bold text-text">
                 Dynamic Split-Commission
               </h3>
-              <p className="text-xs text-obsidian-muted mt-1 leading-relaxed">
+              <p className="text-xs text-text-muted mt-1 leading-relaxed">
                 Tune the automatic split between platform commission, escrow guarantee reserves, and immediate payout to the master artist.
               </p>
             </div>
@@ -574,7 +574,7 @@ export const AdminCommandCenter: React.FC = () => {
               <div className="h-5 w-full rounded-xl overflow-hidden flex shadow-inner">
                 <div
                   style={{ width: `${artistPayout}%` }}
-                  className="bg-obsidian flex items-center justify-center text-[10px] font-mono text-white font-bold"
+                  className="bg-accent flex items-center justify-center text-[10px] font-mono text-white font-bold"
                   title={`Artist: ${artistPayout}%`}
                 >
                   {artistPayout}%
@@ -588,16 +588,16 @@ export const AdminCommandCenter: React.FC = () => {
                 </div>
                 <div
                   style={{ width: `${escrowGuaranteeFund}%` }}
-                  className="bg-champagne flex items-center justify-center text-[10px] font-mono text-obsidian font-bold"
+                  className="bg-fill flex items-center justify-center text-[10px] font-mono text-text font-bold"
                   title={`Guarantee: ${escrowGuaranteeFund}%`}
                 >
                   {escrowGuaranteeFund}%
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-obsidian-subtle">
+              <div className="flex items-center justify-between text-[11px] text-text-muted/80">
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-obsidian" />
+                  <span className="w-2 h-2 rounded-full bg-accent" />
                   <span>Artist: {artistPayout}%</span>
                 </span>
                 <span className="flex items-center gap-1">
@@ -605,7 +605,7 @@ export const AdminCommandCenter: React.FC = () => {
                   <span>Platform: {platformCommission}%</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-champagne" />
+                  <span className="w-2 h-2 rounded-full bg-fill" />
                   <span>Vault: {escrowGuaranteeFund}%</span>
                 </span>
               </div>
@@ -614,8 +614,8 @@ export const AdminCommandCenter: React.FC = () => {
             {/* Slider 1: Platform Commission */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="font-semibold text-obsidian">Platform Commission Fee</span>
-                <span className="font-mono font-bold text-rose-gold">{platformCommission}%</span>
+                <span className="font-semibold text-text">Platform Commission Fee</span>
+                <span className="font-mono font-bold text-accent">{platformCommission}%</span>
               </div>
               <input
                 type="range"
@@ -626,7 +626,7 @@ export const AdminCommandCenter: React.FC = () => {
                 onChange={(e) => setPlatformCommission(Number(e.target.value))}
                 className="w-full accent-rose-gold cursor-pointer"
               />
-              <span className="text-[10px] text-obsidian-subtle block">
+              <span className="text-[10px] text-text-muted/80 block">
                 Covers payment gateway, AI shade matching, and 24/7 concierge.
               </span>
             </div>
@@ -634,8 +634,8 @@ export const AdminCommandCenter: React.FC = () => {
             {/* Slider 2: Escrow Guarantee Fund */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="font-semibold text-obsidian">Escrow Guarantee & Protection Pool</span>
-                <span className="font-mono font-bold text-champagne-dark">{escrowGuaranteeFund}%</span>
+                <span className="font-semibold text-text">Escrow Guarantee & Protection Pool</span>
+                <span className="font-mono font-bold text-star">{escrowGuaranteeFund}%</span>
               </div>
               <input
                 type="range"
@@ -646,14 +646,14 @@ export const AdminCommandCenter: React.FC = () => {
                 onChange={(e) => setEscrowGuaranteeFund(Number(e.target.value))}
                 className="w-full accent-champagne cursor-pointer"
               />
-              <span className="text-[10px] text-obsidian-subtle block">
+              <span className="text-[10px] text-text-muted/80 block">
                 Instant refund guarantee fund for last-minute artist travel cancellations.
               </span>
             </div>
 
             {/* Live Example Calculation */}
-            <div className="p-4 rounded-2xl bg-surface-cream text-xs space-y-2 border border-rose-gold/15">
-              <span className="font-bold text-obsidian block">
+            <div className="p-4 rounded-2xl bg-bg-alt text-xs space-y-2 border border-border">
+              <span className="font-bold text-text block">
                 Example: On a ₹32,000 Bridal HD Booking:
               </span>
               <div className="flex justify-between text-emerald-800 font-semibold">
@@ -662,13 +662,13 @@ export const AdminCommandCenter: React.FC = () => {
                   ₹{Math.round((32000 * artistPayout) / 100).toLocaleString('en-IN')}
                 </span>
               </div>
-              <div className="flex justify-between text-obsidian-muted">
+              <div className="flex justify-between text-text-muted">
                 <span>Glamgo Platform Take:</span>
                 <span className="font-mono">
                   ₹{Math.round((32000 * platformCommission) / 100).toLocaleString('en-IN')}
                 </span>
               </div>
-              <div className="flex justify-between text-obsidian-subtle">
+              <div className="flex justify-between text-text-muted/80">
                 <span>Guarantee Reserve Pool:</span>
                 <span className="font-mono">
                   ₹{Math.round((32000 * escrowGuaranteeFund) / 100).toLocaleString('en-IN')}

@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       layout
       transition={MOTION_SPRINGS.slider}
       style={{ width: isCollapsed ? 72 : 240 }}
-      className={`fixed top-0 left-0 bottom-0 z-30 bg-white border-r border-mist flex flex-col justify-between pt-20 sm:pt-[82px] pb-4 select-none ${className}`}
+      className={`fixed top-0 left-0 bottom-0 z-30 bg-bg border-r border-border flex flex-col justify-between pt-20 sm:pt-[82px] pb-4 select-none ${className}`}
       aria-label="Marketplace Navigation Sidebar"
     >
       {/* Scrollable Navigation Body */}
@@ -128,7 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             type="button"
             onClick={onToggleCollapse}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar to icons'}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-mauve-grey hover:text-ink hover:bg-blush/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text hover:bg-fill/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
@@ -136,18 +136,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Next Appointment Mini-Card (Visible for logged-in users with active booking) */}
         {isAuthenticated && nextAppointment && !isCollapsed && (
-          <div className="p-3 rounded-2xl bg-gradient-to-br from-blush/70 to-soft-ivory border border-rose-plum/20 shadow-2xs">
-            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-rose-plum mb-1.5">
+          <div className="p-3 rounded-[16px] bg-card border border-border shadow-warm-sm">
+            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-accent mb-1.5">
               <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3 text-rose-plum" />
+                <Clock className="w-3 h-3 text-accent" />
                 <span>Next Appointment</span>
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
             </div>
-            <p className="text-xs font-bold text-ink truncate leading-tight">
+            <p className="text-xs font-bold text-text truncate leading-tight">
               {nextAppointment.serviceTitle}
             </p>
-            <p className="text-[11px] text-mauve-grey mt-0.5 truncate">
+            <p className="text-[11px] text-text-muted mt-0.5 truncate">
               {nextAppointment.dateTime}
             </p>
             <button
@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 if (onOpenBookings) onOpenBookings();
                 else onNavigate('bookings');
               }}
-              className="mt-2 text-[11px] font-bold text-rose-plum hover:text-deep-plum flex items-center gap-1 cursor-pointer"
+              className="mt-2 text-[11px] font-bold text-accent hover:text-accent-pressed flex items-center gap-1 cursor-pointer transition-colors"
             >
               <span>View details</span>
               <ArrowRight className="w-3 h-3" />
@@ -201,7 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={MOTION_SPRINGS.slider}
-                className="pl-4 pr-1 space-y-0.5 overflow-hidden border-l-2 border-blush ml-5 my-1"
+                className="pl-4 pr-1 space-y-0.5 overflow-hidden border-l-2 border-border ml-5 my-1"
               >
                 {CATEGORIES_LIST.map((cat) => {
                   const isCatActive = activeRoute === `category-${cat.slug}`;
@@ -214,8 +214,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       aria-current={isCatActive ? 'page' : undefined}
                       className={`w-full h-8 flex items-center gap-2.5 px-2.5 rounded-lg text-xs transition-colors cursor-pointer text-left ${
                         isCatActive
-                          ? 'bg-blush text-rose-plum font-bold'
-                          : 'text-ink/80 hover:text-ink hover:bg-blush/30'
+                          ? 'bg-fill text-accent-pressed font-bold border-l-2 border-accent'
+                          : 'text-text hover:bg-fill/40'
                       }`}
                     >
                       <CatIcon className="w-3.5 h-3.5 shrink-0" />
@@ -298,7 +298,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={MOTION_SPRINGS.slider}
-                className="pl-4 pr-1 space-y-0.5 overflow-hidden border-l-2 border-blush ml-5 my-1"
+                className="pl-4 pr-1 space-y-0.5 overflow-hidden border-l-2 border-border ml-5 my-1"
               >
                 {PRODUCT_SUB_CATEGORIES.map((cat) => {
                   const isCatActive =
@@ -313,8 +313,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       aria-current={isCatActive ? 'page' : undefined}
                       className={`w-full h-8 flex items-center gap-2.5 px-2.5 rounded-lg text-xs transition-colors cursor-pointer text-left ${
                         isCatActive
-                          ? 'bg-blush text-rose-plum font-bold'
-                          : 'text-ink/80 hover:text-ink hover:bg-blush/30'
+                          ? 'bg-fill text-accent-pressed font-bold border-l-2 border-accent'
+                          : 'text-text hover:bg-fill/40'
                       }`}
                     >
                       <CatIcon className="w-3.5 h-3.5 shrink-0" />
@@ -364,7 +364,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer User / Guest Card */}
-      <div className="px-2 pt-2 border-t border-mist/80">
+      <div className="px-2 pt-2 border-t border-border">
         {!isAuthenticated || !user ? (
           // Guest Footer Card: Get 20% off your first booking + Log in button
           isCollapsed ? (
@@ -374,26 +374,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => onOpenAuth('login')}
                 title="Get 20% off your first booking"
                 aria-label="Log in for 20% off"
-                className="w-10 h-10 rounded-full bg-blush text-rose-plum flex items-center justify-center font-bold text-xs hover:bg-rose-plum hover:text-white transition-colors cursor-pointer"
+                className="w-10 h-10 rounded-full bg-accent-soft text-accent flex items-center justify-center font-bold text-xs hover:bg-accent hover:text-white transition-colors cursor-pointer shadow-warm-sm"
               >
                 20%
               </button>
             </div>
           ) : (
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-blush to-soft-ivory border border-rose-plum/20 space-y-2">
+            <div className="p-3 rounded-[16px] bg-bg-alt border border-border shadow-warm-sm space-y-2">
               <div>
-                <span className="inline-block px-1.5 py-0.5 rounded bg-rose-plum text-white text-[9px] font-bold uppercase tracking-wider mb-1">
+                <span className="inline-block px-1.5 py-0.5 rounded-full bg-accent text-white text-[9px] font-bold uppercase tracking-wider mb-1">
                   FIRST20
                 </span>
-                <p className="text-xs font-bold text-ink">Get 20% off your first booking</p>
-                <p className="text-[11px] text-mauve-grey leading-tight mt-0.5">
+                <p className="text-xs font-bold text-text">Get 20% off your first booking</p>
+                <p className="text-[11px] text-text-muted leading-tight mt-0.5">
                   Zero convenience fee on your first salon service.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => onOpenAuth('login')}
-                className="w-full h-8 rounded-xl bg-rose-plum text-white text-xs font-bold hover:bg-deep-plum transition-colors cursor-pointer flex items-center justify-center shadow-2xs"
+                className="w-full h-8 rounded-[12px] bg-accent text-white text-xs font-bold hover:bg-accent-pressed transition-colors cursor-pointer flex items-center justify-center shadow-warm-sm"
               >
                 Log In
               </button>
@@ -408,7 +408,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => onNavigate('profile')}
                 title={user.fullName}
                 aria-label={`View profile of ${user.fullName}`}
-                className="w-10 h-10 rounded-full bg-blush text-rose-plum flex items-center justify-center font-bold text-xs border border-rose-plum/20 hover:scale-105 transition-transform cursor-pointer"
+                className="w-10 h-10 rounded-full bg-accent-soft text-accent flex items-center justify-center font-bold text-xs border border-border hover:scale-105 transition-transform cursor-pointer shadow-warm-sm"
               >
                 {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
               </button>
@@ -418,24 +418,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
               type="button"
               onClick={() => onNavigate('profile')}
               aria-label={`Profile of ${user.fullName}`}
-              className="w-full p-2.5 rounded-xl hover:bg-blush/50 transition-colors flex items-center gap-2.5 text-left cursor-pointer group"
+              className="w-full p-2.5 rounded-[14px] bg-card border border-border hover:border-border-strong hover:bg-fill/30 shadow-warm-sm transition-colors flex items-center gap-2.5 text-left cursor-pointer group"
             >
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
                   alt={user.fullName}
-                  className="w-9 h-9 rounded-full object-cover border border-mist shrink-0"
+                  className="w-9 h-9 rounded-full object-cover border border-border shrink-0"
                 />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-blush text-rose-plum font-bold text-xs flex items-center justify-center shrink-0 border border-rose-plum/20">
+                <div className="w-9 h-9 rounded-full bg-accent-soft text-accent font-bold text-xs flex items-center justify-center shrink-0 border border-accent/20">
                   {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-ink truncate group-hover:text-rose-plum transition-colors">
+                <p className="text-xs font-bold text-text truncate group-hover:text-accent transition-colors">
                   {user.fullName}
                 </p>
-                <p className="text-[10px] text-mauve-grey truncate">View profile →</p>
+                <p className="text-[10px] text-text-muted truncate">View profile →</p>
               </div>
             </button>
           )

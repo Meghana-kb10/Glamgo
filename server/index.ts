@@ -2038,12 +2038,14 @@ app.post('/api/v1/admin/diagnostics/concurrency-audit', async (_req: Request, re
 // ----------------------------------------------------------------------------
 // 10.5. PRODUCTION STATIC ASSETS & CLIENT SPA ROUTING FALLBACK
 // ----------------------------------------------------------------------------
-const distPath = path.resolve(__dirname, '../dist');
+const distPath = path.resolve(process.cwd(), 'dist');
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
-  app.get('*', (req: Request, res: Response, next: NextFunction) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(distPath, 'index.html'));
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api')) {
+      return res.sendFile(path.join(distPath, 'index.html'));
+    }
+    next();
   });
 }
 

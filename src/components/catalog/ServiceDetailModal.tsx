@@ -84,8 +84,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-ink/75 backdrop-blur-sm"
-        style={{ backgroundColor: 'rgba(31, 26, 29, 0.75)' }}
+        className="fixed inset-0 bg-text/60 backdrop-blur-sm"
       />
 
       {/* Modal / Bottom Sheet Container */}
@@ -94,19 +93,18 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-        className="relative w-full max-w-3xl bg-soft-ivory rounded-t-3xl sm:rounded-3xl border border-mist shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh] sm:max-h-[88vh]"
-        style={{ backgroundColor: '#FFFBF8' }}
+        className="relative w-full max-w-3xl bg-card rounded-t-[24px] sm:rounded-[24px] border border-border shadow-warm-modal overflow-hidden z-10 flex flex-col max-h-[92vh] sm:max-h-[88vh]"
       >
         {/* Sticky Header Bar */}
-        <div className="px-5 py-3.5 border-b border-mist bg-white/90 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-5 py-3.5 border-b border-border bg-card/90 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2.5 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent-soft px-2.5 py-0.5 rounded-full">
               {service.category}
             </span>
             <div className="flex items-center gap-1 text-xs">
-              <Star className="w-3.5 h-3.5 text-champagne-gold fill-champagne-gold" />
-              <span className="font-bold text-ink">{service.rating}</span>
-              <span className="text-mauve-grey">({service.reviewCount})</span>
+              <Star className="w-3.5 h-3.5 text-star fill-star" />
+              <span className="font-bold text-text">{service.rating}</span>
+              <span className="text-text-muted">({service.reviewCount})</span>
             </div>
           </div>
 
@@ -115,15 +113,15 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
               type="button"
               onClick={handleToggleFav}
               aria-label="Save to favorites"
-              className="p-1.5 rounded-full text-mauve-grey hover:text-coral-red cursor-pointer"
+              className="p-1.5 rounded-full text-text-muted hover:text-accent cursor-pointer transition-colors"
             >
-              <Heart className={`w-4 h-4 ${isFavorite ? 'text-coral-red fill-coral-red' : ''}`} />
+              <Heart className={`w-4 h-4 ${isFavorite ? 'text-accent fill-accent' : ''}`} />
             </button>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close details"
-              className="w-8 h-8 rounded-full flex items-center justify-center text-mauve-grey hover:text-ink hover:bg-mist/40 transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text hover:bg-fill/60 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -134,14 +132,14 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
         <div className="overflow-y-auto p-5 sm:p-7 space-y-6 flex-1">
           {/* 1. Image Carousel & Thumbnails */}
           <div className="space-y-3">
-            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden border border-mist bg-ink/10 shadow-xs">
+            <div className="relative aspect-[16/9] rounded-[20px] overflow-hidden border border-border bg-fill/20 shadow-warm-xs">
               <img
                 src={images[activeImageIndex] || service.imageUrl}
                 alt={service.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-3 right-3 px-2 py-0.5 rounded-lg bg-ink/75 backdrop-blur-sm text-white text-[11px] font-mono flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-champagne-gold" />
+              <div className="absolute bottom-3 right-3 px-2 py-0.5 rounded-[10px] bg-text/80 backdrop-blur-sm text-white text-[11px] font-mono flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-star" />
                 <span>{service.durationMinutes} mins dedicated</span>
               </div>
             </div>
@@ -153,8 +151,8 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`relative w-16 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer shrink-0 ${
-                      activeImageIndex === idx ? 'border-rose-plum ring-2 ring-rose-plum/20' : 'border-mist opacity-70'
+                    className={`relative w-16 h-12 rounded-[12px] overflow-hidden border-2 transition-all cursor-pointer shrink-0 ${
+                      activeImageIndex === idx ? 'border-accent ring-2 ring-accent/20' : 'border-border opacity-70'
                     }`}
                   >
                     <img src={img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
@@ -166,22 +164,22 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           {/* 2. Title & Core Value Proposition */}
           <div>
-            <h2 id="service-detail-title" className="font-serif text-xl sm:text-2xl font-bold text-ink">
+            <h2 id="service-detail-title" className="font-heading text-xl sm:text-2xl font-bold text-text">
               {service.title}
             </h2>
-            <p className="text-xs sm:text-sm text-mauve-grey leading-relaxed mt-2 font-sans">
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed mt-2 font-sans">
               {service.description}
             </p>
           </div>
 
           {/* Glamgo Signature: Product Delivery Mode (All-Inclusive vs Bring Your Own Product) */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-blush/35 to-soft-ivory border border-rose-plum/25 space-y-2.5">
+          <div className="p-4 rounded-[20px] bg-bg-alt border border-border space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-rose-plum" />
+              <span className="text-xs font-bold uppercase tracking-wider text-text flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-accent" />
                 <span>Product Transparency Mode</span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2 py-0.5 rounded-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent-soft px-2 py-0.5 rounded-full">
                 Glamgo Transparency Guarantee
               </span>
             </div>
@@ -190,17 +188,17 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsByopSelected(false)}
-                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-3 rounded-[16px] border text-left transition-all cursor-pointer ${
                   !isByopSelected
-                    ? 'bg-white border-rose-plum ring-1 ring-rose-plum/25 shadow-xs'
-                    : 'bg-white/60 hover:bg-white border-mist text-mauve-grey'
+                    ? 'bg-card border-accent ring-1 ring-accent/25 shadow-warm-xs'
+                    : 'bg-card/60 hover:bg-card border-border text-text-muted'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-ink">All-Inclusive Sealed Kit</span>
-                  {!isByopSelected && <Check className="w-3.5 h-3.5 text-rose-plum" />}
+                  <span className="font-bold text-text">All-Inclusive Sealed Kit</span>
+                  {!isByopSelected && <Check className="w-3.5 h-3.5 text-accent" />}
                 </div>
-                <p className="text-[11px] text-mauve-grey leading-tight">
+                <p className="text-[11px] text-text-muted leading-tight">
                   100% genuine single-use mono-pack opened in front of you.
                 </p>
               </button>
@@ -208,19 +206,19 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsByopSelected(true)}
-                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-3 rounded-[16px] border text-left transition-all cursor-pointer ${
                   isByopSelected
-                    ? 'bg-white border-rose-plum ring-1 ring-rose-plum/25 shadow-xs'
-                    : 'bg-white/60 hover:bg-white border-mist text-mauve-grey'
+                    ? 'bg-card border-accent ring-1 ring-accent/25 shadow-warm-xs'
+                    : 'bg-card/60 hover:bg-card border-border text-text-muted'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-ink">Bring Your Own Product (BYOP)</span>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                  <span className="font-bold text-text">Bring Your Own Product (BYOP)</span>
+                  <span className="text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded-full">
                     Save ₹{(service.byopDiscount || 500).toLocaleString('en-IN')}
                   </span>
                 </div>
-                <p className="text-[11px] text-mauve-grey leading-tight">
+                <p className="text-[11px] text-text-muted leading-tight">
                   Use your own preferred foundation/creams; pay only for master labor.
                 </p>
               </button>
@@ -229,28 +227,28 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           {/* Glamgo Signature: Step-by-Step Procedure Timeline */}
           {service.procedureSteps && service.procedureSteps.length > 0 && (
-            <div className="p-5 rounded-2xl bg-white border border-mist space-y-4">
+            <div className="p-5 rounded-[20px] bg-card border border-border space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-ink block">
+                <span className="text-xs font-bold uppercase tracking-wider text-text block">
                   Step-by-Step Treatment Procedure ({service.procedureSteps.length} Steps)
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-success bg-success/10 px-2 py-0.5 rounded-full">
                   Glamgo Atelier Protocol
                 </span>
               </div>
 
-              <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-mist">
+              <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
                 {service.procedureSteps.map((step) => (
                   <div key={step.stepNumber} className="relative group">
-                    <div className="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-rose-plum text-white text-[9px] font-bold flex items-center justify-center ring-4 ring-white">
+                    <div className="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-accent text-white text-[9px] font-bold flex items-center justify-center ring-4 ring-card">
                       {step.stepNumber}
                     </div>
                     <div>
                       <div className="flex items-baseline justify-between gap-2">
-                        <h4 className="text-xs font-bold text-ink">{step.title}</h4>
-                        <span className="text-[10px] font-mono text-mauve-grey">{step.duration}</span>
+                        <h4 className="text-xs font-bold text-text">{step.title}</h4>
+                        <span className="text-[10px] font-mono text-text-muted">{step.duration}</span>
                       </div>
-                      <p className="text-[11px] text-mauve-grey mt-0.5 leading-relaxed">{step.description}</p>
+                      <p className="text-[11px] text-text-muted mt-0.5 leading-relaxed">{step.description}</p>
                     </div>
                   </div>
                 ))}
@@ -260,12 +258,12 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           {/* Glamgo Signature: Consumables vs Customer Requirements */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/60 space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+            <div className="p-4 rounded-[18px] bg-bg-alt border border-border space-y-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-success flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-success" />
                 <span>What Glamgo Delivers</span>
               </span>
-              <ul className="space-y-1 text-xs text-ink/80">
+              <ul className="space-y-1 text-xs text-text">
                 {(service.disposablesIncluded || [
                   '100% Genuine Sealed Mono-Dose Pack',
                   'Sterile single-use bed roll & floor sheet',
@@ -273,26 +271,26 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                   'Post-service bio-waste disposal pouch',
                 ]).map((d, i) => (
                   <li key={i} className="flex items-start gap-1.5 text-[11px]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0 mt-0.5" />
                     <span>{d}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/60 space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-amber-700" />
+            <div className="p-4 rounded-[18px] bg-bg-alt border border-border space-y-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-accent-pressed flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-accent-pressed" />
                 <span>What You Need to Provide</span>
               </span>
-              <ul className="space-y-1 text-xs text-ink/80">
+              <ul className="space-y-1 text-xs text-text">
                 {(service.customerRequirements || [
                   '1 Chair or bed in a well-lit room',
                   'Electrical socket within 2 meters',
                   'Normal room temperature water',
                 ]).map((req, i) => (
                   <li key={i} className="flex items-start gap-1.5 text-[11px]">
-                    <span className="text-amber-700 font-bold shrink-0">•</span>
+                    <span className="text-accent font-bold shrink-0">•</span>
                     <span>{req}</span>
                   </li>
                 ))}
@@ -302,15 +300,15 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           {/* 3. Before / After Slider (if available) */}
           {service.beforeImage && service.afterImage && (
-            <div className="p-4 rounded-2xl bg-white border border-mist space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-rose-plum flex items-center gap-1.5">
+            <div className="p-4 rounded-[20px] bg-card border border-border space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Editorial Lookbook Transformation (Before &amp; After)</span>
               </span>
-              <p className="text-[11px] text-mauve-grey mb-3">
+              <p className="text-[11px] text-text-muted mb-3">
                 Drag the slider to inspect high-definition skin blending &amp; contouring precision.
               </p>
-              <div className="aspect-[16/10] max-h-[300px] overflow-hidden rounded-xl border border-mist">
+              <div className="aspect-[16/10] max-h-[300px] overflow-hidden rounded-[16px] border border-border">
                 <BeforeAfterSlider
                   data={{
                     beforeUrl: service.beforeImage,
@@ -325,14 +323,14 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           )}
 
           {/* 4. What's Included Checklist */}
-          <div className="p-5 rounded-2xl bg-white border border-mist space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-ink block">
+          <div className="p-5 rounded-[20px] bg-card border border-border space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-text block">
               What's Included in This Experience
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {service.whatIsIncluded.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-2.5 text-xs text-ink">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                <div key={idx} className="flex items-start gap-2.5 text-xs text-text">
+                  <CheckCircle2 className="w-4 h-4 text-success shrink-0 mt-0.5" />
                   <span className="leading-snug">{item}</span>
                 </div>
               ))}
@@ -341,16 +339,16 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           {/* 5. Products & Formulations Used */}
           {service.productsUsed?.length > 0 && (
-            <div className="p-5 rounded-2xl bg-white border border-mist space-y-2.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-mauve-grey flex items-center gap-1.5">
-                <Droplets className="w-3.5 h-3.5 text-champagne-gold" />
+            <div className="p-5 rounded-[20px] bg-card border border-border space-y-2.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
+                <Droplets className="w-3.5 h-3.5 text-star" />
                 <span>Luxury Formulas &amp; Tools Used</span>
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {service.productsUsed.map((prod, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-xl bg-soft-ivory border border-mist text-xs font-medium text-ink"
+                    className="px-2.5 py-1 rounded-[12px] bg-fill border border-border text-xs font-medium text-text"
                   >
                     {prod}
                   </span>
@@ -359,9 +357,9 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </div>
           )}
 
-          {/* 6. Popular Add-ons Selection */}
+          {/* 6. Recommended Add-ons Selection */}
           <div className="space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-ink block">
+            <span className="text-xs font-bold uppercase tracking-wider text-text block">
               Recommended Add-ons for This Look
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -371,26 +369,26 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                 return (
                   <label
                     key={addon.id}
-                    className={`p-3.5 rounded-2xl border flex items-start gap-3 cursor-pointer transition-all ${
+                    className={`p-3.5 rounded-[16px] border flex items-start gap-3 cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-blush/30 border-rose-plum ring-1 ring-rose-plum/30 shadow-xs'
-                        : 'bg-white border-mist hover:border-mist/80'
+                        ? 'bg-accent-soft/40 border-accent ring-1 ring-accent/30 shadow-warm-xs'
+                        : 'bg-card border-border hover:border-accent/40'
                     }`}
                   >
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => toggleAddon(addon.id)}
-                      className="w-4 h-4 mt-0.5 rounded text-rose-plum accent-rose-plum"
+                      className="w-4 h-4 mt-0.5 rounded text-accent accent-accent"
                     />
                     <div className="flex-1">
                       <div className="flex items-baseline justify-between">
-                        <p className="text-xs font-bold text-ink">{addon.name}</p>
-                        <span className="font-serif text-xs font-bold text-rose-plum">
+                        <p className="text-xs font-bold text-text">{addon.name}</p>
+                        <span className="font-heading text-xs font-bold text-accent">
                           +₹{addon.price.toLocaleString('en-IN')}
                         </span>
                       </div>
-                      <p className="text-[10px] text-mauve-grey mt-0.5">{addon.description}</p>
+                      <p className="text-[10px] text-text-muted mt-0.5">{addon.description}</p>
                     </div>
                   </label>
                 );
@@ -400,11 +398,11 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           {/* 7. FAQs Accordion */}
           {service.faqs?.length > 0 && (
-            <div className="p-5 rounded-2xl bg-white border border-mist space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
+            <div className="p-5 rounded-[20px] bg-card border border-border space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-text block mb-1">
                 Frequently Asked Questions
               </span>
-              <div className="divide-y divide-mist">
+              <div className="divide-y divide-border">
                 {service.faqs.map((faq, idx) => {
                   const isOpen = expandedFaqIndex === idx;
 
@@ -413,13 +411,13 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setExpandedFaqIndex(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between text-left text-xs font-bold text-ink cursor-pointer"
+                        className="w-full flex items-center justify-between text-left text-xs font-bold text-text cursor-pointer"
                       >
                         <span>{faq.question}</span>
-                        {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-mauve-grey" /> : <ChevronDown className="w-3.5 h-3.5 text-mauve-grey" />}
+                        {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-text-muted" /> : <ChevronDown className="w-3.5 h-3.5 text-text-muted" />}
                       </button>
                       {isOpen && (
-                        <p className="text-[11px] text-mauve-grey mt-2 leading-relaxed font-sans">
+                        <p className="text-[11px] text-text-muted mt-2 leading-relaxed font-sans">
                           {faq.answer}
                         </p>
                       )}
@@ -431,8 +429,8 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           )}
 
           {/* 8. Cancellation Policy Strip */}
-          <div className="p-3.5 rounded-xl bg-champagne-gold/15 border border-champagne-gold/30 flex items-center gap-2 text-xs text-ink">
-            <ShieldCheck className="w-4 h-4 text-champagne-gold shrink-0" />
+          <div className="p-3.5 rounded-[16px] bg-bg-alt border border-border flex items-center gap-2 text-xs text-text">
+            <ShieldCheck className="w-4 h-4 text-star shrink-0" />
             <span className="leading-snug">
               Free rescheduling or cancellation up to 4 hours prior to appointment slot. Sealed sterile kit included.
             </span>
@@ -440,22 +438,19 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
         </div>
 
         {/* Sticky Bottom Booking Action Bar */}
-        <div
-          className="p-4 sm:p-5 border-t border-mist bg-white flex items-center justify-between gap-4 shrink-0 shadow-lg"
-          style={{ backgroundColor: '#FFFFFF' }}
-        >
+        <div className="p-4 sm:p-5 border-t border-border bg-card flex items-center justify-between gap-4 shrink-0 shadow-warm-lg">
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="font-serif text-xl sm:text-2xl font-bold text-rose-plum">
+              <span className="font-heading text-xl sm:text-2xl font-bold text-accent">
                 ₹{finalPrice.toLocaleString('en-IN')}
               </span>
               {service.originalPrice > service.price && (
-                <span className="text-xs text-mauve-grey line-through">
+                <span className="text-xs text-text-muted line-through">
                   ₹{service.originalPrice.toLocaleString('en-IN')}
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-mauve-grey block">
+            <span className="text-[10px] text-text-muted block">
               {isByopSelected
                 ? `BYOP Labor Only (-₹${byopDiscountAmount.toLocaleString('en-IN')}) • Taxes included`
                 : selectedAddonIds.length > 0
@@ -474,7 +469,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                 onClose();
               }}
               leftIcon={<Sparkles className="w-4 h-4" />}
-              style={{ backgroundColor: '#B8336A', color: '#FFFFFF', minWidth: '180px' }}
+              className="min-w-[180px] rounded-[14px]"
             >
               Reserve Appointment
             </Button>

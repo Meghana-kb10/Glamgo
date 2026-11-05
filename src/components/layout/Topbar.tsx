@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu,
   Sparkles,
@@ -66,7 +65,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
-  // Monitor scroll for glass effect & elevation
+  // Monitor scroll for 85% Ivory glass effect & warm shadow
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 12);
@@ -79,8 +78,8 @@ export const Topbar: React.FC<TopbarProps> = ({
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-200 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-mist shadow-xs'
-          : 'bg-white border-b border-mist/80'
+          ? 'bg-bg/85 backdrop-blur-md border-b border-border shadow-warm-card'
+          : 'bg-bg border-b border-border'
       }`}
     >
       {/* 1. Slim Announcement Bar Above Topbar */}
@@ -94,7 +93,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onToggleMobileMenu}
             aria-label="Open navigation drawer"
-            className="w-10 h-10 flex lg:hidden items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-10 h-10 flex lg:hidden items-center justify-center rounded-full text-text hover:text-accent hover:bg-fill/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -104,12 +103,12 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onLogoClick}
             aria-label="Glamgo Home"
-            className="flex items-center gap-2 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum rounded-xl p-0.5"
+            className="flex items-center gap-2 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl p-0.5"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-rose-plum flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-accent flex items-center justify-center text-white shadow-warm-sm group-hover:scale-105 transition-transform">
               <Sparkles className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </div>
-            <span className="font-heading font-bold text-lg sm:text-xl text-ink tracking-tight group-hover:text-rose-plum transition-colors">
+            <span className="font-heading font-bold text-lg sm:text-xl text-text tracking-tight group-hover:text-accent transition-colors">
               Glamgo
             </span>
           </button>
@@ -134,8 +133,8 @@ export const Topbar: React.FC<TopbarProps> = ({
               aria-haspopup="true"
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
                 isMegaMenuOpen
-                  ? 'bg-rose-plum text-white border-rose-plum'
-                  : 'bg-soft-ivory text-ink hover:text-rose-plum border-mist hover:border-rose-plum/30'
+                  ? 'bg-accent text-white border-accent shadow-warm-sm'
+                  : 'bg-card text-text hover:text-accent border-border hover:border-border-strong hover:bg-fill/40'
               }`}
             >
               <Grid className="w-3.5 h-3.5" />
@@ -175,7 +174,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onOpenSearchModal}
             aria-label="Search services and products"
-            className="w-10 h-10 lg:hidden flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer"
+            className="w-10 h-10 lg:hidden flex items-center justify-center rounded-full text-text hover:text-accent hover:bg-fill/50 transition-colors cursor-pointer"
           >
             <SearchIcon className="w-5 h-5" />
           </button>
@@ -186,7 +185,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             onClick={onOpenOffers}
             aria-label="Exclusive Offers & Discounts"
             title="Special Offers"
-            className="w-10 h-10 hidden sm:flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-10 h-10 hidden sm:flex items-center justify-center rounded-full text-text hover:text-accent hover:bg-fill/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <Tag className="w-4.5 h-4.5" />
           </button>
@@ -196,11 +195,11 @@ export const Topbar: React.FC<TopbarProps> = ({
             type="button"
             onClick={onOpenNotifications}
             aria-label="Notifications, 1 unread message"
-            className="w-10 h-10 hidden xl:flex items-center justify-center rounded-full text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+            className="w-10 h-10 hidden xl:flex items-center justify-center rounded-full text-text hover:text-accent hover:bg-fill/50 transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <Bell className="w-4.5 h-4.5" />
             <span
-              className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-rose-plum ring-2 ring-white"
+              className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-accent ring-2 ring-card"
               aria-hidden="true"
             />
           </button>

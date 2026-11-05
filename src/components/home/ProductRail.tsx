@@ -46,17 +46,17 @@ export const ProductRail: React.FC<ProductRailProps> = ({
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="flex items-baseline justify-between mb-4">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-rose-plum block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
             Backstage Beauty Formulations
           </span>
-          <h2 className="text-xl sm:text-2xl font-bold text-ink font-sans tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-text font-sans tracking-tight">
             Curated Professional Products
           </h2>
         </div>
         <button
           type="button"
           onClick={onViewAll}
-          className="text-xs font-semibold text-rose-plum hover:underline cursor-pointer flex items-center gap-1"
+          className="text-xs font-semibold text-accent hover:text-accent-pressed hover:underline cursor-pointer flex items-center gap-1"
         >
           <span>View All Products</span>
           <span>→</span>
@@ -70,9 +70,9 @@ export const ProductRail: React.FC<ProductRailProps> = ({
             type="button"
             onClick={() => handleScroll('left')}
             aria-label="Previous products"
-            className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white text-ink shadow-lg border border-mist flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-card text-text shadow-warm-md border border-border flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-5 h-5 text-ink" />
+            <ArrowLeft className="w-5 h-5 text-text" />
           </button>
         )}
 
@@ -99,9 +99,9 @@ export const ProductRail: React.FC<ProductRailProps> = ({
             type="button"
             onClick={() => handleScroll('right')}
             aria-label="Next products"
-            className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white text-ink shadow-lg border border-mist flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-card text-text shadow-warm-md border border-border flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
-            <ArrowRight className="w-5 h-5 text-ink" />
+            <ArrowRight className="w-5 h-5 text-text" />
           </button>
         )}
       </div>

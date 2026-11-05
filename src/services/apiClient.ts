@@ -61,10 +61,27 @@ export async function checkBackendHealth(): Promise<boolean> {
   return isLiveBackend;
 }
 
-// Automatically check health on load and every 10 seconds
+// Automatically check health on idle/load and periodically
 if (typeof window !== 'undefined') {
-  checkBackendHealth();
-  setInterval(checkBackendHealth, 10000);
+  const initHealth = () => {
+    checkBackendHealth();
+    setInterval(checkBackendHealth, 30000);
+  };
+  if (document.readyState === 'complete') {
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(initHealth);
+    } else {
+      setTimeout(initHealth, 1500);
+    }
+  } else {
+    window.addEventListener('load', () => {
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(initHealth);
+      } else {
+        setTimeout(initHealth, 1500);
+      }
+    });
+  }
 }
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));

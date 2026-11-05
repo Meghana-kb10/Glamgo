@@ -48,56 +48,38 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, childre
       >
         <motion.div
           style={{ opacity: isRefreshing ? 1 : iconOpacity }}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-xs border border-rose-gold/25 text-obsidian text-[13px] font-semibold"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-card shadow-warm-xs border border-border text-text text-[13px] font-semibold"
         >
           {justRefreshed ? (
             <>
-              <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-              <span>Catalog Synchronized with Redis &amp; PostGIS</span>
+              <CheckCircle2 className="w-4 h-4 text-success" />
+              <span>Catalog Synchronized</span>
             </>
           ) : isRefreshing ? (
             <>
-              <RefreshCw className="w-4 h-4 text-rose-dark animate-spin" />
-              <span>Refreshing MUA Calendars &amp; Inventory...</span>
+              <RefreshCw className="w-4 h-4 text-accent animate-spin" />
+              <span>Updating Beauty Offerings...</span>
             </>
           ) : (
             <>
-              <motion.div style={{ rotate: iconRotation }}>
-                <RefreshCw className="w-4 h-4 text-rose-dark" />
-              </motion.div>
-              <span>Pull to Refresh Catalog</span>
+              <Sparkles className="w-4 h-4 text-accent" />
+              <span>Pull to Synchronize</span>
             </>
           )}
         </motion.div>
       </motion.div>
 
-      {/* Draggable Content Wrapper with Elastic Spring Resistance */}
+      {/* Touch-Friendly Draggable Content Wrapper */}
       <motion.div
         drag="y"
         dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.35}
+        dragElastic={0.4}
         onDragEnd={handleDragEnd}
         style={{ y }}
-        transition={spatialSpring}
-        className="relative z-10 touch-pan-x"
+        className="touch-pan-x"
       >
         {children}
       </motion.div>
-
-      {/* Quick Desktop Trigger Strip */}
-      <div className="py-2 flex justify-center items-center">
-        <motion.button
-          type="button"
-          whileHover={hoverElevate}
-          whileTap={tapScale}
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-cream hover:bg-surface-hover text-obsidian-muted hover:text-obsidian text-[13px] font-semibold transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-rose-gold focus-visible:outline-none"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 text-rose-dark ${isRefreshing ? 'animate-spin' : ''}`} />
-          <span>{isRefreshing ? 'Re-syncing...' : 'Click or Drag to Refresh Marketplace'}</span>
-        </motion.button>
-      </div>
     </div>
   );
 };

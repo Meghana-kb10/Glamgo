@@ -20,9 +20,9 @@ export const CartButton: React.FC<CartButtonProps> = ({
       onClick={onClick}
       whileTap={MOTION_GESTURES.tap}
       aria-label={`Shopping Cart, ${count} item${count === 1 ? '' : 's'}`}
-      className={`w-11 h-11 rounded-full flex items-center justify-center text-ink hover:text-rose-plum hover:bg-blush/60 transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum ${className}`}
+      className={`w-11 h-11 rounded-full flex items-center justify-center text-text hover:text-accent hover:bg-fill/50 transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${className}`}
     >
-      <ShoppingBag className="w-5 h-5 text-ink hover:text-rose-plum transition-colors" />
+      <ShoppingBag className="w-5 h-5 text-text hover:text-accent transition-colors" />
 
       {/* Cart Badge with Count Pop Animation */}
       <AnimatePresence>
@@ -34,7 +34,7 @@ export const CartButton: React.FC<CartButtonProps> = ({
             exit={{ scale: 0, opacity: 0 }}
             transition={MOTION_SPRINGS.snappy}
             aria-live="polite"
-            className="absolute -top-0.5 -right-0.5 min-w-[20px] h-5 px-1 bg-rose-plum text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-xs pointer-events-none"
+            className="absolute -top-0.5 -right-0.5 min-w-[20px] h-5 px-1 bg-accent text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-warm-sm pointer-events-none"
           >
             {count > 99 ? '99+' : count}
           </motion.span>

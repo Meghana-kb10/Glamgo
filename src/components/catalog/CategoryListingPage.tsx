@@ -226,15 +226,15 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
   const totalServicesCount = groupedServices.reduce((sum, g) => sum + g.services.length, 0);
 
   return (
-    <div className="min-h-screen bg-soft-ivory pb-28">
+    <div className="min-h-screen bg-bg pb-28">
       {/* Category Header Hero */}
-      <div className="bg-white border-b border-mist px-4 sm:px-6 lg:px-8 pt-4 pb-5">
+      <div className="bg-bg-alt border-b border-border px-4 sm:px-6 lg:px-8 pt-4 pb-5">
         <div className="max-w-7xl mx-auto">
           {/* Back button */}
           <button
             type="button"
             onClick={onBackToHome}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-mauve-grey hover:text-ink transition-colors mb-3 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-muted hover:text-text transition-colors mb-3 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Home</span>
@@ -242,18 +242,18 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-accent block">
                 Glamgo Certified Salon Menus
               </span>
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">
+              <h1 className="font-heading text-2xl sm:text-3xl font-bold text-text">
                 {currentCategory.name}
               </h1>
-              <p className="text-xs sm:text-sm text-mauve-grey mt-0.5">
+              <p className="text-xs sm:text-sm text-text-muted mt-0.5">
                 {currentCategory.tagline} • 100% genuine sealed mono-dose kits
               </p>
             </div>
 
-            <div className="text-xs font-mono text-mauve-grey">
+            <div className="text-xs font-mono text-text-muted">
               {totalServicesCount} {totalServicesCount === 1 ? 'service' : 'services'} available
             </div>
           </div>
@@ -269,8 +269,8 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                   onClick={() => handleScrollToSubcategory(g.title)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-rose-plum text-white shadow-xs'
-                      : 'bg-soft-ivory hover:bg-blush/50 text-mauve-grey border border-mist'
+                      ? 'bg-fill text-accent-pressed border border-accent font-bold shadow-warm-xs'
+                      : 'bg-card hover:bg-fill/40 text-text-muted border border-border'
                   }`}
                 >
                   {g.title}
@@ -282,21 +282,21 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
       </div>
 
       {/* Filter / Sort Sticky Bar */}
-      <div className="sticky top-14 sm:top-16 z-20 bg-white/95 backdrop-blur-md border-b border-mist shadow-xs px-4 sm:px-6 lg:px-8 py-2.5">
+      <div className="sticky top-14 sm:top-16 z-20 bg-card/95 backdrop-blur-md border-b border-border shadow-warm-xs px-4 sm:px-6 lg:px-8 py-2.5">
         <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
           {/* Sort Selector */}
           <div className="relative shrink-0">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="appearance-none bg-soft-ivory border border-mist rounded-xl px-3 py-1.5 pr-7 font-semibold text-ink focus:outline-none focus:ring-1 focus:ring-rose-plum cursor-pointer"
+              className="appearance-none bg-card border border-border rounded-[14px] px-3 py-1.5 pr-7 font-semibold text-text focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
             >
               <option value="recommended">Sort: Recommended</option>
               <option value="rating">Sort: Top Rated</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-mauve-grey absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-text-muted absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           {/* Service Mode Chips */}
@@ -305,10 +305,10 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             onClick={() =>
               setModeFilter((prev) => (prev === 'AT_VENUE' ? 'all' : 'AT_VENUE'))
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[14px] font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               modeFilter === 'AT_VENUE'
-                ? 'bg-rose-plum text-white border-rose-plum'
-                : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
+                ? 'bg-fill text-accent-pressed border-accent font-bold'
+                : 'bg-card hover:bg-fill/40 text-text-muted border-border'
             }`}
           >
             <Home className="w-3.5 h-3.5" />
@@ -320,10 +320,10 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             onClick={() =>
               setModeFilter((prev) => (prev === 'IN_STUDIO' ? 'all' : 'IN_STUDIO'))
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[14px] font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               modeFilter === 'IN_STUDIO'
-                ? 'bg-rose-plum text-white border-rose-plum'
-                : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
+                ? 'bg-fill text-accent-pressed border-accent font-bold'
+                : 'bg-card hover:bg-fill/40 text-text-muted border-border'
             }`}
           >
             <Building2 className="w-3.5 h-3.5" />
@@ -334,13 +334,13 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
           <button
             type="button"
             onClick={() => setOnlyHighRating((prev) => !prev)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[14px] font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               onlyHighRating
-                ? 'bg-champagne-gold/20 text-ink border-champagne-gold'
-                : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
+                ? 'bg-fill text-accent-pressed border-accent font-bold'
+                : 'bg-card hover:bg-fill/40 text-text-muted border-border'
             }`}
           >
-            <Star className="w-3.5 h-3.5 fill-champagne-gold text-champagne-gold" />
+            <Star className="w-3.5 h-3.5 fill-star text-star" />
             <span>4.8+ Rating</span>
           </button>
 
@@ -348,13 +348,13 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
           <button
             type="button"
             onClick={() => setOnlyAvailableToday((prev) => !prev)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[14px] font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
               onlyAvailableToday
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-400'
-                : 'bg-soft-ivory hover:bg-blush/40 text-mauve-grey border-mist'
+                ? 'bg-success/10 text-success border-success/30 font-bold'
+                : 'bg-card hover:bg-fill/40 text-text-muted border-border'
             }`}
           >
-            <CalendarCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <CalendarCheck className="w-3.5 h-3.5 text-success" />
             <span>Available Today</span>
           </button>
         </div>
@@ -365,8 +365,8 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* COLUMN 1 (Desktop Left Rail): Sticky Sub-Category Rail with Scroll-Spy */}
-          <aside className="hidden lg:block lg:col-span-3 sticky top-32 space-y-1 bg-white p-3 rounded-2xl border border-mist shadow-xs">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-mauve-grey px-2 py-1 block">
+          <aside className="hidden lg:block lg:col-span-3 sticky top-32 space-y-1 bg-card p-3.5 rounded-[20px] border border-border shadow-warm-sm">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted px-2 py-1 block">
               Sub-Categories
             </span>
             {groupedServices.map((group) => {
@@ -376,14 +376,14 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                   key={group.title}
                   type="button"
                   onClick={() => handleScrollToSubcategory(group.title)}
-                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left ${
+                  className={`w-full flex items-center justify-between p-2.5 rounded-[12px] text-xs font-semibold transition-all cursor-pointer text-left ${
                     isSelected
-                      ? 'bg-blush text-rose-plum font-bold shadow-2xs'
-                      : 'text-ink/80 hover:text-ink hover:bg-soft-ivory'
+                      ? 'bg-fill text-accent-pressed font-bold border-l-2 border-accent shadow-warm-xs'
+                      : 'text-text/80 hover:text-text hover:bg-fill/40'
                   }`}
                 >
                   <span className="truncate">{group.title}</span>
-                  <span className="text-[10px] font-mono text-mauve-grey shrink-0 ml-2">
+                  <span className="text-[10px] font-mono text-text-muted shrink-0 ml-2">
                     {group.services.length}
                   </span>
                 </button>
@@ -394,12 +394,12 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
           {/* COLUMN 2 (Center): Service List Grouped Under Sub-Category Headings */}
           <main className="lg:col-span-6 space-y-8">
             {groupedServices.length === 0 ? (
-              <div className="py-16 text-center max-w-md mx-auto bg-white rounded-2xl p-6 border border-mist">
-                <Sparkles className="w-8 h-8 text-rose-plum mx-auto mb-2" />
-                <h3 className="font-serif text-lg font-bold text-ink">
+              <div className="py-16 text-center max-w-md mx-auto bg-card rounded-[22px] p-6 border border-border shadow-warm-sm">
+                <Sparkles className="w-8 h-8 text-accent mx-auto mb-2" />
+                <h3 className="font-heading text-lg font-bold text-text">
                   No services match these filters
                 </h3>
-                <p className="text-xs text-mauve-grey mt-1 mb-4">
+                <p className="text-xs text-text-muted mt-1 mb-4">
                   Adjust your filter chips or reset to see all available services.
                 </p>
                 <Button
@@ -423,11 +423,11 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                   className="space-y-4"
                 >
                   {/* Sub-category Heading */}
-                  <div className="flex items-baseline justify-between border-b border-mist/80 pb-2">
-                    <h2 className="font-heading font-bold text-lg text-ink">
+                  <div className="flex items-baseline justify-between border-b border-border pb-2">
+                    <h2 className="font-heading font-bold text-lg text-text">
                       {group.title}
                     </h2>
-                    <span className="text-xs text-mauve-grey">
+                    <span className="text-xs text-text-muted">
                       {group.services.length} items
                     </span>
                   </div>
@@ -443,66 +443,66 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                         <div
                           key={service.id}
                           onClick={() => onOpenServiceDetail(service)}
-                          className="p-4 sm:p-5 rounded-2xl bg-white border border-mist shadow-2xs hover:border-rose-plum/30 hover:shadow-card transition-all flex flex-col sm:flex-row gap-4 justify-between cursor-pointer group"
+                          className="p-4 sm:p-5 rounded-[20px] bg-card border border-border shadow-warm-card hover:border-accent/40 hover:shadow-warm-md transition-all flex flex-col sm:flex-row gap-4 justify-between cursor-pointer group"
                         >
                           {/* Left details info */}
                           <div className="flex-1 min-w-0 space-y-2">
                             {/* Service title & Rating */}
                             <div>
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ink bg-champagne-gold/15 px-2 py-0.5 rounded">
-                                  <Star className="w-3 h-3 fill-champagne-gold text-champagne-gold" />
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-text bg-fill/60 px-2 py-0.5 rounded-full border border-border">
+                                  <Star className="w-3 h-3 fill-star text-star" />
                                   <span>{service.rating.toFixed(2)}</span>
-                                  <span className="text-mauve-grey font-normal font-mono">
+                                  <span className="text-text-muted font-normal font-mono">
                                     ({service.reviewCount})
                                   </span>
                                 </span>
 
                                 {service.isMostBooked && (
-                                  <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum bg-blush px-2 py-0.5 rounded-full">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent-soft px-2 py-0.5 rounded-full">
                                     Most Booked
                                   </span>
                                 )}
                               </div>
 
-                              <h3 className="font-heading font-bold text-sm sm:text-base text-ink group-hover:text-rose-plum transition-colors leading-tight">
+                              <h3 className="font-heading font-bold text-sm sm:text-base text-text group-hover:text-accent transition-colors leading-tight">
                                 {service.title}
                               </h3>
                             </div>
 
                             {/* Duration & Price */}
                             <div className="flex items-baseline gap-2 font-mono">
-                              <span className="text-xs font-semibold text-rose-plum bg-blush/60 px-2 py-0.5 rounded">
+                              <span className="text-xs font-semibold text-accent bg-accent-soft px-2 py-0.5 rounded-full">
                                 {service.durationMinutes} mins
                               </span>
-                              <span className="text-sm sm:text-base font-bold text-ink">
+                              <span className="text-sm sm:text-base font-bold text-text">
                                 ₹{service.price}
                               </span>
                               {hasDiscount && (
-                                <span className="text-xs text-mauve-grey line-through">
+                                <span className="text-xs text-text-muted line-through">
                                   ₹{service.originalPrice}
                                 </span>
                               )}
                               {hasDiscount && (
-                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                                <span className="text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded-full">
                                   Save ₹{service.savingsAmount}
                                 </span>
                               )}
                             </div>
 
                             {/* 2-3 Bullet Highlights */}
-                            <ul className="space-y-1 pt-1 text-xs text-mauve-grey">
+                            <ul className="space-y-1 pt-1 text-xs text-text-muted">
                               {service.whatIsIncluded.slice(0, 3).map((item, idx) => (
                                 <li key={idx} className="flex items-start gap-1.5">
-                                  <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                                  <Check className="w-3.5 h-3.5 text-success shrink-0 mt-0.5" />
                                   <span className="line-clamp-1">{item}</span>
                                 </li>
                               ))}
                             </ul>
 
                             {/* Sealed single-use note */}
-                            <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-medium pt-1">
-                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <div className="flex items-center gap-1 text-[11px] text-success font-medium pt-1">
+                              <ShieldCheck className="w-3.5 h-3.5 text-success shrink-0" />
                               <span>Products: sealed, single-use</span>
                             </div>
 
@@ -513,7 +513,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                                 e.stopPropagation();
                                 onOpenServiceDetail(service);
                               }}
-                              className="text-[11px] font-bold text-rose-plum hover:text-deep-plum inline-flex items-center gap-1 cursor-pointer pt-1"
+                              className="text-[11px] font-bold text-accent hover:text-accent-pressed inline-flex items-center gap-1 cursor-pointer pt-1"
                             >
                               <span>View details</span>
                               <ArrowRight className="w-3 h-3" />
@@ -522,7 +522,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
 
                           {/* Right: Service photo + Round Add Button */}
                           <div className="relative w-full sm:w-36 shrink-0 flex sm:flex-col items-center justify-between sm:justify-start gap-3">
-                            <div className="relative aspect-[4/3] w-28 sm:w-full rounded-xl overflow-hidden bg-blush/20 border border-mist shadow-2xs">
+                            <div className="relative aspect-[4/3] w-28 sm:w-full rounded-[16px] overflow-hidden bg-fill/30 border border-border shadow-warm-xs">
                               <img
                                 src={service.imageUrl}
                                 alt={service.title}
@@ -536,23 +536,23 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                               {qty > 0 ? (
                                 <div
                                   onClick={(e) => e.stopPropagation()}
-                                  className="flex items-center border border-rose-plum rounded-full overflow-hidden bg-blush/40 shadow-xs"
+                                  className="flex items-center border border-accent rounded-full overflow-hidden bg-accent-soft/40 shadow-warm-xs"
                                 >
                                   <button
                                     type="button"
                                     onClick={(e) => handleDecrement(e, service.id)}
-                                    className="w-7 h-7 flex items-center justify-center text-rose-plum hover:bg-rose-plum/10 transition-colors cursor-pointer"
+                                    className="w-7 h-7 flex items-center justify-center text-accent hover:bg-accent/10 transition-colors cursor-pointer"
                                     aria-label="Decrease quantity"
                                   >
                                     <Minus className="w-3 h-3" />
                                   </button>
-                                  <span className="w-6 text-center font-mono font-bold text-xs text-ink">
+                                  <span className="w-6 text-center font-mono font-bold text-xs text-text">
                                     {qty}
                                   </span>
                                   <button
                                     type="button"
                                     onClick={(e) => handleIncrement(e, service.id)}
-                                    className="w-7 h-7 flex items-center justify-center text-rose-plum hover:bg-rose-plum/10 transition-colors cursor-pointer"
+                                    className="w-7 h-7 flex items-center justify-center text-accent hover:bg-accent/10 transition-colors cursor-pointer"
                                     aria-label="Increase quantity"
                                   >
                                     <Plus className="w-3 h-3" />
@@ -562,7 +562,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                                 <button
                                   type="button"
                                   onClick={(e) => handleAddClick(e, service)}
-                                  className="px-4 py-1.5 rounded-full bg-white hover:bg-blush border border-rose-plum text-rose-plum font-bold text-xs shadow-xs hover:shadow transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                                  className="px-4 py-1.5 rounded-full bg-card hover:bg-accent-soft border border-accent text-accent font-bold text-xs shadow-warm-xs hover:shadow-warm-sm transition-all flex items-center gap-1 cursor-pointer active:scale-95"
                                 >
                                   <Plus className="w-3.5 h-3.5" />
                                   <span>{hasVariants ? 'Add +' : 'Add'}</span>
@@ -582,13 +582,13 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
           {/* COLUMN 3 (Desktop Right): Sticky Cart & Safe Assurance Card */}
           <aside className="hidden lg:block lg:col-span-3 sticky top-32 space-y-4">
             {/* Sticky Cart Summary */}
-            <div className="p-4 rounded-2xl bg-white border border-mist shadow-xs space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-mist/80">
-                <span className="font-heading font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
-                  <ShoppingBag className="w-4 h-4 text-rose-plum" />
+            <div className="p-4 rounded-[20px] bg-card border border-border shadow-warm-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-border">
+                <span className="font-heading font-bold text-xs uppercase tracking-wider text-text flex items-center gap-1.5">
+                  <ShoppingBag className="w-4 h-4 text-accent" />
                   <span>Your Cart</span>
                 </span>
-                <span className="text-[11px] font-mono font-semibold text-rose-plum">
+                <span className="text-[11px] font-mono font-semibold text-accent">
                   {activeCart ? '1 item' : '0 items'}
                 </span>
               </div>
@@ -596,13 +596,13 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
               {activeCart ? (
                 <div className="space-y-3">
                   <div className="text-xs">
-                    <p className="font-bold text-ink truncate">
+                    <p className="font-bold text-text truncate">
                       {activeCart.package.name}
                     </p>
-                    <p className="text-[11px] text-mauve-grey font-mono mt-0.5">
+                    <p className="text-[11px] text-text-muted font-mono mt-0.5">
                       {activeCart.date} • {activeCart.timeSlot}
                     </p>
-                    <p className="font-bold text-rose-plum mt-1">
+                    <p className="font-bold text-accent mt-1">
                       ₹{activeCart.package.price.toLocaleString('en-IN')}
                     </p>
                   </div>
@@ -610,7 +610,7 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                   <button
                     type="button"
                     onClick={onOpenCart}
-                    className="w-full py-2.5 rounded-xl bg-rose-plum text-white font-bold text-xs hover:bg-deep-plum transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-[14px] bg-accent text-white font-bold text-xs hover:bg-accent-pressed transition-all shadow-warm-sm cursor-pointer flex items-center justify-center gap-2"
                   >
                     <span>View Cart &amp; Checkout</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -618,10 +618,10 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
                 </div>
               ) : (
                 <div className="py-4 text-center">
-                  <p className="text-xs text-mauve-grey">
+                  <p className="text-xs text-text-muted">
                     No services in cart yet.
                   </p>
-                  <p className="text-[11px] text-mauve-grey/80 mt-0.5">
+                  <p className="text-[11px] text-text-muted/80 mt-0.5">
                     Click &apos;Add&apos; on any service to start booking.
                   </p>
                 </div>
@@ -629,12 +629,12 @@ export const CategoryListingPage: React.FC<CategoryListingPageProps> = ({
             </div>
 
             {/* Safe & Hygienic Assurance Box */}
-            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 space-y-2 text-xs text-emerald-900">
-              <div className="flex items-center gap-1.5 font-bold">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="p-4 rounded-[18px] bg-bg-alt border border-border space-y-2 text-xs text-text">
+              <div className="flex items-center gap-1.5 font-bold text-text">
+                <ShieldCheck className="w-4 h-4 text-success shrink-0" />
                 <span>Safe &amp; Hygienic Delivery</span>
               </div>
-              <ul className="space-y-1 text-[11px] text-emerald-800">
+              <ul className="space-y-1 text-[11px] text-text-muted">
                 <li>• Barcode-sealed mono-dose kits</li>
                 <li>• Hospital-grade tool sterilization</li>
                 <li>• Start OTP verification on arrival</li>

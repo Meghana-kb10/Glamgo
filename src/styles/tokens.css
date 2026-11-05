@@ -22,6 +22,7 @@
 
   /* Semantic Feedback */
   --success: #1E7F5C;
+  --success-text: #136347;   /* Accessible green text on tinted badge backgrounds (5.88:1) */
   --error: #B3261E;
   --warning: #A8620A;
   --warning-text: #8C4D00;

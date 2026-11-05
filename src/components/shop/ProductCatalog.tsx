@@ -82,46 +82,46 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* 1. Header Navigation & Breadcrumb */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-mist">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <button
           type="button"
           onClick={onBackToServices}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-mauve-grey hover:text-rose-plum transition-colors cursor-pointer group w-fit"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-text-muted hover:text-accent transition-colors cursor-pointer group w-fit"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
           <span>Back to Salon &amp; Bridal Services</span>
         </button>
 
-        <span className="text-xs text-mauve-grey font-sans">
-          Showing <span className="font-bold text-ink">{filteredProducts.length}</span> curated beauty formulations
+        <span className="text-xs text-text-muted font-sans">
+          Showing <span className="font-bold text-text">{filteredProducts.length}</span> curated beauty formulations
         </span>
       </div>
 
       {/* 2. Editorial Title Banner */}
-      <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-blush/40 via-soft-ivory to-blush/20 border border-mist flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xs">
+      <div className="rounded-3xl p-6 sm:p-8 bg-bg-alt border border-border flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-warm-xs">
         <div className="max-w-2xl space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-mist shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-rose-plum" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-plum">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card border border-border shadow-warm-xs">
+            <Sparkles className="w-3.5 h-3.5 text-accent" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
               The Backstage Beauty Boutique
             </span>
           </div>
-          <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-ink tracking-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-text tracking-tight">
             Curated Professional Cosmetics
           </h1>
-          <p className="text-xs sm:text-sm text-mauve-grey font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-text-muted font-sans leading-relaxed">
             The exact setting shields, 24k radiance primers, and couture bridal palettes approved and used by celebrity makeup artists. Delivered straight to your doorstep.
           </p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <div className="p-4 rounded-2xl bg-white border border-mist text-center shadow-xs">
-            <span className="block font-mono text-xl font-bold text-rose-plum">100%</span>
-            <span className="text-[10px] text-mauve-grey uppercase font-bold tracking-wider">Authentic Lab Verified</span>
+          <div className="p-4 rounded-2xl bg-card border border-border text-center shadow-warm-xs">
+            <span className="block font-mono text-xl font-bold text-accent">100%</span>
+            <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider">Authentic Lab Verified</span>
           </div>
-          <div className="p-4 rounded-2xl bg-white border border-mist text-center shadow-xs">
-            <span className="block font-mono text-xl font-bold text-ink">24h</span>
-            <span className="text-[10px] text-mauve-grey uppercase font-bold tracking-wider">Climate-Safe Dispatch</span>
+          <div className="p-4 rounded-2xl bg-card border border-border text-center shadow-warm-xs">
+            <span className="block font-mono text-xl font-bold text-text">24h</span>
+            <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider">Climate-Safe Dispatch</span>
           </div>
         </div>
       </div>
@@ -130,23 +130,23 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         {/* Search Input */}
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-mauve-grey" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products or brands..."
-            className="w-full h-10 pl-9 pr-4 rounded-xl bg-white border border-mist text-xs text-ink placeholder:text-mauve-grey focus:outline-none focus:border-rose-plum focus:ring-1 focus:ring-rose-plum transition-all shadow-2xs font-sans"
+            className="w-full h-10 pl-9 pr-4 rounded-xl bg-card border border-border text-xs text-text placeholder:text-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-warm-xs font-sans"
           />
         </div>
 
         {/* Sort Selector */}
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <span className="text-xs text-mauve-grey shrink-0 font-sans hidden sm:inline">Sort by:</span>
+          <span className="text-xs text-text-muted shrink-0 font-sans hidden sm:inline">Sort by:</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="h-10 px-3.5 rounded-xl bg-white border border-mist text-xs font-semibold text-ink focus:outline-none focus:border-rose-plum transition-all cursor-pointer shadow-2xs font-sans"
+            className="h-10 px-3.5 rounded-xl bg-card border border-border text-xs font-semibold text-text focus:outline-none focus:border-accent transition-all cursor-pointer shadow-warm-xs font-sans"
           >
             <option value="featured">Featured Formulations</option>
             <option value="rating">Top Rated by Brides</option>
@@ -167,8 +167,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               onClick={() => handleCategoryChange(cat.id)}
               className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer font-sans shrink-0 ${
                 isSelected
-                  ? 'bg-rose-plum text-white shadow-xs'
-                  : 'bg-white hover:bg-blush/50 border border-mist text-ink hover:text-rose-plum shadow-2xs'
+                  ? 'bg-accent text-white shadow-xs'
+                  : 'bg-card hover:bg-fill border border-border text-text hover:text-accent-pressed shadow-warm-xs'
               }`}
             >
               {cat.label}
@@ -179,10 +179,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
       {/* 5. Product Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="py-20 text-center space-y-3 bg-white rounded-3xl border border-mist p-8 shadow-xs">
-          <Package className="w-12 h-12 mx-auto text-mist" />
-          <h3 className="font-heading text-lg font-bold text-ink">No formulations found</h3>
-          <p className="text-xs text-mauve-grey max-w-sm mx-auto font-sans">
+        <div className="py-20 text-center space-y-3 bg-card rounded-3xl border border-border p-8 shadow-warm-xs">
+          <Package className="w-12 h-12 mx-auto text-border" />
+          <h3 className="font-heading text-lg font-bold text-text">No formulations found</h3>
+          <p className="text-xs text-text-muted max-w-sm mx-auto font-sans">
             We couldn't find any products matching your search criteria. Try selecting another category or resetting the search.
           </p>
           <button
@@ -191,7 +191,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               setActiveCategory('all');
               setSearchQuery('');
             }}
-            className="px-4 py-2 rounded-xl bg-rose-plum text-white text-xs font-semibold hover:bg-deep-plum transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent-pressed transition-colors cursor-pointer"
           >
             Reset Filters
           </button>

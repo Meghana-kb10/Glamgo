@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Topbar } from './Topbar';
 import { Sidebar, NextAppointmentInfo } from './Sidebar';
 import { MobileDrawer } from './MobileDrawer';
 import { BottomNav, BottomNavTab } from './BottomNav';
 import { LocationItem, DetailedService } from '../../services/marketplaceService';
 import { Artist, Product } from '../../types';
-import { MOTION_SPRINGS } from '../../motion/tokens';
 import { AudienceType } from '../../config/marketing';
 
 export interface AppShellProps {
@@ -80,10 +78,17 @@ export const AppShell: React.FC<AppShellProps> = ({
   });
 
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [isDesktopOrTablet, setIsDesktopOrTablet] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 600;
+    }
+    return false;
+  });
 
   // Auto-collapse sidebar on window resize to tablet
   useEffect(() => {
     const handleResize = () => {
+      setIsDesktopOrTablet(window.innerWidth >= 600);
       if (window.innerWidth >= 600 && window.innerWidth < 1024) {
         setIsSidebarCollapsed(true);
       }
@@ -101,11 +106,11 @@ export const AppShell: React.FC<AppShellProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-soft-ivory text-ink flex flex-col selection:bg-rose-plum/20 selection:text-ink">
+    <div className="min-h-screen bg-bg text-text flex flex-col selection:bg-accent-soft selection:text-text">
       {/* Skip-to-content Link for Accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 px-4 py-2 bg-rose-plum text-white font-bold text-xs rounded-xl shadow-lg focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 px-4 py-2 bg-accent text-white font-bold text-xs rounded-[14px] shadow-warm-modal focus:outline-none"
       >
         Skip to main content
       </a>
@@ -134,20 +139,22 @@ export const AppShell: React.FC<AppShellProps> = ({
       />
 
       {/* 2. Persistent Sidebar (Desktop >=1024px: 240px/72px, Tablet 600-1023px: 72px) */}
-      <div className="hidden sm:block">
-        <Sidebar
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={handleToggleCollapse}
-          activeRoute={activeRoute}
-          onNavigate={onNavigate}
-          onOpenAuth={onOpenAuth}
-          upcomingBookingsCount={upcomingBookingsCount}
-          nextAppointment={nextAppointment}
-          audience={audience}
-          onOpenBookings={onOpenBookings}
-          onOpenOffers={onOpenOffers}
-        />
-      </div>
+      {isDesktopOrTablet && (
+        <div className="hidden sm:block">
+          <Sidebar
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={handleToggleCollapse}
+            activeRoute={activeRoute}
+            onNavigate={onNavigate}
+            onOpenAuth={onOpenAuth}
+            upcomingBookingsCount={upcomingBookingsCount}
+            nextAppointment={nextAppointment}
+            audience={audience}
+            onOpenBookings={onOpenBookings}
+            onOpenOffers={onOpenOffers}
+          />
+        </div>
+      )}
 
       {/* 3. Mobile Slide-in Drawer (<600px) */}
       <MobileDrawer
@@ -160,9 +167,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       />
 
       {/* 4. Main Content Area */}
-      <motion.div
-        layout
-        transition={MOTION_SPRINGS.slider}
+      <div
         className={`flex-1 transition-all duration-200 pt-20 sm:pt-[82px] ${
           // Padding left matches sidebar width on tablet & desktop
           isSidebarCollapsed ? 'sm:pl-[72px]' : 'sm:pl-[72px] lg:pl-[240px]'
@@ -175,7 +180,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         >
           {children}
         </main>
-      </motion.div>
+      </div>
 
       {/* 5. Mobile 4-Tab Bottom Navigation + Docked Cart Bar */}
       <BottomNav

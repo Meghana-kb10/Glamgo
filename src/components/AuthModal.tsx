@@ -8,11 +8,7 @@ import {
   Crown,
   Brush,
   Store,
-  MapPin,
-  CheckCircle2,
   AlertCircle,
-  RefreshCw,
-  Phone,
   MessageSquare,
   Lock,
 } from 'lucide-react';
@@ -20,9 +16,6 @@ import { useAuth, UserRole } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { authService, AuthUser, DEV_OTP, isDevAuthEnabled } from '../services/authService';
 import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import { Chip } from './ui/Chip';
-import { BottomSheet } from './ui/BottomSheet';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -32,7 +25,7 @@ interface AuthModalProps {
   onSuccess?: () => void;
 }
 
-type AuthStep = 'PHONE' | 'OTP' | 'PROFILE' | 'LOCATION';
+type AuthStep = 'PHONE' | 'OTP' | 'SUCCESS_TICK' | 'PROFILE';
 
 const DEMO_PERSONAS = [
   {
@@ -80,53 +73,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   defaultRole = 'CUSTOMER',
   onSuccess,
 }) => {
-  const { loginWithAuthUser, updateUser, login } = useAuth();
+  const { loginWithAuthUser, login } = useAuth();
   const toast = useToast();
 
-  // Screen state
   const [step, setStep] = useState<AuthStep>('PHONE');
-  const [isMobile, setIsMobile] = useState<boolean>(() =>
-    typeof window !== 'undefined' ? window.innerWidth < 640 : false
-  );
-
-  // Phone Step State
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
-  // OTP Step State
   const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [resendCooldown, setResendCooldown] = useState(30);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [shakeKey, setShakeKey] = useState(0);
 
-  // Profile Step State (New Users)
+  // New users: Name only
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
   const [nameError, setNameError] = useState<string | null>(null);
-  const [preferredGender, setPreferredGender] = useState<'female' | 'male' | 'none'>('female');
 
-  // Location Step State
-  const [manualCity, setManualCity] = useState('Mumbai');
-  const [manualPincode, setManualPincode] = useState('400050');
-  const [isLocating, setIsLocating] = useState(false);
-
-  // General Loading & Developer Bypass State
   const [isLoading, setIsLoading] = useState(false);
   const [showDevPersonas, setShowDevPersonas] = useState(false);
   const [pendingUser, setPendingUser] = useState<AuthUser | null>(null);
   const [pendingToken, setPendingToken] = useState<string | null>(null);
 
-  // Detect mobile width
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Reset state on modal open
+  // Reset state on open
   useEffect(() => {
     if (isOpen) {
       setStep('PHONE');
@@ -135,9 +104,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setOtpDigits(['', '', '', '', '', '']);
       setOtpError(null);
       setFullName('');
-      setEmail('');
       setNameError(null);
-      setPreferredGender('female');
       setIsLoading(false);
       setShowDevPersonas(false);
       setPendingUser(null);
@@ -154,7 +121,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return () => clearInterval(interval);
   }, [step, resendCooldown]);
 
-  // Escape key listener for desktop dialog
+  // Escape key listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -165,14 +132,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Handle Phone input formatting (only 10 digits)
+  // Format phone
   const handlePhoneChange = (val: string) => {
     const cleaned = val.replace(/\D/g, '').slice(0, 10);
     setPhone(cleaned);
     if (phoneError) setPhoneError(null);
   };
 
-  // Submit Phone & Send OTP
+  // Submit phone
   const handleSendOtp = async (channel: 'sms' | 'whatsapp' = 'sms') => {
     if (phone.length !== 10) {
       setPhoneError('Enter a valid 10-digit mobile number');
@@ -191,10 +158,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setOtpDigits(['', '', '', '', '', '']);
         setOtpError(null);
         toast.info(res.message || `OTP sent via ${channel.toUpperCase()}`, 'Verification Code Sent');
-        // Auto-focus first OTP input after render
         setTimeout(() => {
           otpInputRefs.current[0]?.focus();
-        }, 100);
+        }, 150);
       } else {
         setPhoneError(res.error || 'Failed to dispatch verification code');
       }
@@ -204,29 +170,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Auto-verify OTP when 6th digit entered
+  // OTP inputs
   const handleOtpInput = (index: number, value: string) => {
     const val = value.replace(/\D/g, '');
     const newDigits = [...otpDigits];
 
     if (!val) {
-      // Backspace
       newDigits[index] = '';
       setOtpDigits(newDigits);
       return;
     }
 
-    // Single character entry
     newDigits[index] = val.slice(-1);
     setOtpDigits(newDigits);
     setOtpError(null);
 
-    // Auto-advance to next box if available
     if (index < 5 && val) {
       otpInputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-submit on 6th digit
     if (index === 5 || newDigits.every((d) => d.length === 1)) {
       const fullCode = newDigits.join('');
       if (fullCode.length === 6) {
@@ -267,18 +229,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsLoading(false);
 
       if (res.success && res.user && res.token) {
-        if (res.isNewUser) {
-          // New customer: navigate to profile onboarding
-          setPendingUser(res.user);
-          setPendingToken(res.token);
-          setStep('PROFILE');
-        } else {
-          // Returning customer: complete login
-          loginWithAuthUser(res.user, res.token);
-          toast.success(`Welcome back, ${res.user.fullName || 'Member'}!`, 'Authenticated');
-          onSuccess?.();
-          onClose();
-        }
+        // Show SVG tick animation first
+        setStep('SUCCESS_TICK');
+        setPendingUser(res.user);
+        setPendingToken(res.token);
+
+        setTimeout(() => {
+          if (res.isNewUser) {
+            setStep('PROFILE');
+          } else if (res.user && res.token) {
+            loginWithAuthUser(res.user, res.token);
+            toast.success(`Welcome back, ${res.user.fullName || 'Member'}!`, 'Authenticated');
+            onSuccess?.();
+            onClose();
+          }
+        }, 900);
       } else {
         setOtpError(res.error || `Incorrect code. Enter ${DEV_OTP} to test.`);
         setShakeKey((prev) => prev + 1);
@@ -290,65 +255,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Submit Profile Setup
-  const handleProfileSubmit = (e: React.FormEvent) => {
+  // Submit Name-Only Profile
+  const handleNameOnlySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName.trim()) {
-      setNameError('Full name is required');
+      setNameError('Please enter your name');
       return;
     }
-    setNameError(null);
-    setStep('LOCATION');
-  };
+    if (!pendingUser || !pendingToken) return;
 
-  // Location Confirmation & Finalize New User
-  const handleFinalizeNewUser = async (locationCity: string, locationPincode: string) => {
-    if (!pendingUser) return;
     setIsLoading(true);
+    setNameError(null);
 
     try {
       const res = await authService.completeProfile(pendingUser.id, {
         fullName: fullName.trim(),
-        email: email.trim() || undefined,
-        preferredGender,
-        city: locationCity,
-        pincode: locationPincode,
+        preferredGender: 'female',
+        city: 'Indiranagar, Bengaluru',
+        pincode: '560038',
       });
-
       setIsLoading(false);
-      if (res.success && pendingToken) {
+
+      if (res.success) {
         loginWithAuthUser(res.user, pendingToken);
-        toast.success(`Welcome to Glamgo Atelier, ${res.user.fullName}!`, 'Profile Created');
+        toast.success(`Welcome to Glamgo, ${res.user.fullName}!`, 'Profile Created');
         onSuccess?.();
         onClose();
       }
     } catch (err: any) {
       setIsLoading(false);
-      toast.error(err.message || 'Failed to complete profile', 'Error');
+      setNameError(err.message || 'Failed to save profile');
     }
   };
 
-  const handleUseCurrentLocation = () => {
-    setIsLocating(true);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        () => {
-          setIsLocating(false);
-          handleFinalizeNewUser('Bandra West, Mumbai', '400050');
-        },
-        () => {
-          setIsLocating(false);
-          handleFinalizeNewUser(manualCity, manualPincode);
-        },
-        { timeout: 3000 }
-      );
-    } else {
-      setIsLocating(false);
-      handleFinalizeNewUser(manualCity, manualPincode);
-    }
-  };
-
-  // Google Sign-In Mock
+  // Google sign in mock
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
@@ -362,23 +302,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
     } catch {
       setIsLoading(false);
-      toast.error('Google Sign-In failed. (Requires VITE_GOOGLE_CLIENT_ID in live production)', 'Auth Error');
+      toast.error('Google Sign-In failed.', 'Auth Error');
     }
   };
 
-  // Developer Quick Persona Bypass
+  // Quick Persona
   const handleQuickPersona = async (persona: (typeof DEMO_PERSONAS)[0]) => {
     setIsLoading(true);
     try {
-      // Use existing email/password auth for quick admin / pro / vendor review
       const res = await login(persona.email, persona.role === 'CUSTOMER' ? 'GlamgoBride2026!' : 'Glamgo2026!');
       setIsLoading(false);
       if (res.success) {
-        toast.success(`Signed in as ${persona.name} (${persona.badge})`, 'Persona Switched');
+        toast.success(`Signed in as ${persona.name}`, 'Persona Switched');
         onSuccess?.();
         onClose();
       } else {
-        // Fallback: verify phone directly
         const verifyRes = await authService.verifyOtp(persona.phone, DEV_OTP || '123456');
         if (verifyRes.success && verifyRes.user && verifyRes.token) {
           loginWithAuthUser(verifyRes.user, verifyRes.token);
@@ -395,396 +333,65 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Masked phone for display
   const maskedPhone =
     phone.length === 10
       ? `+91 ${phone.slice(0, 5)} •••••`
       : '+91 ••••• •••••';
 
-  // Modal Content Form
-  const renderAuthContent = () => {
-    return (
-      <div className="flex flex-col">
-        {/* Step 1: Phone Entry Screen */}
-        {step === 'PHONE' && (
-          <div>
-            {/* Header with Playfair Typography */}
-            <div className="text-center pt-2 pb-5">
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-blush flex items-center justify-center text-rose-plum mb-3 shadow-xs">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <h2
-                id="auth-modal-title"
-                className="font-serif text-2xl sm:text-3xl text-ink font-bold tracking-tight"
-              >
-                Welcome to Glamgo
-              </h2>
-              <p className="text-xs sm:text-sm text-mauve-grey mt-1 font-sans">
-                Sign in to book beauty services in seconds
-              </p>
-            </div>
-
-            {/* Phone Input with +91 Country Code Chip */}
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="customer-phone-input"
-                  className="block text-xs font-semibold uppercase tracking-wider text-mauve-grey mb-1.5"
-                >
-                  Mobile Number
-                </label>
-                <div className="flex items-center gap-2">
-                  <div className="h-12 px-3.5 flex items-center justify-center gap-1.5 bg-mist/50 border border-mist rounded-xl text-sm font-semibold text-ink select-none">
-                    <span className="text-xs font-bold text-mauve-grey tracking-wider">IN</span>
-                    <span>+91</span>
-                  </div>
-                  <div className="relative flex-1">
-                    <input
-                      id="customer-phone-input"
-                      type="tel"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={10}
-                      autoFocus
-                      value={phone}
-                      onChange={(e) => handlePhoneChange(e.target.value)}
-                      placeholder="98765 43210"
-                      aria-invalid={!!phoneError}
-                      aria-describedby={phoneError ? 'phone-error-msg' : undefined}
-                      className={`w-full h-12 px-4 text-base font-medium text-ink bg-white border rounded-xl focus:outline-none focus:ring-2 transition-colors ${
-                        phoneError
-                          ? 'border-coral-red focus:ring-coral-red/20'
-                          : 'border-mist focus:border-rose-plum focus:ring-rose-plum/15'
-                      } placeholder:text-mauve-grey/50`}
-                    />
-                  </div>
-                </div>
-
-                {phoneError && (
-                  <p
-                    id="phone-error-msg"
-                    role="alert"
-                    aria-live="assertive"
-                    className="mt-1.5 text-xs text-coral-red flex items-center gap-1 font-medium"
-                  >
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    <span>{phoneError}</span>
-                  </p>
-                )}
-              </div>
-
-              {/* Continue CTA */}
-              <Button
-                type="button"
-                variant="primary"
-                size="lg"
-                fullWidth
-                disabled={phone.length !== 10}
-                isLoading={isLoading}
-                onClick={() => handleSendOtp('sms')}
-                rightIcon={<ArrowRight className="w-4 h-4" />}
-                className="mt-1"
-              >
-                Continue
-              </Button>
-
-              {/* "or" Divider */}
-              <div className="relative flex items-center justify-center my-3">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-mist" />
-                </div>
-                <span className="relative px-3 bg-soft-ivory text-xs uppercase tracking-wider text-mauve-grey font-medium">
-                  or
-                </span>
-              </div>
-
-              {/* Continue with Google */}
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                className="w-full h-12 px-4 rounded-xl border border-mist bg-white hover:bg-mist/30 text-ink text-sm font-semibold flex items-center justify-center gap-3 transition-colors cursor-pointer active:scale-98 shadow-xs"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    fill="#4285F4"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                  />
-                </svg>
-                <span>Continue with Google</span>
-              </button>
-
-              {/* Browse as Guest Link */}
-              <div className="text-center pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onSuccess?.();
-                    onClose();
-                  }}
-                  className="text-xs sm:text-sm font-medium text-rose-plum hover:text-deep-plum transition-colors cursor-pointer py-1.5"
-                >
-                  Browse as guest →
-                </button>
-              </div>
-
-              {/* Developer Access Accordion (Dev Only) */}
-              {isDevAuthEnabled && (
-                <div className="pt-2 border-t border-mist/80">
-                  <button
-                    type="button"
-                    onClick={() => setShowDevPersonas(!showDevPersonas)}
-                    className="w-full text-center text-[11px] font-sans text-mauve-grey hover:text-ink cursor-pointer py-1"
-                  >
-                    {showDevPersonas ? 'Hide developer personas ▲' : 'Developer access (Quick Personas) ▼'}
-                  </button>
-
-                  {showDevPersonas && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="grid grid-cols-2 gap-2 mt-2 pt-1"
-                    >
-                      {DEMO_PERSONAS.map((persona) => {
-                        const Icon = persona.icon;
-                        return (
-                          <button
-                            key={persona.email}
-                            type="button"
-                            onClick={() => handleQuickPersona(persona)}
-                            className="flex items-center gap-2 p-2 rounded-xl border border-mist bg-white hover:bg-blush/40 text-left transition-colors cursor-pointer"
-                          >
-                            <div className="w-7 h-7 rounded-lg bg-soft-ivory flex items-center justify-center text-rose-plum">
-                              <Icon className="w-3.5 h-3.5" />
-                            </div>
-                            <div className="overflow-hidden">
-                              <p className="text-xs font-semibold text-ink truncate">{persona.name}</p>
-                              <p className="text-[10px] text-mauve-grey truncate">{persona.badge}</p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </div>
-              )}
-
-              {/* Footer Terms */}
-              <p className="text-[11px] text-mauve-grey/80 text-center leading-relaxed font-sans pt-1">
-                By continuing, you agree to our{' '}
-                <a href="#terms" className="underline hover:text-ink">Terms</a> &amp;{' '}
-                <a href="#privacy" className="underline hover:text-ink">Privacy Policy</a>
-              </p>
-            </div>
+  // Core Form Step Elements
+  const renderFormContent = () => (
+    <div className="flex flex-col justify-between h-full">
+      {/* PHONE STEP */}
+      {step === 'PHONE' && (
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-text tracking-tight">
+              Log in or sign up
+            </h2>
+            <p className="text-xs sm:text-sm text-text-muted">
+              Enter your mobile number to get instant booking OTP
+            </p>
           </div>
-        )}
 
-        {/* Step 2: 6-Box OTP Verification Screen */}
-        {step === 'OTP' && (
-          <div>
-            <div className="text-center pt-1 pb-4">
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-blush flex items-center justify-center text-rose-plum mb-3 shadow-xs">
-                <Lock className="w-6 h-6" />
-              </div>
-              <h2 className="font-serif text-2xl sm:text-3xl text-ink font-bold tracking-tight">
-                Verify your number
-              </h2>
-              <p className="text-xs sm:text-sm text-mauve-grey mt-1 font-sans flex items-center justify-center gap-2">
-                <span>Code sent to {maskedPhone}</span>
-                <button
-                  type="button"
-                  onClick={() => setStep('PHONE')}
-                  className="text-xs font-semibold text-rose-plum hover:text-deep-plum underline cursor-pointer"
-                >
-                  Edit
-                </button>
-              </p>
-
-              {/* Review Tip (Dev Only) */}
-              {isDevAuthEnabled && DEV_OTP && (
-                <div className="mt-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-champagne-gold/15 text-ink text-xs font-medium">
-                  <Sparkles className="w-3.5 h-3.5 text-champagne-gold" />
-                  <span>For review, enter OTP: <strong>{DEV_OTP}</strong></span>
-                </div>
-              )}
-            </div>
-
-            {/* 6 OTP Boxes with Shake animation on error */}
-            <motion.div
-              key={shakeKey}
-              animate={shakeKey > 0 ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
-              transition={{ duration: 0.4 }}
-              className="my-3"
-            >
-              <div className="flex items-center justify-center gap-2 sm:gap-3">
-                {otpDigits.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    ref={(el) => (otpInputRefs.current[idx] = el)}
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpInput(idx, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    onPaste={handleOtpPaste}
-                    aria-label={`Digit ${idx + 1} of verification code`}
-                    className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-xl border bg-white focus:outline-none focus:ring-2 transition-all ${
-                      otpError
-                        ? 'border-coral-red focus:ring-coral-red/20 text-coral-red'
-                        : digit
-                        ? 'border-rose-plum text-ink bg-blush/10'
-                        : 'border-mist text-ink focus:border-rose-plum focus:ring-rose-plum/15'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {otpError && (
-                <p
-                  role="alert"
-                  aria-live="assertive"
-                  className="mt-2 text-xs text-coral-red text-center font-medium flex items-center justify-center gap-1"
-                >
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>{otpError}</span>
-                </p>
-              )}
-            </motion.div>
-
-            {/* Resend Timer & WhatsApp Option */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between text-xs sm:text-sm font-sans px-1">
-                <span className="text-mauve-grey">Didn't receive code?</span>
-                {resendCooldown > 0 ? (
-                  <span className="text-mauve-grey font-medium">
-                    Resend OTP in 0:{resendCooldown.toString().padStart(2, '0')}
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => handleSendOtp('sms')}
-                    className="font-semibold text-rose-plum hover:text-deep-plum cursor-pointer"
-                  >
-                    Resend OTP
-                  </button>
-                )}
-              </div>
-
-              {/* WhatsApp Alternative */}
-              <button
-                type="button"
-                onClick={() => handleSendOtp('whatsapp')}
-                className="w-full h-11 rounded-xl border border-mist bg-white hover:bg-emerald-50 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+          <div className="space-y-3 pt-1">
+            <div>
+              <label
+                htmlFor="auth-phone-input"
+                className="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-1.5"
               >
-                <MessageSquare className="w-4 h-4 text-emerald-600" />
-                <span>Get OTP on WhatsApp</span>
-              </button>
-
-              {/* Manual Verify Fallback button if needed */}
-              <Button
-                type="button"
-                variant="primary"
-                size="lg"
-                fullWidth
-                disabled={otpDigits.some((d) => !d)}
-                isLoading={isLoading}
-                onClick={() => triggerOtpVerification(otpDigits.join(''))}
-                className="mt-1"
-              >
-                Verify &amp; Continue
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: New User Profile Setup */}
-        {step === 'PROFILE' && (
-          <form onSubmit={handleProfileSubmit} className="space-y-4 pt-1">
-            <div className="text-center pb-2">
-              <h2 className="font-serif text-2xl sm:text-3xl text-ink font-bold tracking-tight">
-                Complete your profile
-              </h2>
-              <p className="text-xs sm:text-sm text-mauve-grey mt-1 font-sans">
-                Tell us a bit about you to personalize your beauty suite
-              </p>
-            </div>
-
-            <div>
-              <Input
-                label="Full Name *"
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. Rhea Singhania"
-                error={nameError || undefined}
-              />
-            </div>
-
-            <div>
-              <Input
-                label="Email Address (Optional)"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="rhea@example.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-mauve-grey mb-2">
-                Preferred Professional Gender (Optional)
+                Mobile Number
               </label>
               <div className="flex items-center gap-2">
-                {(['female', 'male', 'none'] as const).map((gender) => (
-                  <Chip
-                    key={gender}
-                    label={gender === 'female' ? 'Female' : gender === 'male' ? 'Male' : 'No Preference'}
-                    selected={preferredGender === gender}
-                    onClick={() => setPreferredGender(gender)}
+                <div className="h-12 px-3 flex items-center justify-center gap-1.5 bg-fill border border-border-strong rounded-[14px] text-sm font-semibold text-text select-none">
+                  <span className="text-xs font-bold text-text-muted">IN</span>
+                  <span>+91</span>
+                </div>
+                <div className="relative flex-1">
+                  <input
+                    id="auth-phone-input"
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    autoFocus
+                    value={phone}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="98765 43210"
+                    aria-invalid={!!phoneError}
+                    className={`w-full h-12 px-4 text-base font-medium text-text bg-card border rounded-[14px] focus:outline-none focus:ring-2 transition-colors ${
+                      phoneError
+                        ? 'border-error focus:ring-error/20'
+                        : 'border-border-strong focus:border-accent focus:ring-accent-soft'
+                    } placeholder:text-text-muted/60`}
                   />
-                ))}
+                </div>
               </div>
-            </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              fullWidth
-              rightIcon={<ArrowRight className="w-4 h-4" />}
-              className="mt-3"
-            >
-              Continue to Location
-            </Button>
-          </form>
-        )}
-
-        {/* Step 4: Location Setup Screen */}
-        {step === 'LOCATION' && (
-          <div className="space-y-4 pt-1">
-            <div className="text-center pb-2">
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-blush flex items-center justify-center text-rose-plum mb-3 shadow-xs">
-                <MapPin className="w-6 h-6" />
-              </div>
-              <h2 className="font-serif text-2xl sm:text-3xl text-ink font-bold tracking-tight">
-                Find beauty experts near you
-              </h2>
-              <p className="text-xs sm:text-sm text-mauve-grey mt-1 font-sans max-w-sm mx-auto">
-                We use your location to show available master artists, travel distance, and exact transparent pricing.
-              </p>
+              {phoneError && (
+                <p role="alert" className="mt-1.5 text-xs text-error flex items-center gap-1 font-medium">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{phoneError}</span>
+                </p>
+              )}
             </div>
 
             <Button
@@ -792,77 +399,277 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               variant="primary"
               size="lg"
               fullWidth
-              isLoading={isLocating}
-              onClick={handleUseCurrentLocation}
-              leftIcon={<MapPin className="w-4 h-4" />}
+              disabled={phone.length !== 10}
+              isLoading={isLoading}
+              onClick={() => handleSendOtp('sms')}
+              rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              Use Current Location
+              Continue
             </Button>
 
-            <div className="relative flex items-center justify-center my-2">
+            {/* "or" Divider */}
+            <div className="relative flex items-center justify-center my-3">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-mist" />
+                <div className="w-full border-t border-border" />
               </div>
-              <span className="relative px-3 bg-soft-ivory text-xs uppercase tracking-wider text-mauve-grey font-medium">
-                or enter area manually
+              <span className="relative px-3 bg-card text-xs uppercase tracking-wider text-text-muted font-medium">
+                or
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                label="City / Locality"
-                value={manualCity}
-                onChange={(e) => setManualCity(e.target.value)}
-                placeholder="e.g. Mumbai"
-              />
-              <Input
-                label="Pincode"
-                value={manualPincode}
-                onChange={(e) => setManualPincode(e.target.value)}
-                placeholder="400050"
-              />
+            {/* Continue with Google */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="w-full h-12 px-4 rounded-[14px] border border-border bg-card hover:bg-fill/40 text-text text-sm font-semibold flex items-center justify-center gap-3 transition-colors cursor-pointer shadow-warm-sm"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            {/* Skip for now / Browse as guest */}
+            <div className="text-center pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  onSuccess?.();
+                  onClose();
+                }}
+                className="text-xs font-semibold text-text-muted hover:text-accent transition-colors cursor-pointer py-1"
+              >
+                Skip for now →
+              </button>
+            </div>
+
+            {/* Dev Quick Personas */}
+            {isDevAuthEnabled && (
+              <div className="pt-2 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setShowDevPersonas(!showDevPersonas)}
+                  className="w-full text-center text-[11px] text-text-muted hover:text-text cursor-pointer py-1"
+                >
+                  {showDevPersonas ? 'Hide test personas ▲' : 'Quick Test Personas ▼'}
+                </button>
+                {showDevPersonas && (
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {DEMO_PERSONAS.map((p) => {
+                      const Icon = p.icon;
+                      return (
+                        <button
+                          key={p.email}
+                          type="button"
+                          onClick={() => handleQuickPersona(p)}
+                          className="flex items-center gap-2 p-2 rounded-[12px] border border-border bg-card hover:bg-fill/40 text-left transition-colors cursor-pointer"
+                        >
+                          <div className="w-6 h-6 rounded-lg bg-fill flex items-center justify-center text-accent shrink-0">
+                            <Icon className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="overflow-hidden">
+                            <p className="text-xs font-semibold text-text truncate">{p.name}</p>
+                            <p className="text-[10px] text-text-muted truncate">{p.badge}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* OTP STEP */}
+      {step === 'OTP' && (
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <div className="w-10 h-10 rounded-full bg-accent-soft flex items-center justify-center text-accent mb-2">
+              <Lock className="w-5 h-5" />
+            </div>
+            <h2 className="font-heading text-2xl font-bold text-text tracking-tight">
+              Enter verification code
+            </h2>
+            <p className="text-xs sm:text-sm text-text-muted flex items-center gap-2">
+              <span>Code sent to {maskedPhone}</span>
+              <button
+                type="button"
+                onClick={() => setStep('PHONE')}
+                className="text-xs font-bold text-accent hover:text-accent-pressed underline cursor-pointer"
+              >
+                Change number
+              </button>
+            </p>
+          </div>
+
+          {/* 6 OTP Boxes */}
+          <motion.div
+            key={shakeKey}
+            animate={shakeKey > 0 ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            className="my-4"
+          >
+            <div className="flex items-center justify-center gap-2 sm:gap-2.5">
+              {otpDigits.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => (otpInputRefs.current[idx] = el)}
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpInput(idx, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                  onPaste={handleOtpPaste}
+                  aria-label={`Digit ${idx + 1} of verification code`}
+                  className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-[12px] bg-card border transition-all ${
+                    otpError
+                      ? 'border-error text-error focus:ring-2 focus:ring-error/20'
+                      : digit
+                      ? 'border-accent text-accent-pressed bg-fill/30 ring-1 ring-accent'
+                      : 'border-border-strong text-text focus:border-accent focus:ring-2 focus:ring-accent-soft'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {otpError && (
+              <p role="alert" className="mt-2.5 text-xs text-error text-center font-medium flex items-center justify-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>{otpError}</span>
+              </p>
+            )}
+          </motion.div>
+
+          <div className="space-y-3 pt-1">
+            <div className="flex items-center justify-between text-xs font-sans px-1">
+              <span className="text-text-muted">Didn&apos;t receive code?</span>
+              {resendCooldown > 0 ? (
+                <span className="text-text-muted font-medium">
+                  Resend in 0:{resendCooldown.toString().padStart(2, '0')}
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleSendOtp('sms')}
+                  className="font-bold text-accent hover:text-accent-pressed cursor-pointer"
+                >
+                  Resend OTP
+                </button>
+              )}
             </div>
 
             <Button
               type="button"
-              variant="secondary"
+              variant="primary"
               size="lg"
               fullWidth
+              disabled={otpDigits.some((d) => !d)}
               isLoading={isLoading}
-              onClick={() => handleFinalizeNewUser(manualCity, manualPincode)}
-              rightIcon={<CheckCircle2 className="w-4 h-4" />}
+              onClick={() => triggerOtpVerification(otpDigits.join(''))}
             >
-              Start Exploring
+              Verify &amp; Continue
             </Button>
           </div>
-        )}
-      </div>
-    );
-  };
-
-  // Render on Mobile as BottomSheet (< 640px)
-  if (isMobile) {
-    return (
-      <BottomSheet
-        isOpen={isOpen}
-        onClose={onClose}
-        title={step === 'OTP' ? 'Verification' : step === 'PROFILE' ? 'Profile Setup' : step === 'LOCATION' ? 'Location' : 'Sign In'}
-      >
-        <div className="pb-4">
-          {renderAuthContent()}
         </div>
-      </BottomSheet>
-    );
-  }
+      )}
 
-  // Render on Desktop as Centered Modal Dialog (>= 640px)
+      {/* SUCCESS TICK ANIMATION */}
+      {step === 'SUCCESS_TICK' && (
+        <div className="flex flex-col items-center justify-center py-10 space-y-4">
+          <div className="relative w-20 h-20 flex items-center justify-center">
+            <svg className="w-20 h-20 text-success" viewBox="0 0 52 52">
+              <circle className="stroke-success/20" cx="26" cy="26" r="24" fill="none" strokeWidth="3" />
+              <motion.path
+                fill="none"
+                stroke="var(--success)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14 27l7 7 17-17"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+              />
+            </svg>
+          </div>
+          <div className="text-center">
+            <h3 className="font-heading font-bold text-xl text-text">Verified!</h3>
+            <p className="text-xs text-text-muted mt-1">Taking you to your beauty atelier...</p>
+          </div>
+        </div>
+      )}
+
+      {/* PROFILE SETUP: Name only */}
+      {step === 'PROFILE' && (
+        <form onSubmit={handleNameOnlySubmit} className="space-y-4">
+          <div className="space-y-1">
+            <div className="w-10 h-10 rounded-full bg-accent-soft flex items-center justify-center text-accent mb-2">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <h2 className="font-heading text-2xl font-bold text-text tracking-tight">
+              What should we call you?
+            </h2>
+            <p className="text-xs sm:text-sm text-text-muted">
+              Enter your name to personalize your bookings and receipts
+            </p>
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <label htmlFor="auth-name-input" className="block text-xs font-semibold uppercase tracking-wider text-text-muted">
+              Your Full Name
+            </label>
+            <input
+              id="auth-name-input"
+              type="text"
+              autoFocus
+              value={fullName}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                if (nameError) setNameError(null);
+              }}
+              placeholder="e.g. Kavita Sharma"
+              className={`w-full h-12 px-4 rounded-[14px] bg-card border text-sm text-text focus:outline-none focus:ring-2 ${
+                nameError
+                  ? 'border-error focus:ring-error/20'
+                  : 'border-border-strong focus:border-accent focus:ring-accent-soft'
+              } placeholder:text-text-muted/60`}
+            />
+            {nameError && (
+              <p className="text-xs text-error font-medium flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>{nameError}</span>
+              </p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            fullWidth
+            isLoading={isLoading}
+            className="mt-2"
+          >
+            Start Exploring
+          </Button>
+        </form>
+      )}
+    </div>
+  );
+
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 flex items-center justify-center min-h-screen"
+        className="fixed inset-0 z-50 overflow-hidden flex items-end sm:items-center justify-center"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="auth-modal-title"
+        aria-label="Authentication"
       >
         {/* Backdrop */}
         <motion.div
@@ -871,39 +678,108 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          className="fixed inset-0 bg-ink/70 backdrop-blur-md"
+          className="fixed inset-0 bg-text/60 backdrop-blur-xs"
         />
 
-        {/* Modal Card */}
+        {/* MOBILE VIEW (<640px): Gradient top area + warm photo + rising Warm White card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 10 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-md bg-soft-ivory border border-mist rounded-3xl shadow-2xl p-6 sm:p-7 z-10"
-          style={{ backgroundColor: '#FFFBF8' }}
+          initial={{ y: '100%' }}
+          animate={{ y: 0 }}
+          exit={{ y: '100%' }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          className="relative w-full max-h-[92vh] sm:hidden flex flex-col z-10 overflow-hidden"
         >
-          {/* Header Bar */}
-          <div className="flex items-center justify-between pb-3 border-b border-mist/80 mb-2">
-            <div className="flex items-center gap-2">
-              <span className="font-serif tracking-widest text-sm uppercase text-ink font-semibold">
-                GLAMGO
-              </span>
-              <span className="text-mist">|</span>
-              <span className="text-[12px] text-mauve-grey font-sans">
-                Atelier Access
-              </span>
+          {/* Top Beauty Photo Strip with Cream-to-Ivory Gradient */}
+          <div className="relative h-44 bg-gradient-to-b from-bg-alt to-bg flex flex-col justify-between p-4 shrink-0 overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80"
+              alt="Glamgo Luxury Beauty"
+              className="absolute inset-0 w-full h-full object-cover object-center mix-blend-multiply opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-black/20 pointer-events-none" />
+
+            <div className="relative z-10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center shadow-warm-sm">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <span className="font-heading font-bold text-lg text-text">Glamgo</span>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="w-8 h-8 rounded-full bg-card/80 backdrop-blur-xs flex items-center justify-center text-text hover:bg-card shadow-warm-sm"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
+
+            <p className="relative z-10 text-xs font-semibold text-text max-w-[240px] leading-tight">
+              Luxury beauty rituals delivered directly to your doorstep.
+            </p>
+          </div>
+
+          {/* Rising Warm White Card from Bottom */}
+          <div className="bg-card rounded-t-[24px] border-t border-border shadow-warm-sheet p-5 overflow-y-auto flex-1">
+            {renderFormContent()}
+          </div>
+        </motion.div>
+
+        {/* DESKTOP VIEW (>=640px): Two columns (photo left, form right) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 12 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="relative hidden sm:grid sm:grid-cols-12 w-full max-w-2xl bg-card border border-border rounded-[24px] shadow-warm-modal overflow-hidden z-10"
+        >
+          {/* Left Column: Photo with warm gradient overlay */}
+          <div className="sm:col-span-5 relative bg-bg-alt overflow-hidden min-h-[460px]">
+            <img
+              src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80"
+              alt="Glamgo Beauty Suite"
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-text/80 via-text/30 to-transparent" />
+
+            <div className="absolute inset-0 p-6 flex flex-col justify-between text-white z-10">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center shadow-warm-sm">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <span className="font-heading font-bold text-lg text-white">Glamgo</span>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-fill">
+                  Atelier Access
+                </span>
+                <p className="font-heading font-bold text-base leading-snug text-white">
+                  Beauty services at your doorstep.
+                </p>
+                <p className="text-[11px] text-border leading-relaxed">
+                  100% verified professionals with sealed single-use kits.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Form Area */}
+          <div className="sm:col-span-7 p-7 flex flex-col justify-between bg-card relative">
             <button
+              type="button"
               onClick={onClose}
-              aria-label="Close authentication modal"
-              className="w-8 h-8 flex items-center justify-center rounded-full text-mauve-grey hover:text-ink hover:bg-mist/40 transition-colors cursor-pointer min-h-[44px] min-w-[44px]"
+              aria-label="Close login dialog"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text hover:bg-fill/50 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
-          </div>
 
-          {renderAuthContent()}
+            <div className="pt-2">
+              {renderFormContent()}
+            </div>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>

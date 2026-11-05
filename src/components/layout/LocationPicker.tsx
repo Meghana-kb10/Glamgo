@@ -35,7 +35,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   }, [isOpen]);
 
   const handleOpen = () => {
-    // On small screen (<640px), open bottom sheet if callback provided
     if (window.innerWidth < 640 && onOpenSheet) {
       onOpenSheet();
       return;
@@ -53,7 +52,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         () => {
-          // Fallback to top Bangalore location for now
           handleSelect(POPULAR_LOCATIONS[0]);
         },
         () => {
@@ -83,19 +81,19 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label={`Current location: ${currentLocation.area}, ${currentLocation.city}. Click to change location.`}
-        className="h-11 flex items-center gap-2.5 px-3 sm:px-4 rounded-full bg-soft-ivory hover:bg-blush/40 border border-mist hover:border-rose-plum/30 transition-all cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+        className="h-11 flex items-center gap-2.5 px-3 sm:px-4 rounded-full bg-card hover:bg-fill/40 border border-border hover:border-border-strong shadow-warm-sm transition-all cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
-        <div className="w-6 h-6 rounded-full bg-blush flex items-center justify-center text-rose-plum shrink-0">
-          <MapPin className="w-3.5 h-3.5 text-rose-plum" />
+        <div className="w-6 h-6 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
+          <MapPin className="w-3.5 h-3.5 text-accent" />
         </div>
         <div className="min-w-0 pr-1">
           <div className="flex items-center gap-1">
-            <span className="text-xs sm:text-sm font-semibold text-ink truncate max-w-[120px] sm:max-w-[160px]">
+            <span className="text-xs sm:text-sm font-semibold text-text truncate max-w-[120px] sm:max-w-[160px]">
               {currentLocation.area || currentLocation.city}
             </span>
             <ChevronDown
-              className={`w-3.5 h-3.5 text-mauve-grey transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-rose-plum' : ''
+              className={`w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${
+                isOpen ? 'rotate-180 text-accent' : ''
               }`}
             />
           </div>
@@ -110,12 +108,12 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute left-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white border border-mist shadow-card p-4 z-50 overflow-hidden"
+            className="absolute left-0 mt-2 w-80 sm:w-96 rounded-[18px] bg-card border border-border shadow-warm-modal p-4 z-50 overflow-hidden"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-mist/80 mb-3">
+            <div className="flex items-center justify-between pb-3 border-b border-border mb-3">
               <div>
-                <h3 className="text-sm font-bold text-ink">Choose your location</h3>
-                <p className="text-[11px] text-mauve-grey">Available service providers vary by location</p>
+                <h3 className="text-sm font-bold text-text">Choose your location</h3>
+                <p className="text-[11px] text-text-muted">Available service providers vary by location</p>
               </div>
             </div>
 
@@ -123,7 +121,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             <button
               type="button"
               onClick={handleUseCurrentLocation}
-              className="w-full h-11 flex items-center gap-2.5 px-3 rounded-xl bg-blush/60 hover:bg-blush text-rose-plum text-xs font-semibold transition-colors cursor-pointer mb-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum"
+              className="w-full h-11 flex items-center gap-2.5 px-3 rounded-[12px] bg-accent-soft hover:bg-accent text-accent hover:text-white text-xs font-semibold transition-colors cursor-pointer mb-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Compass className="w-4 h-4 shrink-0" />
               <span>Use current GPS location</span>
@@ -131,19 +129,19 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
             {/* Search Box */}
             <div className="relative mb-3">
-              <Search className="w-3.5 h-3.5 text-mauve-grey absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search area, landmark, or 6-digit pincode"
-                className="w-full h-10 pl-9 pr-3 rounded-xl bg-soft-ivory border border-mist text-xs text-ink placeholder:text-mauve-grey focus:outline-none focus:border-rose-plum focus:ring-1 focus:ring-rose-plum"
+                className="w-full h-10 pl-9 pr-3 rounded-[12px] bg-bg border border-border text-xs text-text placeholder:text-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
               />
             </div>
 
             {/* Popular / Matching Locations */}
             <div className="max-h-60 overflow-y-auto space-y-1 pr-1">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-mauve-grey px-2 py-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted px-2 py-1">
                 Popular Areas
               </p>
               {filtered.map((loc) => {
@@ -153,19 +151,19 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     key={loc.id}
                     type="button"
                     onClick={() => handleSelect(loc)}
-                    className={`w-full h-11 flex items-center justify-between px-3 rounded-xl text-left text-xs transition-colors cursor-pointer ${
+                    className={`w-full h-11 flex items-center justify-between px-3 rounded-[12px] text-left text-xs transition-colors cursor-pointer ${
                       isSelected
-                        ? 'bg-blush text-rose-plum font-semibold'
-                        : 'hover:bg-soft-ivory text-ink'
+                        ? 'bg-fill text-accent-pressed font-semibold'
+                        : 'hover:bg-fill/30 text-text'
                     }`}
                   >
                     <div className="min-w-0 pr-2">
                       <p className="font-semibold truncate">{loc.name}</p>
-                      <p className="text-[11px] text-mauve-grey truncate">
+                      <p className="text-[11px] text-text-muted truncate">
                         {loc.area}, {loc.city} • {loc.pincode}
                       </p>
                     </div>
-                    {isSelected && <Check className="w-4 h-4 text-rose-plum shrink-0" />}
+                    {isSelected && <Check className="w-4 h-4 text-accent shrink-0" />}
                   </button>
                 );
               })}

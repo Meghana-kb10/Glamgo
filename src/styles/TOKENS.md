@@ -67,6 +67,13 @@ Pure black shadows are prohibited. All shadows use an amber-tinted warm umber al
 | **Rose Plum** (`#B8336A`) | **Accent Soft** (`#F6E4EA`)| **4.63:1** | $\ge 4.5:1$ (Badges) | **PASS** |
 | **Deep Plum** (`#7A1F4A`)| **Sand** (`#EFE4D0`) | **7.86:1** | $\ge 4.5:1$ (Selected) | **PASS** |
 | **Deep Plum** (`#7A1F4A`)| **Accent Soft** (`#F6E4EA`)| **8.11:1** | $\ge 4.5:1$ (Badges) | **PASS** |
+| **Verified Pro Text** (`#136347`)| **Composited Mint** (`#DDEBE3`)| **5.88:1** | $\ge 4.5:1$ (Badges) | **PASS** |
+| **Offer Badge Text** (`#7A1F4A`)| **Accent Soft** (`#F6E4EA`)| **8.11:1** | $\ge 4.5:1$ (Badges) | **PASS** |
+| **Bestseller Text** (`#7A1F4A`)| **Sand Fill** (`#EFE4D0`)| **7.86:1** | $\ge 4.5:1$ (Badges) | **PASS** |
+| **Footer Link** (`#6F6258`)| **Cream Foot** (`#F7F0E3`)| **5.20:1** | $\ge 4.5:1$ (Links) | **PASS** |
+| **Footer Link Hover** (`#B8336A`)| **Cream Foot** (`#F7F0E3`)| **4.98:1** | $\ge 4.5:1$ (Hover) | **PASS** |
+| **Button Hover** (`#FFFFFF`)| **Deep Plum** (`#7A1F4A`)| **9.89:1** | $\ge 4.5:1$ (Hover) | **PASS** |
+| **Secondary Button Hover** (`#7A1F4A`)| **Accent Soft** (`#F6E4EA`)| **8.11:1** | $\ge 4.5:1$ (Hover) | **PASS** |
 | **White** (`#FFFFFF`) | **Rose Plum** (`#B8336A`) | **5.65:1** | $\ge 4.5:1$ (Buttons) | **PASS** |
 | **White** (`#FFFFFF`) | **Deep Plum** (`#7A1F4A`) | **9.89:1** | $\ge 4.5:1$ (Pressed) | **PASS** |
 | **Success** (`#1E7F5C`) | **Warm White** (`#FFFEFB`) | **4.90:1** | $\ge 4.5:1$ (Text) | **PASS** |

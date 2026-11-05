@@ -20,21 +20,21 @@ const ONBOARDING_SLIDES: OnboardingSlide[] = [
     title: 'Beauty experts, at your doorstep',
     subtitle: 'Certified master artists bring luxury salon & bridal experiences directly to your home.',
     image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80&fm=webp',
-    icon: <Sparkles className="w-5 h-5 text-champagne-gold" />,
+    icon: <Sparkles className="w-5 h-5 text-accent" />,
     tag: 'Haute Artistry',
   },
   {
     title: 'Transparent prices. Verified pros.',
     subtitle: 'Background-checked stylists, 100% sealed single-use hygiene kits, and zero hidden charges.',
     image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80&fm=webp',
-    icon: <ShieldCheck className="w-5 h-5 text-emerald-700" />,
+    icon: <ShieldCheck className="w-5 h-5 text-success" />,
     tag: 'Safe & Hygienic',
   },
   {
     title: 'Book in under a minute',
     subtitle: 'Pick your bespoke service, select a real-time slot, and enjoy seamless luxury with instant confirmation.',
     image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80&fm=webp',
-    icon: <Clock className="w-5 h-5 text-rose-plum" />,
+    icon: <Clock className="w-5 h-5 text-accent" />,
     tag: 'Instant Scheduling',
   },
 ];
@@ -60,20 +60,9 @@ export const SplashOnboarding: React.FC<SplashOnboardingProps> = ({ onComplete }
         return () => clearTimeout(timer);
       }
     } catch {
-      // If localStorage is unavailable, proceed normally
       setPhase('DONE');
     }
   }, []);
-
-  const handleFinish = () => {
-    try {
-      localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
-    } catch (e) {
-      console.warn('Could not persist onboarding state to localStorage', e);
-    }
-    setPhase('DONE');
-    onComplete?.();
-  };
 
   const handleNext = () => {
     if (currentSlide < ONBOARDING_SLIDES.length - 1) {
@@ -83,56 +72,63 @@ export const SplashOnboarding: React.FC<SplashOnboardingProps> = ({ onComplete }
     }
   };
 
+  const handleFinish = () => {
+    try {
+      localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+    } catch {}
+    setPhase('DONE');
+    onComplete?.();
+  };
+
   if (phase === 'DONE') return null;
 
   return (
-    <AnimatePresence>
-      {/* 1. Splash Screen (<= 1.5s) */}
+    <AnimatePresence mode="wait">
+      {/* 1. BRAND SPLASH SCREEN (under 1.5s) */}
       {phase === 'SPLASH' && (
         <motion.div
           key="splash"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-soft-ivory p-6 text-center select-none"
-          role="dialog"
-          aria-label="Glamgo Welcome Splash"
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-bg p-6 text-center select-none"
         >
-          {/* Subtle Ambient Blush Radial */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blush/40 via-soft-ivory to-soft-ivory pointer-events-none" />
+          {/* Subtle Warm Backdrop */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent-soft/40 via-bg to-bg pointer-events-none" />
 
+          {/* Monogram Crest */}
           <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
+            initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ type: 'spring', damping: 14, stiffness: 180, delay: 0.1 }}
             className="relative z-10 flex flex-col items-center"
           >
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-rose-plum via-deep-plum to-champagne-gold flex items-center justify-center text-white shadow-xl mb-4">
+            <div className="w-16 h-16 rounded-3xl bg-accent text-white flex items-center justify-center shadow-warm-lg mb-4">
               <Sparkles className="w-8 h-8" />
             </div>
-
-            <h1 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-ink">
-              Glamgo
+            <h1 className="font-heading text-4xl sm:text-5xl font-bold tracking-tight text-text">
+              GLAMGO
             </h1>
-            <p className="mt-2 text-xs uppercase tracking-widest text-mauve-grey font-medium font-sans border-t border-mist/80 pt-2 px-4">
-              Luxury Beauty Atelier at Your Doorstep
+            <p className="mt-2 text-xs uppercase tracking-widest text-text-muted font-medium font-sans border-t border-border pt-2 px-4">
+              Couture Beauty Concierge
             </p>
           </motion.div>
 
+          {/* Discreet Loading indicator */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-            className="absolute bottom-10 flex items-center gap-2 text-xs text-mauve-grey font-sans"
+            transition={{ delay: 0.35 }}
+            className="absolute bottom-10 flex items-center gap-2 text-xs text-text-muted font-sans"
           >
-            <span className="w-2 h-2 rounded-full bg-rose-plum animate-ping" />
-            <span>Curating private beauty suites...</span>
+            <span className="w-2 h-2 rounded-full bg-accent animate-ping" />
+            <span>Connecting to Beauty Atelier...</span>
           </motion.div>
         </motion.div>
       )}
 
-      {/* 2. Three-Slide Skippable Onboarding Carousel */}
+      {/* 2. ONBOARDING CAROUSEL (3 Value Props, Swipe/Next, Skip) */}
       {phase === 'ONBOARDING' && (
         <motion.div
           key="onboarding"
@@ -140,17 +136,13 @@ export const SplashOnboarding: React.FC<SplashOnboardingProps> = ({ onComplete }
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/70 backdrop-blur-md p-4 sm:p-6"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Welcome Onboarding"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-text/60 backdrop-blur-md p-4 sm:p-6"
         >
-          <div className="relative w-full max-w-md bg-soft-ivory border border-mist rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-            {/* Top Bar with Brand and Skip Button */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-mist/60 bg-white/70 backdrop-blur-sm z-10">
+          <div className="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-warm-lg overflow-hidden flex flex-col">
+            {/* Top Bar: Skip button & progress */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card/90 backdrop-blur-sm z-10">
               <div className="flex items-center gap-2">
-                <span className="font-serif text-base font-bold text-ink">Glamgo</span>
-                <span className="text-xs text-rose-plum font-sans font-medium px-2 py-0.5 rounded-full bg-blush">
+                <span className="text-xs text-accent font-sans font-medium px-2 py-0.5 rounded-full bg-accent-soft">
                   {ONBOARDING_SLIDES[currentSlide].tag}
                 </span>
               </div>
@@ -158,14 +150,14 @@ export const SplashOnboarding: React.FC<SplashOnboardingProps> = ({ onComplete }
                 type="button"
                 onClick={handleFinish}
                 aria-label="Skip onboarding"
-                className="text-xs font-semibold text-mauve-grey hover:text-ink px-3 py-1.5 rounded-lg hover:bg-mist/40 transition-colors cursor-pointer min-h-[44px] flex items-center"
+                className="text-xs font-semibold text-text-muted hover:text-text px-3 py-1.5 rounded-lg hover:bg-fill transition-colors cursor-pointer min-h-[44px] flex items-center"
               >
                 Skip
               </button>
             </div>
 
-            {/* Slide Hero Image */}
-            <div className="relative w-full h-56 sm:h-64 overflow-hidden bg-mist/30">
+            {/* Slide Visual Area */}
+            <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-bg-alt">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentSlide}
@@ -173,16 +165,16 @@ export const SplashOnboarding: React.FC<SplashOnboardingProps> = ({ onComplete }
                   alt={ONBOARDING_SLIDES[currentSlide].title}
                   initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.35 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.4 }}
                   className="w-full h-full object-cover"
                 />
               </AnimatePresence>
-              <div className="absolute inset-0 bg-gradient-to-t from-soft-ivory via-transparent to-black/15 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent pointer-events-none" />
             </div>
 
-            {/* Content & Typography */}
-            <div className="px-6 pt-5 pb-6 flex flex-col items-center text-center">
+            {/* Slide Text Content */}
+            <div className="p-6 pt-4 flex-1 flex flex-col justify-between text-left">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
@@ -190,61 +182,55 @@ export const SplashOnboarding: React.FC<SplashOnboardingProps> = ({ onComplete }
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.3 }}
-                  className="flex flex-col items-center min-h-[110px]"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-blush flex items-center justify-center mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-accent-soft flex items-center justify-center mb-3">
                     {ONBOARDING_SLIDES[currentSlide].icon}
                   </div>
-                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-ink tracking-tight">
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold text-text leading-tight">
                     {ONBOARDING_SLIDES[currentSlide].title}
                   </h2>
-                  <p className="mt-2 text-sm text-mauve-grey font-sans leading-relaxed max-w-sm">
+                  <p className="mt-2 text-sm text-text-muted font-sans leading-relaxed max-w-sm">
                     {ONBOARDING_SLIDES[currentSlide].subtitle}
                   </p>
                 </motion.div>
               </AnimatePresence>
 
-              {/* Dot Indicators */}
-              <div
-                className="flex items-center justify-center gap-1 my-3"
-                role="tablist"
-                aria-label="Onboarding slide indicators"
-              >
-                {ONBOARDING_SLIDES.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentSlide(idx)}
-                    role="tab"
-                    aria-selected={currentSlide === idx}
-                    aria-label={`Go to slide ${idx + 1}`}
-                    className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-plum rounded-full"
-                  >
-                    <span
-                      className={`h-2 rounded-full transition-all duration-300 block ${
-                        currentSlide === idx ? 'w-8 bg-rose-plum' : 'w-2 bg-mist hover:bg-mauve-grey/50'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-
-              {/* Navigation Action */}
-              <div className="w-full mt-2">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  onClick={handleNext}
-                  rightIcon={
-                    currentSlide === ONBOARDING_SLIDES.length - 1 ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : (
-                      <ArrowRight className="w-4 h-4" />
-                    )
-                  }
+              {/* Bottom Nav: Dots + Next CTA */}
+              <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+                {/* 3 Pagination Dots */}
+                <div
+                  className="flex items-center gap-1.5"
+                  role="tablist"
+                  aria-label="Onboarding slides navigation"
                 >
-                  {currentSlide === ONBOARDING_SLIDES.length - 1 ? 'Start Exploring' : 'Continue'}
+                  {ONBOARDING_SLIDES.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      role="tab"
+                      aria-label={`Go to slide ${idx + 1}`}
+                      aria-selected={currentSlide === idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full"
+                    >
+                      <span
+                        className={`h-1.5 rounded-full transition-all duration-300 block ${
+                          currentSlide === idx ? 'w-8 bg-accent' : 'w-2 bg-fill hover:bg-text-muted/50'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Primary Button */}
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={handleNext}
+                  rightIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  {currentSlide === ONBOARDING_SLIDES.length - 1 ? 'Get Started' : 'Next'}
                 </Button>
               </div>
             </div>

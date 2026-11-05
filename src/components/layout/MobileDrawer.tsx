@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { X, Sparkles } from 'lucide-react';
-import { Sidebar, CATEGORIES_LIST } from './Sidebar';
-import { slideInLeftVariant, fadeInVariant, MOTION_GESTURES } from '../../motion/tokens';
+import { Sidebar } from './Sidebar';
+import { slideInLeftVariant, fadeInVariant } from '../../motion/tokens';
 
 export interface MobileDrawerProps {
   isOpen: boolean;
@@ -74,7 +74,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
             animate="visible"
             exit="exit"
             onClick={onClose}
-            className="fixed inset-0 bg-ink/40 backdrop-blur-xs cursor-pointer"
+            className="fixed inset-0 bg-text/40 backdrop-blur-xs cursor-pointer"
             aria-hidden="true"
           />
 
@@ -89,15 +89,15 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-[280px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col z-10 select-none"
+            className="relative w-[280px] max-w-[85vw] h-full bg-bg border-r border-border shadow-warm-modal flex flex-col z-10 select-none"
           >
             {/* Drawer Header */}
-            <div className="h-14 sm:h-[72px] px-4 border-b border-mist flex items-center justify-between shrink-0">
+            <div className="h-14 sm:h-[72px] px-4 border-b border-border bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-rose-plum text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center shadow-warm-sm">
                   <Sparkles className="w-4 h-4" />
                 </div>
-                <span className="font-heading font-bold text-xl text-ink">
+                <span className="font-heading font-bold text-xl text-text">
                   Glamgo
                 </span>
               </div>
@@ -106,7 +106,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Close menu drawer"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-mauve-grey hover:text-ink hover:bg-blush/60 transition-colors cursor-pointer"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-text-muted hover:text-text hover:bg-fill/50 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

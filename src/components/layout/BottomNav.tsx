@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Calendar, ShoppingBag, User, ArrowRight } from 'lucide-react';
-import { MOTION_SPRINGS, MOTION_GESTURES } from '../../motion/tokens';
+import { MOTION_SPRINGS } from '../../motion/tokens';
 
 export type BottomNavTab = 'home' | 'bookings' | 'shop' | 'profile';
 
@@ -47,11 +47,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               <button
                 type="button"
                 onClick={onOpenCart}
-                className="w-full bg-rose-plum text-white h-12 px-4 rounded-2xl shadow-lg shadow-rose-plum/30 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-full bg-accent text-white h-12 px-4 rounded-[14px] shadow-warm-modal flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft"
                 aria-label={`View Cart: ${cartCount} ${cartCount === 1 ? 'item' : 'items'}, ₹${cartTotal.toLocaleString('en-IN')}`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="w-6 h-6 rounded-full bg-white/20 text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-card/25 text-xs font-bold flex items-center justify-center shrink-0">
                     {cartCount}
                   </span>
                   <span className="text-xs font-bold truncate">
@@ -75,7 +75,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* 4-Tab Bottom Navigation Bar */}
         <nav
           aria-label="Mobile Navigation"
-          className="bg-white/95 backdrop-blur-md border-t border-mist/80 px-2 pt-1 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-sheet"
+          className="bg-bg/95 backdrop-blur-md border-t border-border px-2 pt-1 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-warm-sheet"
         >
           <div className="grid grid-cols-4 items-center">
             {tabs.map((tab) => {
@@ -96,20 +96,20 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                     <motion.div
                       layoutId="bottom-nav-active-tab"
                       transition={MOTION_SPRINGS.slider}
-                      className="absolute inset-x-2 inset-y-1 rounded-xl bg-blush/60 -z-10"
+                      className="absolute inset-x-2 inset-y-1 rounded-xl bg-fill -z-10"
                     />
                   )}
 
                   <Icon
                     className={`w-5 h-5 transition-transform duration-200 ${
                       isActive
-                        ? 'text-rose-plum scale-110'
-                        : 'text-mauve-grey group-hover:text-ink'
+                        ? 'text-accent-pressed scale-110'
+                        : 'text-text-muted group-hover:text-text'
                     }`}
                   />
                   <span
                     className={`text-[10px] font-semibold transition-colors ${
-                      isActive ? 'text-rose-plum' : 'text-mauve-grey group-hover:text-ink'
+                      isActive ? 'text-accent-pressed font-bold' : 'text-text-muted group-hover:text-text'
                     }`}
                   >
                     {tab.label}

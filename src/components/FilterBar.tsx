@@ -33,13 +33,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   ];
 
   return (
-    <div className="py-3.5 border-b border-mist bg-soft-ivory/95 sticky top-20 z-30 backdrop-blur-md">
+    <div className="py-3.5 border-b border-border bg-bg/95 sticky top-20 z-30 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         
         {/* Left: Standardized Filter Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 w-full md:w-auto scrollbar-none">
-          <div className="flex items-center gap-1.5 text-xs text-mauve-grey font-medium mr-1 shrink-0">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-rose-plum" />
+          <div className="flex items-center gap-1.5 text-xs text-text-muted font-medium mr-1 shrink-0">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-accent" />
             <span>Filters:</span>
           </div>
 
@@ -49,7 +49,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               label={label}
               selected={active}
               onClick={() => onToggleFilter(key)}
-              icon={<Icon className={`w-3.5 h-3.5 ${active ? 'text-white' : 'text-rose-plum'}`} />}
+              icon={<Icon className={`w-3.5 h-3.5 ${active ? 'text-accent-pressed' : 'text-accent'}`} />}
               className="shrink-0 text-xs py-1.5 min-h-[38px]"
             />
           ))}
@@ -57,12 +57,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
         {/* Right: Results Count & Accessible Sort Dropdown */}
         <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto shrink-0 text-xs">
-          <span className="text-mauve-grey font-medium">
-            Showing <strong className="text-ink font-mono font-semibold">{totalResults}</strong> master artists
+          <span className="text-text-muted font-medium">
+            Showing <strong className="text-text font-mono font-semibold">{totalResults}</strong> master artists
           </span>
 
           <div className="flex items-center gap-1.5">
-            <label htmlFor="sort-select" className="text-mauve-grey cursor-pointer font-medium">
+            <label htmlFor="sort-select" className="text-text-muted cursor-pointer font-medium">
               Sort:
             </label>
             <select
@@ -70,7 +70,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               aria-label="Sort master artists"
               value={filters.sort}
               onChange={(e) => onSortChange(e.target.value as FilterState['sort'])}
-              className="bg-white border border-mist text-ink text-xs rounded-xl px-3 py-1.5 outline-none font-medium cursor-pointer shadow-xs focus:border-rose-plum focus:ring-1 focus:ring-rose-plum/30 transition-all"
+              className="bg-card border border-border text-text text-xs rounded-xl px-3 py-1.5 outline-none font-medium cursor-pointer shadow-warm-xs focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
             >
               <option value="featured">Featured & High Demand</option>
               <option value="rating">Top Rated (4.9+)</option>

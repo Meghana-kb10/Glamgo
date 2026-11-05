@@ -95,7 +95,7 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-ink/50 backdrop-blur-xs cursor-pointer"
+          className="fixed inset-0 bg-text/60 backdrop-blur-xs cursor-pointer"
         />
 
         {/* Modal / Bottom Sheet Panel */}
@@ -104,20 +104,20 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
           transition={{ type: 'spring', damping: 30, stiffness: 350 }}
-          className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
+          className="relative w-full max-w-lg bg-card rounded-t-[24px] sm:rounded-[24px] border border-border shadow-warm-sheet overflow-hidden z-10 max-h-[90vh] flex flex-col"
         >
           {/* Header */}
-          <div className="p-5 border-b border-mist flex items-start justify-between gap-3">
+          <div className="p-5 border-b border-border bg-card flex items-start justify-between gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-plum block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-accent block">
                 Customize Service
               </span>
-              <h3 className="font-heading font-bold text-base sm:text-lg text-ink">
+              <h3 className="font-heading font-bold text-base sm:text-lg text-text">
                 {service.title}
               </h3>
-              <div className="flex items-center gap-3 text-xs text-mauve-grey mt-1 font-mono">
+              <div className="flex items-center gap-3 text-xs text-text-muted mt-1 font-mono">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-rose-plum" />
+                  <Clock className="w-3.5 h-3.5 text-accent" />
                   <span>{finalDuration} mins</span>
                 </span>
                 <span>•</span>
@@ -129,7 +129,7 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
               type="button"
               onClick={onClose}
               aria-label="Close variant picker"
-              className="w-8 h-8 rounded-full bg-soft-ivory hover:bg-blush flex items-center justify-center text-ink transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full bg-fill hover:bg-accent-soft hover:text-accent flex items-center justify-center text-text transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -137,7 +137,7 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
 
           {/* Options List */}
           <div className="p-5 overflow-y-auto space-y-3 flex-1 no-scrollbar">
-            <p className="text-xs font-bold text-ink mb-1">
+            <p className="text-xs font-bold text-text mb-1">
               {variantGroup.name}
             </p>
 
@@ -149,35 +149,35 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
                 <div
                   key={opt.id}
                   onClick={() => setSelectedOptionId(opt.id)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                  className={`p-4 rounded-[16px] border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                     isSelected
-                      ? 'bg-blush/40 border-rose-plum shadow-xs ring-1 ring-rose-plum/30'
-                      : 'bg-white hover:bg-soft-ivory border-mist'
+                      ? 'bg-accent-soft/40 border-accent shadow-warm-xs ring-1 ring-accent/30'
+                      : 'bg-card hover:bg-fill/40 border-border'
                   }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-heading font-bold text-xs sm:text-sm text-ink">
+                      <h4 className="font-heading font-bold text-xs sm:text-sm text-text">
                         {opt.name}
                       </h4>
                       {opt.priceDelta === 0 && (
-                        <span className="text-[10px] font-bold text-mauve-grey bg-mist/60 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-bold text-text-muted bg-fill px-1.5 py-0.5 rounded-full">
                           Standard
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-mauve-grey mt-0.5 leading-snug">
+                    <p className="text-[11px] text-text-muted mt-0.5 leading-snug">
                       {opt.description}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
                     <div className="text-right">
-                      <span className="font-heading font-bold text-sm text-ink block">
+                      <span className="font-heading font-bold text-sm text-text block">
                         ₹{optionPrice}
                       </span>
                       {opt.durationDeltaMinutes > 0 && (
-                        <span className="text-[10px] text-mauve-grey font-mono block">
+                        <span className="text-[10px] text-text-muted font-mono block">
                           +{opt.durationDeltaMinutes}m
                         </span>
                       )}
@@ -185,8 +185,8 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
                     <div
                       className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
                         isSelected
-                          ? 'bg-rose-plum text-white'
-                          : 'border border-mist text-transparent'
+                          ? 'bg-accent text-white'
+                          : 'border border-border text-transparent'
                       }`}
                     >
                       <Check className="w-3 h-3" />
@@ -197,8 +197,8 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
             })}
 
             {/* Hygiene Assurance Note */}
-            <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/60 flex items-center gap-2 text-xs text-emerald-800">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="p-3 rounded-[14px] bg-bg-alt border border-border flex items-center gap-2 text-xs text-text">
+              <ShieldCheck className="w-4 h-4 text-success shrink-0" />
               <span>
                 Every option includes genuine mono-dose sachets and disposable linens.
               </span>
@@ -206,12 +206,12 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
           </div>
 
           {/* Footer Action */}
-          <div className="p-4 border-t border-mist bg-white flex items-center justify-between gap-4">
+          <div className="p-4 border-t border-border bg-card flex items-center justify-between gap-4">
             <div>
-              <span className="text-[10px] uppercase font-bold text-mauve-grey tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-text-muted tracking-wider block">
                 Total Live Price
               </span>
-              <span className="font-heading font-bold text-xl text-ink">
+              <span className="font-heading font-bold text-xl text-text">
                 ₹{finalPrice}
               </span>
             </div>
@@ -219,7 +219,7 @@ export const VariantPickerSheet: React.FC<VariantPickerSheetProps> = ({
             <button
               type="button"
               onClick={handleConfirm}
-              className="px-6 py-2.5 rounded-xl bg-rose-plum text-white font-bold text-xs sm:text-sm hover:bg-deep-plum transition-all shadow-xs cursor-pointer"
+              className="px-6 py-2.5 rounded-[14px] bg-accent text-white font-bold text-xs sm:text-sm hover:bg-accent-pressed transition-all shadow-warm-xs cursor-pointer"
             >
               Confirm &amp; Add
             </button>

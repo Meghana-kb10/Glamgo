@@ -25,6 +25,7 @@ export function useSseEvents() {
     if (typeof window === 'undefined') return;
 
     let isSubscribed = true;
+    let timer: NodeJS.Timeout | null = null;
 
     function connect() {
       if (!isSubscribed) return;
@@ -106,10 +107,11 @@ export function useSseEvents() {
       });
     }
 
-    connect();
+    timer = setTimeout(connect, 1500);
 
     return () => {
       isSubscribed = false;
+      if (timer) clearTimeout(timer);
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }

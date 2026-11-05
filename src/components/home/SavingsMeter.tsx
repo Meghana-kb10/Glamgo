@@ -23,36 +23,36 @@ export const SavingsMeter: React.FC<SavingsMeterProps> = ({
     <div
       role="region"
       aria-label="Package savings progress"
-      className={`p-3 rounded-xl bg-blush/60 border border-rose-plum/20 ${className}`}
+      className={`p-3.5 rounded-[16px] bg-card border border-border shadow-warm-sm ${className}`}
     >
-      <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
-        <div className="flex items-center gap-1.5 text-ink">
+      <div className="flex items-center justify-between text-xs font-semibold mb-2">
+        <div className="flex items-center gap-1.5 text-text">
           {isUnlocked ? (
             <>
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span className="font-bold text-emerald-700">
+              <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+              <span className="font-bold text-success-text">
                 You unlocked {discountPercentage}% package savings!
               </span>
             </>
           ) : (
             <>
-              <Sparkles className="w-3.5 h-3.5 text-rose-plum shrink-0" />
+              <Sparkles className="w-3.5 h-3.5 text-accent shrink-0" />
               <span>
-                Add <span className="font-bold text-rose-plum">₹{remainingAmount}</span> more to save {discountPercentage}%
+                Add <span className="font-bold text-accent">₹{remainingAmount}</span> more to save {discountPercentage}%
               </span>
             </>
           )}
         </div>
-        <span className="text-[11px] font-mono text-mauve-grey">
+        <span className="text-[11px] font-mono text-text-muted">
           ₹{currentTotal}/₹{targetTotal}
         </span>
       </div>
 
       {/* Progress Bar Track */}
-      <div className="w-full h-2 rounded-full bg-mist/80 overflow-hidden">
+      <div className="w-full h-2.5 rounded-full bg-fill overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-300 ${
-            isUnlocked ? 'bg-emerald-500' : 'bg-gradient-to-r from-rose-plum to-champagne-gold'
+            isUnlocked ? 'bg-success' : 'bg-gradient-to-r from-accent to-star'
           }`}
           style={{ width: `${progressPercent}%` }}
         />
