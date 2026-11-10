@@ -27,46 +27,54 @@ export default {
         warning: 'var(--warning)',
         'warning-text': 'var(--warning-text)',
 
-        // Named Palette Utilities
-        ivory: '#FFFDF8',
-        cream: '#F7F0E3',
-        sand: '#EFE4D0',
+        // Named Palette Utilities (User Specification)
+        ivory: '#F8F5EF',
+        cream: '#F1ECE3',
+        sand: '#E5D9C9',
         'warm-white': '#FFFEFB',
-        linen: '#E8DDCB',
-        'linen-strong': '#CDBFA8',
-        espresso: '#2B2420',
-        taupe: '#6F6258',
-        'rose-plum': '#B8336A',
-        'deep-plum': '#7A1F4A',
-        'champagne-gold': '#C9A25B',
+        'warm-beige': '#E5D9C9',
+        linen: '#E8E0D5',
+        'linen-strong': '#C5A77D',
+        'light-beige-border': '#E8E0D5',
+        charcoal: '#292722',
+        'charcoal-hover': '#48443C',
+        espresso: '#292722',
+        taupe: '#82796D',
+        champagne: '#C5A77D',
+        'champagne-gold': '#C5A77D',
 
-        // Legacy Aliases Mapped Directly to New Warm Tokens
-        'soft-ivory': '#FFFDF8',
-        blush: '#F6E4EA',        // Warm accent-soft plum tint
-        mist: '#E8DDCB',         // Linen border
-        ink: '#2B2420',          // Espresso
-        'mauve-grey': '#6F6258',  // Taupe
+        // Supporting Shades for Dark Sections
+        'dark-text': '#D3CEC6',
+        'dark-text-alt': '#D7D2C9',
+        'dark-text-subtle': '#BDB6AB',
+
+        // Aliases Mapped Directly to Tokens
+        'soft-ivory': '#F8F5EF',
+        blush: '#F1ECE3',
+        mist: '#E8E0D5',
+        ink: '#292722',
+        'mauve-grey': '#82796D',
         'emerald-accent': '#1E7F5C',
         'coral-red': '#B3261E',
-        'amber-accent': '#A8620A',
+        'amber-accent': '#C5A77D',
 
         soft: {
-          DEFAULT: '#FFFDF8',
-          ivory: '#FFFDF8',
+          DEFAULT: '#F8F5EF',
+          ivory: '#F8F5EF',
         },
         mauve: {
-          DEFAULT: '#6F6258',
-          grey: '#6F6258',
+          DEFAULT: '#82796D',
+          grey: '#82796D',
         },
         surface: {
-          cream: '#F7F0E3',
-          hover: '#EFE4D0',
+          cream: '#F1ECE3',
+          hover: '#E5D9C9',
           white: '#FFFEFB',
           card: '#FFFEFB',
         },
         canvas: {
-          light: '#FFFDF8',
-          DEFAULT: '#FFFDF8',
+          light: '#F8F5EF',
+          DEFAULT: '#F8F5EF',
         },
       },
       fontFamily: {
@@ -83,14 +91,14 @@ export default {
         'chip': '9999px',
       },
       boxShadow: {
-        'warm-sm': '0 2px 8px rgba(80, 60, 40, 0.05)',
-        'card': '0 4px 20px rgba(80, 60, 40, 0.08)',
-        'warm-card': '0 4px 20px rgba(80, 60, 40, 0.08)',
-        'sheet': '0 -6px 28px rgba(80, 60, 40, 0.12)',
-        'warm-sheet': '0 -6px 28px rgba(80, 60, 40, 0.12)',
-        'warm-modal': '0 16px 40px rgba(80, 60, 40, 0.14)',
-        'luxury': '0 20px 40px -15px rgba(80, 60, 40, 0.08), 0 0 1px 1px rgba(184, 51, 106, 0.08)',
-        'luxury-hover': '0 24px 48px -12px rgba(184, 51, 106, 0.16), 0 0 1px 1px rgba(201, 162, 91, 0.25)',
+        'warm-sm': '0 2px 8px rgba(41, 39, 34, 0.05)',
+        'card': '0 4px 20px rgba(41, 39, 34, 0.086)',
+        'warm-card': '0 4px 20px rgba(41, 39, 34, 0.086)',
+        'sheet': '0 -6px 28px rgba(41, 39, 34, 0.14)',
+        'warm-sheet': '0 -6px 28px rgba(41, 39, 34, 0.14)',
+        'warm-modal': '0 16px 40px rgba(41, 39, 34, 0.18)',
+        'luxury': '0 20px 40px -15px rgba(41, 39, 34, 0.086), 0 0 1px 1px rgba(197, 167, 125, 0.25)',
+        'luxury-hover': '0 24px 48px -12px rgba(41, 39, 34, 0.18), 0 0 1px 1px rgba(197, 167, 125, 0.45)',
       },
       backdropBlur: {
         'xs': '2px',

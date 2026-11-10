@@ -1,47 +1,50 @@
-# Glamgo Design Tokens — Warm Cream & Ivory Visual System
+# Glamgo Design Tokens — Warm Ivory, Soft Cream & Champagne Gold Luxury System
 
 ## 1. Overview
-The Glamgo customer experience uses a warm **Ivory and Cream** foundation paired with rich **Espresso** typography, **Taupe** secondary text, and our signature **Rose Plum** accent. This replaces the cold white/dark legacy palette with a calming, luxurious, beginner-friendly atelier aesthetic.
+The Glamgo platform uses a refined, atelier-grade luxury palette featuring **Warm Ivory** and **Soft Cream** canvases, **Warm White** cards and forms, **Warm Beige** soft accents, **Champagne Gold** brand accents and stars, with **Deep Charcoal** high-contrast text, primary action buttons, announcement bar, and footer.
+
+Text and focus colors must be checked against their actual surface to meet WCAG 2.1 AA contrast requirements ($\ge 4.5:1$ for normal text, $\ge 3:1$ for large text and UI components).
 
 ---
 
-## 2. Token Dictionary
+## 2. Token Specification (User Canonical Palette)
 
-| Token | CSS Variable | Hex Value | Semantic Purpose |
+| Colour Name | Hex Value | CSS Variable | Semantic Purpose |
 |---|---|---|---|
-| **Ivory** | `--bg` | `#FFFDF8` | Base canvas: page background, topbar, sidebar, modal backdrops |
-| **Cream** | `--bg-alt` | `#F7F0E3` | Alternating sections, announcement bar, footer, soft feature banners |
-| **Sand** | `--fill` | `#EFE4D0` | Chip backgrounds, selected pill fills, hover states, skeleton base |
-| **Warm White** | `--card` | `#FFFEFB` | Surface containers: cards, modal sheets, popovers, form inputs |
-| **Linen** | `--border` | `#E8DDCB` | Standard card dividers, subtle hair-line borders |
-| **Linen Strong** | `--border-strong`| `#CDBFA8` | Prominent section dividers, card boundary accents |
-| **Field Outline** | `--border-field` | `#8E7D6A` | Form field outlines (ensures $\ge 3:1$ WCAG AA non-text contrast) |
-| **Espresso** | `--text` | `#2B2420` | Headings, primary body text, active icon strokes |
-| **Taupe** | `--text-muted` | `#6F6258` | Secondary labels, timestamps, metadata, placeholder text |
-| **Rose Plum** | `--accent` | `#B8336A` | Primary action buttons, active links, focus rings, selected badges |
-| **Deep Plum** | `--accent-pressed` | `#7A1F4A` | Button hover/pressed states, high-contrast badges |
-| **Accent Soft** | `--accent-soft` | `#F6E4EA` | Soft plum tint for badge containers, row selection, focus ring halo |
-| **Champagne** | `--star` | `#C9A25B` | Customer rating stars only |
-| **Success** | `--success` | `#1E7F5C` | Verification badges, confirmation checks, positive status |
-| **Error** | `--error` | `#B3261E` | Validation errors, destructive actions, alert banners |
-| **Warning** | `--warning` | `#A8620A` | Non-blocking notices, stock warnings, time-critical alerts |
-| **Warning Text**| `--warning-text` | `#8C4D00` | Accessible warning text on warm cards ($\ge 4.5:1$) |
+| **Warm ivory** | `#F8F5EF` | `--bg` | Main page and header background |
+| **Soft cream** | `#F1ECE3` | `--bg-alt`, `--accent-soft` | Alternate sections, hero backgrounds, selected controls |
+| **Warm white** | `#FFFEFB` | `--card`, `--dark-text` | Cards, forms, menus, and light button text |
+| **Warm beige** | `#E5D9C9` | `--fill` | Soft accents, chips, skeleton base, and account avatar background |
+| **Champagne** | `#C5A77D` | `--border-strong`, `--champagne`, `--star` | Small brand accents, stars, verification icons, focus borders |
+| **Deep charcoal** | `#292722` | `--text`, `--accent`, `--dark-bg` | Main text, primary buttons, announcement bar, footer |
+| **Deep taupe** | `#665E53` | `--text-muted` | Secondary text, labels and descriptions |
+| **Field taupe** | `#82796D` | `--border-field` | Input borders |
+| **Light beige border** | `#E8E0D5` | `--border` | Card edges, dividers, input borders |
+
+### Supporting Shades for High-Contrast Dark Sections
+
+| Shade | Hex Value | Semantic Purpose |
+|---|---|---|
+| **Primary-button hover** | `#48443C` | Hover / pressed state for Deep Charcoal buttons and links |
+| **Light text (Standard)** | `#D3CEC6` | Body text and nav links inside Deep Charcoal footer / dark sections |
+| **Light text (Alternative)** | `#D7D2C9` | High-contrast secondary text on dark announcement bar and dark cards |
+| **Light text (Subtle)** | `#BDB6AB` | Metadata, copyright, and subtle labels on dark sections |
+| **Warm Shadow Alpha** | `#29272216` (`rgba(41, 39, 34, 0.086)`) | Subtle warm card elevation |
+| **Photo Overlay Alpha** | `#29272291` (`rgba(41, 39, 34, 0.569)`) | High-contrast readability overlay across lifestyle photography |
 
 ---
 
-## 3. Shadows & Surface Elevations (Warm-Tinted)
+## 3. Shadows & Surface Elevations
 
-Pure black shadows are prohibited. All shadows use an amber-tinted warm umber alpha: `rgba(80, 60, 40, alpha)`.
-
-- **Warm Small**: `0 2px 8px rgba(80, 60, 40, 0.05)` (chips, small badges)
-- **Warm Card**: `0 4px 20px rgba(80, 60, 40, 0.08)` (service cards, floating panels)
-- **Warm Sheet**: `0 -6px 28px rgba(80, 60, 40, 0.12)` (bottom sheets, mobile drawer)
-- **Warm Modal**: `0 16px 40px rgba(80, 60, 40, 0.14)` (center dialogs, search overlay)
+All shadows use transparent charcoal alphas rather than sterile gray:
+- **Warm Small**: `0 2px 8px rgba(41, 39, 34, 0.05)` (chips, small badges)
+- **Warm Card**: `0 4px 20px rgba(41, 39, 34, 0.08)` (service cards, floating panels)
+- **Warm Sheet**: `0 -6px 28px rgba(41, 39, 34, 0.12)` (bottom sheets, mobile drawer)
+- **Warm Modal**: `0 16px 40px rgba(41, 39, 34, 0.14)` (center dialogs, search overlay)
 
 ---
 
 ## 4. Radii & Geometry
-
 - **Buttons**: `14px` (`rounded-button` or `rounded-[14px]`)
 - **Cards**: `18px` (`rounded-card` or `rounded-[18px]`)
 - **Bottom Sheets**: `24px` top corners (`rounded-t-[24px]`)
@@ -49,43 +52,28 @@ Pure black shadows are prohibited. All shadows use an amber-tinted warm umber al
 
 ---
 
-## 5. WCAG AA Contrast Audit & Pairings
+## 5. WCAG AA Contrast Verification Matrix
 
 | Text / Foreground | Background Surface | Contrast Ratio | WCAG AA Requirement | Result |
 |---|---|---|---|---|
-| **Espresso** (`#2B2420`) | **Ivory** (`#FFFDF8`) | **15.01:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Espresso** (`#2B2420`) | **Cream** (`#F7F0E3`) | **13.47:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Espresso** (`#2B2420`) | **Sand** (`#EFE4D0`) | **12.12:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Espresso** (`#2B2420`) | **Warm White** (`#FFFEFB`) | **15.13:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Espresso** (`#2B2420`) | **Accent Soft** (`#F6E4EA`) | **12.50:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Taupe** (`#6F6258`) | **Ivory** (`#FFFDF8`) | **5.80:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Taupe** (`#6F6258`) | **Cream** (`#F7F0E3`) | **5.20:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Taupe** (`#6F6258`) | **Sand** (`#EFE4D0`) | **4.68:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Taupe** (`#6F6258`) | **Warm White** (`#FFFEFB`) | **5.84:1** | $\ge 4.5:1$ (Body) | **PASS** |
-| **Rose Plum** (`#B8336A`) | **Ivory** (`#FFFDF8`) | **5.55:1** | $\ge 4.5:1$ (Links) | **PASS** |
-| **Rose Plum** (`#B8336A`) | **Cream** (`#F7F0E3`) | **4.98:1** | $\ge 4.5:1$ (Links) | **PASS** |
-| **Rose Plum** (`#B8336A`) | **Accent Soft** (`#F6E4EA`)| **4.63:1** | $\ge 4.5:1$ (Badges) | **PASS** |
-| **Deep Plum** (`#7A1F4A`)| **Sand** (`#EFE4D0`) | **7.86:1** | $\ge 4.5:1$ (Selected) | **PASS** |
-| **Deep Plum** (`#7A1F4A`)| **Accent Soft** (`#F6E4EA`)| **8.11:1** | $\ge 4.5:1$ (Badges) | **PASS** |
-| **Verified Pro Text** (`#136347`)| **Composited Mint** (`#DDEBE3`)| **5.88:1** | $\ge 4.5:1$ (Badges) | **PASS** |
-| **Offer Badge Text** (`#7A1F4A`)| **Accent Soft** (`#F6E4EA`)| **8.11:1** | $\ge 4.5:1$ (Badges) | **PASS** |
-| **Bestseller Text** (`#7A1F4A`)| **Sand Fill** (`#EFE4D0`)| **7.86:1** | $\ge 4.5:1$ (Badges) | **PASS** |
-| **Footer Link** (`#6F6258`)| **Cream Foot** (`#F7F0E3`)| **5.20:1** | $\ge 4.5:1$ (Links) | **PASS** |
-| **Footer Link Hover** (`#B8336A`)| **Cream Foot** (`#F7F0E3`)| **4.98:1** | $\ge 4.5:1$ (Hover) | **PASS** |
-| **Button Hover** (`#FFFFFF`)| **Deep Plum** (`#7A1F4A`)| **9.89:1** | $\ge 4.5:1$ (Hover) | **PASS** |
-| **Secondary Button Hover** (`#7A1F4A`)| **Accent Soft** (`#F6E4EA`)| **8.11:1** | $\ge 4.5:1$ (Hover) | **PASS** |
-| **White** (`#FFFFFF`) | **Rose Plum** (`#B8336A`) | **5.65:1** | $\ge 4.5:1$ (Buttons) | **PASS** |
-| **White** (`#FFFFFF`) | **Deep Plum** (`#7A1F4A`) | **9.89:1** | $\ge 4.5:1$ (Pressed) | **PASS** |
-| **Success** (`#1E7F5C`) | **Warm White** (`#FFFEFB`) | **4.90:1** | $\ge 4.5:1$ (Text) | **PASS** |
-| **Error** (`#B3261E`) | **Warm White** (`#FFFEFB`) | **6.48:1** | $\ge 4.5:1$ (Text) | **PASS** |
-| **Warning** (`#8C4D00`) | **Warm White** (`#FFFEFB`) | **6.55:1** | $\ge 4.5:1$ (Text) | **PASS** |
-| **Field Outline** (`#8E7D6A`) | **Warm White** (`#FFFEFB`)| **3.93:1** | $\ge 3:1$ (Non-text) | **PASS** |
-| **Field Outline** (`#8E7D6A`) | **Cream** (`#F7F0E3`) | **3.50:1** | $\ge 3:1$ (Non-text) | **PASS** |
+| **Deep Charcoal** (`#292722`) | **Warm Ivory** (`#F8F5EF`) | **13.71:1** | $\ge 4.5:1$ (Body) | **PASS** |
+| **Deep Charcoal** (`#292722`) | **Soft Cream** (`#F1ECE3`) | **12.68:1** | $\ge 4.5:1$ (Body) | **PASS** |
+| **Deep Charcoal** (`#292722`) | **Warm Beige** (`#E5D9C9`) | **10.73:1** | $\ge 4.5:1$ (Selected / Chips) | **PASS** |
+| **Deep Charcoal** (`#292722`) | **Warm White** (`#FFFEFB`) | **14.79:1** | $\ge 4.5:1$ (Cards & Menus) | **PASS** |
+| **Deep Taupe** (`#665E53`) | **Warm Ivory** (`#F8F5EF`) | **5.86:1** | $\ge 4.5:1$ (Secondary Text) | **PASS** |
+| **Deep Taupe** (`#665E53`) | **Warm White** (`#FFFEFB`) | **6.33:1** | $\ge 4.5:1$ (Secondary on Cards) | **PASS** |
+| **Warm White** (`#FFFEFB`) | **Deep Charcoal** (`#292722`) | **14.79:1** | $\ge 4.5:1$ (Primary Buttons) | **PASS** |
+| **Warm White** (`#FFFEFB`) | **Button Hover** (`#48443C`) | **9.61:1** | $\ge 4.5:1$ (Hovered Buttons) | **PASS** |
+| **Dark Text Alt** (`#D7D2C9`)| **Deep Charcoal** (`#292722`) | **9.91:1** | $\ge 4.5:1$ (Announcement Bar) | **PASS** |
+| **Dark Text** (`#D3CEC6`) | **Deep Charcoal** (`#292722`) | **9.53:1** | $\ge 4.5:1$ (Footer Body) | **PASS** |
+| **Champagne** (`#C5A77D`) | **Deep Charcoal** (`#292722`) | **6.53:1** | $\ge 4.5:1$ (Accents / Stars) | **PASS** |
+| **Field Taupe** (`#82796D`) | **Warm White** (`#FFFEFB`) | **4.24:1** | $\ge 3:1$ (Field Borders) | **PASS** |
+| **Champagne** (`#C5A77D`) | **Warm White** (`#FFFEFB`) | **2.26:1** | Focus Ring / Accent Stroke | **Decorative only; use charcoal for focus** |
 
 ---
 
 ## 6. Implementation Rules
-1. **Never use `#000` or `#FFF` as brand background surfaces.** White is reserved strictly for high-contrast button labels on Rose Plum and photo text overlays.
-2. **Alternating rhythm:** Page sections alternate between Ivory (`--bg`) and Cream (`--bg-alt`); never place two Cream sections adjacently.
-3. **Card elevations:** Cards use Warm White (`--card`) with either a subtle Linen border (`--border`) or a warm shadow (`shadow-warm-card`).
-4. **Form input visibility:** Form controls must use `--border` in rest state, transition to `--border-field` on hover, and show an accent ring (`2px #B8336A` with `3px #F6E4EA` halo) on focus.
+1. **Single Source of Truth**: All components use semantic Tailwind tokens (`bg-bg`, `bg-bg-alt`, `bg-card`, `bg-fill`, `text-text`, `text-text-muted`, `border-border`, `border-champagne`, `bg-charcoal`, `text-champagne`).
+2. **Alternating rhythm**: Page sections alternate between Warm Ivory (`--bg`) and Soft Cream (`--bg-alt`); never place two cream sections adjacently.
+3. **Card elevations**: Cards use Warm White (`--card`) with Light Beige border (`--border`) and warm charcoal shadow (`shadow-warm-card`).
+4. **Primary CTAs**: Primary action buttons use Deep Charcoal (`--accent: #292722`) with Warm White text (`#FFFEFB`) and transition to `#48443C` on hover.

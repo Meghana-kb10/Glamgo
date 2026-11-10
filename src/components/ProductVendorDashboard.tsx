@@ -150,7 +150,7 @@ export const ProductVendorDashboard: React.FC = () => {
                 <th className="px-6 py-3.5 text-right">Fulfillment Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-rose-gold/10">
+            <tbody className="divide-y divide-border">
               {variants.map((v: any) => {
                 const prod = products.find((p: any) => p.id === v.product_id);
                 const status =

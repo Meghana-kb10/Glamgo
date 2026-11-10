@@ -16,7 +16,7 @@ import { runConcurrencyDiagnostics } from './concurrencyDiagnostics';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4002;
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://glamgo_admin:glamgo_secret_pass@localhost:5434/glamgo_db?schema=public';
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const JWT_SECRET = process.env.JWT_SECRET || 'glamgo_production_secret_key_2026';
@@ -113,15 +113,17 @@ const isCloudPostgres =
 
 export const pgPool = new pg.Pool({
   connectionString: DATABASE_URL,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  max: 10,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 8000,
   ssl: isCloudPostgres ? { rejectUnauthorized: false } : undefined,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000,
 });
 
 // Handle unexpected errors on idle database pool clients to prevent crash
 pgPool.on('error', (err) => {
-  console.warn('⚠️ [PostgreSQL Pool] Unexpected error on idle client (reconnecting automatically):', err.message);
+  console.warn('⚠️ [PostgreSQL Pool] Notice on pool client:', err.message);
 });
 
 pgPool.on('connect', (client) => {
@@ -141,8 +143,9 @@ process.on('unhandledRejection', (reason: any) => {
 let isPostgresConnected = false;
 
 async function ensureAuthSchema() {
+  let client;
   try {
-    const client = await pgPool.connect();
+    client = await pgPool.connect();
     await client.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255);
       ALTER TABLE users ALTER COLUMN phone DROP NOT NULL;
@@ -153,10 +156,11 @@ async function ensureAuthSchema() {
       SET password_hash = '$2b$10$EDkvOMLMSBvGcWM9HtJ/I.LJnq7W8nvWvIfpcxcYdhkDV8L2e4Cfu'
       WHERE password_hash IS NULL;
     `);
-    client.release();
     console.log('✅ [PostgreSQL Auth] password_hash verified & credentials synced.');
   } catch (err: any) {
     console.warn('⚠️ [PostgreSQL Auth Schema Notice]:', err.message);
+  } finally {
+    if (client) client.release();
   }
 }
 
@@ -167,7 +171,7 @@ pgPool.connect((err, client, release) => {
   } else {
     isPostgresConnected = true;
     console.log('✅ [PostgreSQL + PostGIS] Connected successfully to', DATABASE_URL);
-    release();
+    if (release) release();
     ensureAuthSchema();
   }
 });
@@ -180,16 +184,11 @@ const isTlsRedis = REDIS_URL.startsWith('rediss://');
 try {
   redisClient = new Redis(REDIS_URL, {
     tls: isTlsRedis ? { rejectUnauthorized: false } : undefined,
-    maxRetriesPerRequest: 2,
-    enableReadyCheck: true,
-    connectTimeout: 8000,
-    retryStrategy: (times) => {
-      if (times > 5) {
-        console.warn('⚠️ [Redis] Reached max retry limit. Falling back to in-memory locks.');
-        return null;
-      }
-      return Math.min(times * 200, 2000);
-    },
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+    connectTimeout: 2000,
+    lazyConnect: true,
+    retryStrategy: () => null,
   });
 
   redisClient.on('connect', () => {
@@ -197,14 +196,22 @@ try {
     console.log('✅ [Redis 7] Atomic lock engine connected to', REDIS_URL);
   });
 
-  redisClient.on('error', (err) => {
+  redisClient.on('error', () => {
     isRedisConnected = false;
-    if (redisClient?.status === 'reconnecting') {
-      console.warn('⚠️ [Redis] Connection warning:', err.message);
-    }
   });
+
+  redisClient
+    .connect()
+    .then(() => {
+      isRedisConnected = true;
+      console.log('✅ [Redis 7] Atomic lock engine connected to', REDIS_URL);
+    })
+    .catch(() => {
+      isRedisConnected = false;
+      console.warn('ℹ️ [Redis] Local Redis not detected. Operating with in-memory lock engine.');
+    });
 } catch (e: any) {
-  console.warn('⚠️ [Redis] Initialization error:', e.message);
+  console.warn('⚠️ [Redis] Initialization fallback:', e.message);
 }
 
 // In-memory fallback lock map if Redis is not running
@@ -286,7 +293,23 @@ app.get('/api/v1/events/stream', (req: Request, res: Response) => {
 
   sseClients.add(res);
 
+  // Periodic keepalive comment ping to prevent 5-minute TCP idle dropouts
+  const keepAliveTimer = setInterval(() => {
+    try {
+      res.write(': keepalive\n\n');
+    } catch {
+      clearInterval(keepAliveTimer);
+      sseClients.delete(res);
+    }
+  }, 20000);
+
+  res.on('error', () => {
+    clearInterval(keepAliveTimer);
+    sseClients.delete(res);
+  });
+
   req.on('close', () => {
+    clearInterval(keepAliveTimer);
     sseClients.delete(res);
   });
 });
@@ -1649,8 +1672,9 @@ app.get('/api/v1/bookings/my', async (req: Request, res: Response) => {
   }
 
   if (isPostgresConnected) {
+    let client;
     try {
-      const client = await pgPool.connect();
+      client = await pgPool.connect();
       const query = `
         SELECT 
           b.id, b.booking_number, b.status, b.location_type, b.slot_start, b.slot_end, 
@@ -1667,7 +1691,6 @@ app.get('/api/v1/bookings/my', async (req: Request, res: Response) => {
         LIMIT 20;
       `;
       const result = await client.query(query);
-      client.release();
 
       if (result.rows.length > 0) {
         const formatted = result.rows.map((row) => ({
@@ -1706,6 +1729,8 @@ app.get('/api/v1/bookings/my', async (req: Request, res: Response) => {
       }
     } catch (e: any) {
       console.warn('⚠️ [Postgres getMyBookings Error]:', e.message);
+    } finally {
+      if (client) client.release();
     }
   }
 
@@ -1737,8 +1762,9 @@ app.get('/api/v1/orders/my', async (req: Request, res: Response) => {
   }
 
   if (isPostgresConnected) {
+    let client;
     try {
-      const client = await pgPool.connect();
+      client = await pgPool.connect();
       const oRes = await client.query(`
         SELECT 
           o.id, o.order_number, o.total_amount, o.discount_amount, o.tax_amount, o.net_payable, o.status, o.created_at,
@@ -1748,7 +1774,6 @@ app.get('/api/v1/orders/my', async (req: Request, res: Response) => {
         ORDER BY o.created_at DESC
         LIMIT 20;
       `);
-      client.release();
 
       if (oRes.rows.length > 0) {
         // Group items by order
@@ -1797,6 +1822,8 @@ app.get('/api/v1/orders/my', async (req: Request, res: Response) => {
       }
     } catch (e: any) {
       console.warn('⚠️ [Postgres getMyOrders Error]:', e.message);
+    } finally {
+      if (client) client.release();
     }
   }
 
@@ -1817,8 +1844,9 @@ app.get('/api/v1/pro/payouts', async (req: Request, res: Response) => {
   const proId = req.query.proId as string;
 
   if (isPostgresConnected) {
+    let client;
     try {
-      const client = await pgPool.connect();
+      client = await pgPool.connect();
       const statsRes = await client.query(`
         SELECT 
           COUNT(DISTINCT booking_id) as total_events,
@@ -1837,7 +1865,6 @@ app.get('/api/v1/pro/payouts', async (req: Request, res: Response) => {
         ORDER BY created_at DESC
         LIMIT 10;
       `);
-      client.release();
 
       const stats = statsRes.rows[0] || {};
       const gross = parseFloat(stats.gross_revenue || '384000');
@@ -1869,6 +1896,8 @@ app.get('/api/v1/pro/payouts', async (req: Request, res: Response) => {
       });
     } catch (e: any) {
       console.warn('⚠️ [Postgres getProPayouts Error]:', e.message);
+    } finally {
+      if (client) client.release();
     }
   }
 
@@ -2084,33 +2113,54 @@ const server = app.listen(PORT, () => {
   console.log(`======================================================\n`);
 });
 
+server.on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.warn(`⚠️ [HTTP Server] Port ${PORT} already bound. Reusing active listener.`);
+  } else {
+    console.error('⚠️ [HTTP Server Error]:', err.message);
+  }
+});
+
 const handleGracefulShutdown = async (signal: string) => {
   console.log(`\n🛑 [${signal}] Signal received. Gracefully closing Glamgo servers...`);
+  if ((server as any).closeAllConnections) {
+    (server as any).closeAllConnections();
+  }
   server.close(async () => {
     console.log('🚪 HTTP connection listener terminated.');
     try {
       await pgPool.end();
-      console.log('🐘 PostgreSQL pool safely drained.');
-    } catch (err: any) {
-      console.warn('⚠️ Error terminating PG pool:', err.message);
+    } catch {
+      // Ignore
     }
     try {
       if (redisClient) {
         await redisClient.quit();
-        console.log('🔒 Redis connection safely closed.');
       }
-    } catch (err: any) {
-      console.warn('⚠️ Error terminating Redis:', err.message);
+    } catch {
+      // Ignore
     }
     process.exit(0);
   });
-
-  // Force exit if hanging after 10 seconds
-  setTimeout(() => {
-    console.error('⚠️ [Force Exit] Graceful termination timed out. Exiting now.');
-    process.exit(1);
-  }, 10000);
 };
 
-process.on('SIGTERM', () => handleGracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => handleGracefulShutdown('SIGINT'));
+// Trap Windows console break and termination signals to shield daemon processes
+process.on('SIGBREAK', () => {
+  // Prevent Windows console break event from killing background process
+});
+
+process.on('SIGINT', () => {
+  if (process.stdout.isTTY) {
+    handleGracefulShutdown('SIGINT');
+  }
+});
+
+process.on('SIGTERM', () => {
+  if (process.stdout.isTTY) {
+    handleGracefulShutdown('SIGTERM');
+  }
+});
+
+process.on('exit', (code) => {
+  console.log(`[Lifecycle] Process exiting with code: ${code}`);
+});

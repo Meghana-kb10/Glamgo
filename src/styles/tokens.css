@@ -1,37 +1,50 @@
 :root {
-  /* Surface & Background */
-  --bg: #FFFDF8;             /* Ivory: page background, topbar, sidebar */
-  --bg-alt: #F7F0E3;         /* Cream: alternating sections, banners, footer */
-  --fill: #EFE4D0;           /* Sand: chips, selected states, skeleton base, hover fills */
-  --card: #FFFEFB;           /* Warm White: cards, sheets, modals, inputs */
+  /* Surface & Background (User Specification) */
+  --bg: #F8F5EF;              /* Warm ivory: Main page and header background */
+  --bg-alt: #F1ECE3;          /* Soft cream: Alternate sections, hero backgrounds, selected controls */
+  --card: #FFFEFB;            /* Warm white: Cards, forms, menus, and light button text */
+  --fill: #E5D9C9;            /* Warm beige: Soft accents and account avatar background */
 
-  /* Borders */
-  --border: #E8DDCB;         /* Linen: standard subtle card & divider borders */
-  --border-strong: #CDBFA8;  /* Linen Strong: prominent dividers & boundary borders */
-  --border-field: #8E7D6A;   /* Field Outline: >= 3:1 WCAG AA non-text contrast for inputs */
+  /* Borders & Dividers */
+  --border: #E8E0D5;          /* Light beige border: Card edges, dividers, input borders */
+  --border-strong: #C5A77D;   /* Champagne: Focus borders, small brand accents */
+  --border-field: #82796D;    /* Muted taupe: Input field borders */
 
   /* Typography */
-  --text: #2B2420;           /* Espresso: headings and body text */
-  --text-muted: #6F6258;     /* Taupe: secondary text, placeholders, metadata */
+  --text: #292722;            /* Deep charcoal: Main text, primary buttons, announcement bar, footer */
+  --text-muted: #665E53;      /* Deep taupe: readable on ivory, cream, white, and beige */
 
-  /* Accents */
-  --accent: #B8336A;         /* Rose Plum: primary buttons, links, active states, focus ring */
-  --accent-pressed: #7A1F4A; /* Deep Plum: button hover/pressed, high-contrast badges */
-  --accent-soft: #F6E4EA;    /* Light Plum Tint: selected rows, chip backgrounds, soft badges */
-  --star: #C9A25B;           /* Rating stars only */
+  /* Buttons & Interactive Elements */
+  --accent: #292722;          /* Deep charcoal: Primary buttons */
+  --accent-pressed: #48443C;  /* Primary-button hover */
+  --accent-soft: #F1ECE3;     /* Soft cream: Selected controls */
+
+  /* Champagne Luxury Accents */
+  --champagne: #C5A77D;       /* Champagne: Small brand accents, stars, verification icons, focus borders */
+  --star: #C5A77D;            /* Champagne: Stars & ratings */
+
+  /* Dark Sections Supporting Shades (Announcement Bar, Footer) */
+  --dark-bg: #292722;         /* Deep charcoal */
+  --dark-hover: #48443C;      /* Primary button hover */
+  --dark-text: #FFFEFB;       /* Warm white text */
+  --dark-text-muted: #D3CEC6; /* Supporting text on dark sections */
+  --dark-text-alt: #D7D2C9;   /* Supporting text on dark sections */
+  --dark-text-subtle: #BDB6AB;/* Supporting subtle text on dark sections */
+  --dark-border: #48443C;
 
   /* Semantic Feedback */
   --success: #1E7F5C;
-  --success-text: #136347;   /* Accessible green text on tinted badge backgrounds (5.88:1) */
+  --success-text: #136347;
   --error: #B3261E;
-  --warning: #A8620A;
-  --warning-text: #8C4D00;
+  --warning: #C5A77D;
+  --warning-text: #292722;
 
-  /* Warm-tinted Shadows */
-  --shadow-warm-sm: 0 2px 8px rgba(80, 60, 40, 0.05);
-  --shadow-warm-card: 0 4px 20px rgba(80, 60, 40, 0.08);
-  --shadow-warm-sheet: 0 -6px 28px rgba(80, 60, 40, 0.12);
-  --shadow-warm-modal: 0 16px 40px rgba(80, 60, 40, 0.14);
+  /* Transparent Charcoal Shadows & Overlays */
+  --shadow-warm-sm: 0 2px 8px rgba(41, 39, 34, 0.05);
+  --shadow-warm-card: 0 4px 20px rgba(41, 39, 34, 0.086); /* ~ #29272216 */
+  --shadow-warm-sheet: 0 -6px 28px rgba(41, 39, 34, 0.14);
+  --shadow-warm-modal: 0 16px 40px rgba(41, 39, 34, 0.18);
+  --overlay-dark: rgba(41, 39, 34, 0.569);                /* #29272291 */
 
   /* Radius Tokens */
   --radius-button: 14px;

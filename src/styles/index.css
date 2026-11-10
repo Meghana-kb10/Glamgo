@@ -12,6 +12,15 @@
     overflow-x: hidden;
   }
 
+  button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  html {
+    scroll-padding-top: calc(var(--customer-header-height, 144px) + 16px);
+  }
+
   /* Accessible Warm Selection */
   ::selection {
     background-color: var(--accent-soft);
@@ -61,14 +70,13 @@
   background: var(--border-strong);
 }
 
-/* Warm Sand-to-Cream Shimmer for Skeletons */
-.skeleton-shimmer,
-.champagne-shimmer {
+/* Warm Beige-to-Soft Cream Shimmer for Skeletons */
+.skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    #EFE4D0 0%,
-    #F7F0E3 50%,
-    #EFE4D0 100%
+    #E5D9C9 0%,
+    #F1ECE3 50%,
+    #E5D9C9 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite ease-in-out;
@@ -89,18 +97,22 @@
 }
 
 /* Explicit Core Brand Utilities using CSS Variables */
+.bg-warm-ivory,
 .bg-soft-ivory,
 .bg-ivory {
   background-color: var(--bg) !important;
 }
+.bg-soft-cream,
 .bg-cream,
 .bg-bg-alt {
   background-color: var(--bg-alt) !important;
 }
+.bg-warm-beige,
 .bg-sand,
 .bg-fill {
   background-color: var(--fill) !important;
 }
+.bg-warm-white,
 .bg-card {
   background-color: var(--card) !important;
 }
@@ -108,6 +120,7 @@
 .bg-accent-soft {
   background-color: var(--accent-soft) !important;
 }
+.bg-charcoal,
 .bg-ink,
 .bg-espresso {
   background-color: var(--text) !important;
@@ -116,43 +129,46 @@
 .bg-linen {
   background-color: var(--border) !important;
 }
+.text-charcoal,
 .text-ink,
 .text-espresso {
   color: var(--text) !important;
 }
-.text-mauve-grey,
-.text-taupe {
+.text-taupe,
+.text-mauve-grey {
   color: var(--text-muted) !important;
 }
 .border-mist,
 .border-linen {
   border-color: var(--border) !important;
 }
-.bg-rose-plum,
 .bg-accent {
   background-color: var(--accent) !important;
 }
-.bg-deep-plum,
 .bg-accent-pressed {
   background-color: var(--accent-pressed) !important;
 }
-.text-rose-plum,
 .text-accent {
   color: var(--accent) !important;
 }
-.border-rose-plum,
 .border-accent {
   border-color: var(--accent) !important;
 }
-.bg-champagne-gold,
+.bg-champagne,
 .bg-star {
   background-color: var(--star) !important;
 }
-.text-champagne-gold,
+.text-champagne,
 .text-star {
   color: var(--star) !important;
 }
-.border-champagne-gold,
+.border-champagne,
 .border-star {
   border-color: var(--star) !important;
+}
+
+/* Keep keyboard focus visible against the dark customer footer. */
+footer button:focus-visible, footer a:focus-visible {
+  outline: 2px solid var(--dark-text);
+  outline-offset: 4px;
 }

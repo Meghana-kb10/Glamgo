@@ -1297,9 +1297,9 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                     {/* Quick Recap */}
                     <div className="space-y-2 text-xs">
                       {activeService && (
-                        <div className="flex items-start justify-between">
+                        <div className="flex items-start justify-between gap-3">
                           <span className="font-medium text-text">{activeService.package.name} (x{serviceQuantity})</span>
-                          <span className="font-bold text-text">₹{(activeService.package.price * serviceQuantity).toLocaleString('en-IN')}</span>
+                          <span className="font-bold text-text shrink-0">₹{(activeService.package.price * serviceQuantity).toLocaleString('en-IN')}</span>
                         </div>
                       )}
 
@@ -1341,10 +1341,13 @@ export const BookingDrawer: React.FC<BookingDrawerProps> = ({
                         </div>
                       )}
 
-                      {/* Hygiene and Safety Fee */}
                       <div className="flex items-center justify-between text-text-muted">
-                        <span>Hygiene & Sanitized Kits:</span>
-                        <span className="text-success font-bold">FREE (₹0)</span>
+                        <span>GST:</span>
+                        <span className="font-semibold text-text">₹{bill.taxes.toLocaleString('en-IN')}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-text-muted">
+                        <span>Convenience fee:</span>
+                        <span className="font-semibold text-text">₹{bill.convenienceFee.toLocaleString('en-IN')}</span>
                       </div>
                     </div>
 

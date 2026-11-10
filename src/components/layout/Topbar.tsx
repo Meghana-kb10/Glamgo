@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useLayoutEffect, useRef } from 'react';
 import {
   Menu,
   Sparkles,
@@ -62,25 +62,29 @@ export const Topbar: React.FC<TopbarProps> = ({
   onChangeAudience,
   onSelectCategory,
 }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
-  // Monitor scroll for 85% Ivory glass effect & warm shadow
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 12);
+  // Keep content clear of the header, including wrapped or dismissed promotions.
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const updateHeight = () => {
+      document.documentElement.style.setProperty('--customer-header-height', `${header.getBoundingClientRect().height}px`);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--customer-header-height');
+    };
   }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-200 ${
-        isScrolled
-          ? 'bg-bg/85 backdrop-blur-md border-b border-border shadow-warm-card'
-          : 'bg-bg border-b border-border'
-      }`}
+      ref={headerRef}
+      className="fixed top-0 left-0 right-0 z-40 bg-bg border-b border-border"
     >
       {/* 1. Slim Announcement Bar Above Topbar */}
       <AnnouncementBar />
@@ -105,7 +109,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             aria-label="Glamgo Home"
             className="flex items-center gap-2 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl p-0.5"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-accent flex items-center justify-center text-white shadow-warm-sm group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-accent hidden min-[360px]:flex items-center justify-center text-white shadow-warm-sm group-hover:scale-105 transition-transform">
               <Sparkles className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </div>
             <span className="font-heading font-bold text-lg sm:text-xl text-text tracking-tight group-hover:text-accent transition-colors">
@@ -115,7 +119,7 @@ export const Topbar: React.FC<TopbarProps> = ({
 
           {/* Audience Switcher (Women | Men | Kids) next to Logo */}
           {onChangeAudience && (
-            <div className="flex items-center">
+            <div className="hidden lg:flex items-center">
               <AudienceSwitcher
                 currentAudience={audience}
                 onChangeAudience={onChangeAudience}
@@ -148,7 +152,7 @@ export const Topbar: React.FC<TopbarProps> = ({
           </div>
 
           {/* Location Pill (Hidden on narrow mobile, shown on md+) */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <LocationPicker
               currentLocation={currentLocation}
               onSelectLocation={onSelectLocation}
@@ -234,6 +238,13 @@ export const Topbar: React.FC<TopbarProps> = ({
           }}
         />
 
+      </div>
+      <div className="lg:hidden flex items-center justify-between gap-3 px-4 pb-3">
+        {onChangeAudience && <AudienceSwitcher currentAudience={audience} onChangeAudience={onChangeAudience} />}
+        <button type="button" onClick={onOpenLocationSheet} aria-label={`Change location, currently ${currentLocation.name}, ${currentLocation.city}`} className="min-w-0 min-h-11 flex items-center gap-1 text-sm text-text-muted">
+          <span className="truncate">{currentLocation.city}</span>
+          <ChevronDown className="w-4 h-4 shrink-0" />
+        </button>
       </div>
     </header>
   );

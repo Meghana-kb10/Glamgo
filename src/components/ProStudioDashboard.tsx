@@ -577,7 +577,7 @@ export const ProStudioDashboard: React.FC = () => {
                     <th className="px-4 py-3 text-right">Settled Timestamp</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-rose-gold/10">
+                <tbody className="divide-y divide-border">
                   {payoutsData.recent_transactions.length > 0 ? (
                     payoutsData.recent_transactions.map((tx: any) => (
                       <tr key={tx.id} className="hover:bg-accent-soft transition-colors">

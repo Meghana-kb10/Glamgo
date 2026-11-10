@@ -6,7 +6,7 @@ export const triggerChampagneSparkles = (originX = 0.5, originY = 0.5) => {
     spread: 60,
     startVelocity: 25,
     origin: { x: originX, y: originY },
-    colors: ['#B8336A', '#7A1F4A', '#EFE4D0', '#C9A25B', '#1E7F5C'],
+    colors: ['#C5A77D', '#292722', '#48443C', '#E5D9C9', '#F1ECE3'],
     ticks: 120,
     gravity: 0.8,
     scalar: 0.9,
@@ -30,13 +30,13 @@ export const triggerBookingSuccessCelebration = () => {
       particleCount,
       spread: 70,
       origin: { x: 0.2, y: 0.6 },
-      colors: ['#B8336A', '#7A1F4A', '#EFE4D0', '#1E7F5C'],
+      colors: ['#C5A77D', '#292722', '#48443C', '#E5D9C9', '#F1ECE3'],
     });
     confetti({
       particleCount,
       spread: 70,
       origin: { x: 0.8, y: 0.6 },
-      colors: ['#B8336A', '#7A1F4A', '#EFE4D0', '#1E7F5C'],
+      colors: ['#C5A77D', '#292722', '#48443C', '#E5D9C9', '#F1ECE3'],
     });
   }, 350);
 };

@@ -45,9 +45,9 @@ export const CustomerProfileModal: React.FC<CustomerProfileModalProps> = ({
   const [activeTab, setActiveTab] = useState<'profile' | 'addresses' | 'settings' | 'help' | 'terms' | 'privacy' | 'cancellation'>(initialTab);
 
   // Profile Edit State
-  const [fullName, setFullName] = useState(user?.fullName || 'Rhea Singhania');
-  const [email, setEmail] = useState(user?.email || 'rhea.singhania@glamgo.in');
-  const [phone, setPhone] = useState(user?.phone || '+91 98201 99481');
+  const [fullName, setFullName] = useState(user?.fullName || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Addresses State
@@ -145,14 +145,14 @@ export const CustomerProfileModal: React.FC<CustomerProfileModalProps> = ({
               {/* Profile Overview Card */}
               <div className="p-3.5 rounded-2xl bg-bg-alt border border-border flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full bg-accent text-white font-heading font-bold text-lg flex items-center justify-center shrink-0 shadow-warm-xs">
-                  {fullName.charAt(0)}
+                  {fullName.charAt(0) || 'G'}
                 </div>
                 <div className="overflow-hidden">
                   <h4 className="font-heading text-sm font-bold text-text truncate">
-                    {fullName}
+                    {fullName || 'Guest'}
                   </h4>
                   <span className="text-[10px] font-semibold text-accent uppercase tracking-wider block">
-                    Gold Haute Beauté Club
+                    Your Glamgo account
                   </span>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export const CustomerProfileModal: React.FC<CustomerProfileModalProps> = ({
                 <form onSubmit={handleSaveProfile} className="space-y-4 max-w-lg">
                   <Input
                     label="Full Legal Name"
-                    value={fullName}
+                    value={fullName || 'Guest'}
                     onChange={(e) => setFullName(e.target.value)}
                     required
                   />

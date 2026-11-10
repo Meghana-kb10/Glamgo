@@ -2,7 +2,7 @@ import React from 'react';
 
 export const ArtistCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-card rounded-3xl overflow-hidden shadow-warm-xs border border-border flex flex-col animate-pulse">
+    <div className="bg-card rounded-3xl overflow-hidden shadow-warm-xs border border-border flex flex-col skeleton-shimmer">
       {/* Shimmer Image Area */}
       <div className="relative aspect-[4/5] w-full bg-fill">
         <div className="absolute top-3.5 left-3.5 w-24 h-6 rounded-full bg-card/80" />
@@ -32,7 +32,7 @@ export const ArtistCardSkeleton: React.FC = () => {
 
 export const ProductCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-card rounded-3xl overflow-hidden shadow-warm-xs border border-border flex flex-col animate-pulse">
+    <div className="bg-card rounded-3xl overflow-hidden shadow-warm-xs border border-border flex flex-col skeleton-shimmer">
       <div className="aspect-square w-full bg-fill" />
       <div className="p-4 sm:p-5 space-y-3 bg-card">
         <div className="w-16 h-3 rounded bg-fill" />

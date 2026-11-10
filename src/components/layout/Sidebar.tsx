@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       layout
       transition={MOTION_SPRINGS.slider}
       style={{ width: isCollapsed ? 72 : 240 }}
-      className={`fixed top-0 left-0 bottom-0 z-30 bg-bg border-r border-border flex flex-col justify-between pt-20 sm:pt-[82px] pb-4 select-none ${className}`}
+      className={`fixed top-0 left-0 bottom-0 z-30 bg-bg border-r border-border flex flex-col justify-between pt-[var(--customer-header-height,144px)] pb-4 select-none ${className}`}
       aria-label="Marketplace Navigation Sidebar"
     >
       {/* Scrollable Navigation Body */}

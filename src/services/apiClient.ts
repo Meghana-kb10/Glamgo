@@ -807,7 +807,7 @@ export const glamgoApi = {
               expiry: '12/2027',
               quantity: 1,
               hsn_code: '3304',
-              shade: 'Champagne Luster',
+              shade: 'Golden Luster',
             },
           ],
           dispatch_date: new Date().toISOString(),

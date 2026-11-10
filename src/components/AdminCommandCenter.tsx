@@ -581,7 +581,7 @@ export const AdminCommandCenter: React.FC = () => {
                 </div>
                 <div
                   style={{ width: `${platformCommission}%` }}
-                  className="bg-rose-gold flex items-center justify-center text-[10px] font-mono text-white font-bold"
+                  className="bg-accent flex items-center justify-center text-[10px] font-mono text-white font-bold"
                   title={`Platform: ${platformCommission}%`}
                 >
                   {platformCommission}%
@@ -601,11 +601,11 @@ export const AdminCommandCenter: React.FC = () => {
                   <span>Artist: {artistPayout}%</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-rose-gold" />
+                  <span className="w-2 h-2 rounded-full bg-accent-pressed" />
                   <span>Platform: {platformCommission}%</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-fill" />
+                  <span className="w-2 h-2 rounded-full bg-star" />
                   <span>Vault: {escrowGuaranteeFund}%</span>
                 </span>
               </div>
@@ -624,7 +624,7 @@ export const AdminCommandCenter: React.FC = () => {
                 step="1"
                 value={platformCommission}
                 onChange={(e) => setPlatformCommission(Number(e.target.value))}
-                className="w-full accent-rose-gold cursor-pointer"
+                className="w-full accent-accent cursor-pointer"
               />
               <span className="text-[10px] text-text-muted/80 block">
                 Covers payment gateway, AI shade matching, and 24/7 concierge.
@@ -644,7 +644,7 @@ export const AdminCommandCenter: React.FC = () => {
                 step="1"
                 value={escrowGuaranteeFund}
                 onChange={(e) => setEscrowGuaranteeFund(Number(e.target.value))}
-                className="w-full accent-champagne cursor-pointer"
+                className="w-full accent-star cursor-pointer"
               />
               <span className="text-[10px] text-text-muted/80 block">
                 Instant refund guarantee fund for last-minute artist travel cancellations.

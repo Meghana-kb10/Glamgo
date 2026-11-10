@@ -697,7 +697,7 @@ export const CustomerBookingsModal: React.FC<CustomerBookingsModalProps> = ({
                                 {ord.items?.[0]?.product?.title || '24K Gold Camellia Glow Serum Primer'}
                               </span>
                               <span className="text-text-muted">
-                                Brand: {ord.items?.[0]?.product?.brand_name || 'Backstage Formulations'} • Shade: Champagne Luster
+                                Brand: {ord.items?.[0]?.product?.brand_name || 'Backstage Formulations'} • Shade: Golden Luster
                               </span>
                             </div>
                             <span className="font-mono text-xs font-bold text-text tabular-nums">

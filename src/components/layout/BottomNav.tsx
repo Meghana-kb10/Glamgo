@@ -75,7 +75,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* 4-Tab Bottom Navigation Bar */}
         <nav
           aria-label="Mobile Navigation"
-          className="bg-bg/95 backdrop-blur-md border-t border-border px-2 pt-1 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-warm-sheet"
+          className="bg-bg border-t border-border px-2 pt-1 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-warm-sheet"
         >
           <div className="grid grid-cols-4 items-center">
             {tabs.map((tab) => {
@@ -108,7 +108,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                     }`}
                   />
                   <span
-                    className={`text-[10px] font-semibold transition-colors ${
+                    className={`text-xs font-semibold transition-colors ${
                       isActive ? 'text-accent-pressed font-bold' : 'text-text-muted group-hover:text-text'
                     }`}
                   >

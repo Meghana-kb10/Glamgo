@@ -32,10 +32,10 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    primary: 'bg-accent text-white hover:bg-accent-pressed active:bg-accent-pressed shadow-warm-sm',
-    secondary: 'bg-transparent border-[1.5px] border-accent text-accent hover:bg-accent-soft active:bg-accent-soft/80',
-    ghost: 'bg-transparent text-accent hover:bg-accent-soft active:bg-accent-soft/80',
-    gold: 'bg-star text-white hover:brightness-95 active:brightness-90 shadow-warm-sm',
+    primary: 'bg-accent text-card hover:bg-accent-pressed active:bg-accent-pressed shadow-warm-sm',
+    secondary: 'bg-card border border-border text-text hover:bg-bg-alt active:bg-fill shadow-warm-xs',
+    ghost: 'bg-transparent text-text hover:bg-fill active:bg-fill',
+    gold: 'bg-star text-charcoal hover:brightness-95 active:brightness-90 shadow-warm-sm',
     danger: 'bg-error text-white hover:opacity-90 active:opacity-100 shadow-warm-sm',
   };
 

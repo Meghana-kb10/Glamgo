@@ -40,89 +40,82 @@ export const UiShowcase: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 text-xs">
           <div className="p-3 rounded-[14px] bg-bg border border-border space-y-1 shadow-warm-sm">
             <div className="h-10 rounded-lg bg-bg border border-border" />
-            <span className="font-bold block text-text">Ivory</span>
-            <span className="text-[11px] text-text-muted font-mono">#FFFDF8</span>
-            <span className="text-[10px] text-text-muted block">Canvas / Topbar</span>
+            <span className="font-bold block text-text">Warm Ivory</span>
+            <span className="text-[11px] text-text-muted font-mono">#F8F5EF</span>
+            <span className="text-[10px] text-text-muted block">Main page &amp; header</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
             <div className="h-10 rounded-lg bg-bg-alt border border-border" />
-            <span className="font-bold block text-text">Cream</span>
-            <span className="text-[11px] text-text-muted font-mono">#F7F0E3</span>
-            <span className="text-[10px] text-text-muted block">Section Alt / Foot</span>
+            <span className="font-bold block text-text">Soft Cream</span>
+            <span className="text-[11px] text-text-muted font-mono">#F1ECE3</span>
+            <span className="text-[10px] text-text-muted block">Alternate sections</span>
+          </div>
+
+          <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
+            <div className="h-10 rounded-lg bg-card border border-border" />
+            <span className="font-bold block text-text">Warm White</span>
+            <span className="text-[11px] text-text-muted font-mono">#FFFEFB</span>
+            <span className="text-[10px] text-text-muted block">Cards, forms, menus</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
             <div className="h-10 rounded-lg bg-fill border border-border" />
-            <span className="font-bold block text-text">Sand</span>
-            <span className="text-[11px] text-text-muted font-mono">#EFE4D0</span>
-            <span className="text-[10px] text-text-muted block">Chips / Fills</span>
+            <span className="font-bold block text-text">Warm Beige</span>
+            <span className="text-[11px] text-text-muted font-mono">#E5D9C9</span>
+            <span className="text-[10px] text-text-muted block">Soft accents, avatars</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
-            <div className="h-10 rounded-lg bg-card border border-border-strong" />
-            <span className="font-bold block text-text">Warm White</span>
-            <span className="text-[11px] text-text-muted font-mono">#FFFEFB</span>
-            <span className="text-[10px] text-text-muted block">Cards / Modals</span>
-          </div>
-
-          <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
-            <div className="h-10 rounded-lg bg-border-strong" />
-            <span className="font-bold block text-text">Linen Strong</span>
-            <span className="text-[11px] text-text-muted font-mono">#CDBFA8</span>
-            <span className="text-[10px] text-text-muted block">Visible Borders</span>
+            <div className="h-10 rounded-lg bg-champagne text-charcoal flex items-center justify-center font-bold text-xs">
+              ★ Gold
+            </div>
+            <span className="font-bold block text-text">Champagne</span>
+            <span className="text-[11px] text-text-muted font-mono">#C5A77D</span>
+            <span className="text-[10px] text-text-muted block">Accents, stars, focus</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
             <div className="h-10 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs">
-              Plum
+              Charcoal
             </div>
-            <span className="font-bold block text-text">Rose Plum</span>
-            <span className="text-[11px] text-text-muted font-mono">#B8336A</span>
-            <span className="text-[10px] text-text-muted block">Primary Accent</span>
+            <span className="font-bold block text-text">Deep Charcoal</span>
+            <span className="text-[11px] text-text-muted font-mono">#292722</span>
+            <span className="text-[10px] text-text-muted block">Main text &amp; buttons</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
             <div className="h-10 rounded-lg bg-accent-pressed text-white flex items-center justify-center font-bold text-xs">
-              Deep
+              Hover
             </div>
-            <span className="font-bold block text-text">Deep Plum</span>
-            <span className="text-[11px] text-text-muted font-mono">#7A1F4A</span>
-            <span className="text-[10px] text-text-muted block">Pressed / Badges</span>
-          </div>
-
-          <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
-            <div className="h-10 rounded-lg bg-accent-soft border border-accent/20" />
-            <span className="font-bold block text-text">Accent Soft</span>
-            <span className="text-[11px] text-text-muted font-mono">#F6E4EA</span>
-            <span className="text-[10px] text-text-muted block">Row / Tag Tint</span>
-          </div>
-
-          <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
-            <div className="h-10 rounded-lg bg-text text-bg flex items-center justify-center font-bold text-xs">
-              Espresso
-            </div>
-            <span className="font-bold block text-text">Espresso</span>
-            <span className="text-[11px] text-text-muted font-mono">#2B2420</span>
-            <span className="text-[10px] text-text-muted block">Primary Text</span>
+            <span className="font-bold block text-text">Charcoal Hover</span>
+            <span className="text-[11px] text-text-muted font-mono">#48443C</span>
+            <span className="text-[10px] text-text-muted block">Primary button hover</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
             <div className="h-10 rounded-lg bg-text-muted text-bg flex items-center justify-center font-bold text-xs">
               Taupe
             </div>
-            <span className="font-bold block text-text">Taupe</span>
-            <span className="text-[11px] text-text-muted font-mono">#6F6258</span>
-            <span className="text-[10px] text-text-muted block">Secondary Text</span>
+            <span className="font-bold block text-text">Muted Taupe</span>
+            <span className="text-[11px] text-text-muted font-mono">#82796D</span>
+            <span className="text-[10px] text-text-muted block">Secondary text, labels</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
-            <div className="h-10 rounded-lg bg-star text-white flex items-center justify-center font-bold text-xs">
-              ★ 4.9
+            <div className="h-10 rounded-lg bg-border border border-border-strong" />
+            <span className="font-bold block text-text">Light Beige Border</span>
+            <span className="text-[11px] text-text-muted font-mono">#E8E0D5</span>
+            <span className="text-[10px] text-text-muted block">Edges &amp; dividers</span>
+          </div>
+
+          <div className="p-3 rounded-[14px] bg-charcoal border border-[#48443C] space-y-1 shadow-warm-sm">
+            <div className="h-10 rounded-lg bg-[#48443C] text-dark-text flex items-center justify-center font-bold text-xs">
+              Light Text
             </div>
-            <span className="font-bold block text-text">Star Rating</span>
-            <span className="text-[11px] text-text-muted font-mono">#C9A25B</span>
-            <span className="text-[10px] text-text-muted block">Review Stars</span>
+            <span className="font-bold block text-white">Dark Text</span>
+            <span className="text-[11px] text-dark-text-subtle font-mono">#D3CEC6</span>
+            <span className="text-[10px] text-dark-text-subtle block">Text on dark sections</span>
           </div>
 
           <div className="p-3 rounded-[14px] bg-card border border-border space-y-1 shadow-warm-sm">
@@ -144,7 +137,7 @@ export const UiShowcase: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="primary">Primary Button</Button>
           <Button variant="secondary">Secondary Outline</Button>
-          <Button variant="ghost">Ghost Plum</Button>
+          <Button variant="ghost">Ghost Gold</Button>
           <Button variant="gold" leftIcon={<Sparkles className="w-4 h-4" />}>Gold Rating</Button>
           <Button variant="danger">Cancel Booking</Button>
           <Button variant="primary" isLoading>Loading...</Button>
@@ -153,10 +146,10 @@ export const UiShowcase: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. Chips & Pills (Selected Sand with Plum Text & Border) */}
+      {/* 3. Chips & Pills (Selected Sand with Gold Text & Border) */}
       <section className="space-y-4 p-6 rounded-[18px] bg-card border border-border shadow-warm-card">
         <h2 className="text-xs font-bold uppercase tracking-wider text-text-muted">
-          3. Shared Chips (Sand Fill &amp; Plum Text for Selected State)
+          3. Shared Chips (Sand Fill &amp; Gold Text for Selected State)
         </h2>
         <div className="flex flex-wrap items-center gap-2.5">
           {['Facial Care', 'Hair Styling', 'Bridal Makeup', 'Waxing & Threading', 'Manicure'].map((chip) => (

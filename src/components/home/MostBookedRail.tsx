@@ -8,6 +8,7 @@ interface MostBookedRailProps {
   onAddService: (service: DetailedService) => void;
   onUpdateQuantity: (serviceId: string, quantity: number) => void;
   onSelectService: (service: DetailedService) => void;
+  onOpenCart: () => void;
 }
 
 export const MostBookedRail: React.FC<MostBookedRailProps> = ({
@@ -16,6 +17,7 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
   onAddService,
   onUpdateQuantity,
   onSelectService,
+  onOpenCart,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -87,9 +89,11 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
                 className="w-[290px] sm:w-[350px] md:w-[370px] shrink-0 snap-start bg-card rounded-[18px] border border-border overflow-hidden shadow-warm-card hover:shadow-warm-lg hover:border-accent/40 transition-all flex flex-col justify-between group"
               >
                 {/* Image & Badges */}
-                <div
+                <button
+                  type="button"
+                  aria-label={`View ${srv.title}`}
                   onClick={() => onSelectService(srv)}
-                  className="relative aspect-[16/10] overflow-hidden cursor-pointer"
+                  className="relative block w-full aspect-[16/10] overflow-hidden cursor-pointer"
                 >
                   <img
                     src={srv.imageUrl}
@@ -114,7 +118,7 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
                     <Clock className="w-3 h-3 text-star" />
                     <span>{srv.durationMinutes} mins</span>
                   </div>
-                </div>
+                </button>
 
                 {/* Body */}
                 <div className="p-5 flex-1 flex flex-col justify-between">
@@ -125,11 +129,8 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
                       <span>({srv.reviewCount} reviews)</span>
                     </div>
 
-                    <h3
-                      onClick={() => onSelectService(srv)}
-                      className="font-sans text-base font-bold text-text line-clamp-1 group-hover:text-accent transition-colors cursor-pointer"
-                    >
-                      {srv.title}
+                    <h3 className="font-sans text-base font-bold text-text">
+                      <button type="button" onClick={() => onSelectService(srv)} className="text-left leading-snug hover:underline underline-offset-4">{srv.title}</button>
                     </h3>
                     <p className="text-xs text-text-muted line-clamp-2 mt-1 leading-relaxed font-sans">
                       {srv.description}
@@ -160,7 +161,8 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
                         <button
                           type="button"
                           onClick={() => onAddService(srv)}
-                          className="px-4 py-2 rounded-[14px] bg-card border border-accent text-accent text-xs font-bold hover:bg-accent hover:text-white transition-all shadow-warm-sm cursor-pointer flex items-center gap-1 active:scale-95"
+                          aria-label={`Add ${srv.title}`}
+                          className="min-h-11 px-4 py-2 rounded-[14px] bg-card border border-accent text-accent text-xs font-bold hover:bg-accent hover:text-white transition-all shadow-warm-sm cursor-pointer flex items-center gap-1 active:scale-95"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add</span>
@@ -170,7 +172,8 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
                           <button
                             type="button"
                             onClick={() => onUpdateQuantity(srv.id, qty - 1)}
-                            className="w-7 h-7 rounded-[10px] bg-card text-accent-pressed flex items-center justify-center hover:bg-accent hover:text-white transition-colors cursor-pointer shadow-warm-sm"
+                            aria-label={`Remove one ${srv.title}`}
+                            className="w-11 h-11 rounded-[10px] bg-card text-accent-pressed flex items-center justify-center hover:bg-accent hover:text-white transition-colors cursor-pointer shadow-warm-sm"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
@@ -179,10 +182,11 @@ export const MostBookedRail: React.FC<MostBookedRailProps> = ({
                           </span>
                           <button
                             type="button"
-                            onClick={() => onUpdateQuantity(srv.id, qty + 1)}
-                            className="w-7 h-7 rounded-[10px] bg-card text-accent-pressed flex items-center justify-center hover:bg-accent hover:text-white transition-colors cursor-pointer shadow-warm-sm"
+                            onClick={onOpenCart}
+                            aria-label={`View cart with ${srv.title}`}
+                            className="min-h-11 px-2 rounded-[10px] bg-card text-accent-pressed flex items-center justify-center hover:bg-accent hover:text-white text-xs font-semibold cursor-pointer"
                           >
-                            <Plus className="w-3 h-3" />
+                            View cart
                           </button>
                         </div>
                       )}

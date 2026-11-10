@@ -454,8 +454,8 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
               {isByopSelected
                 ? `BYOP Labor Only (-₹${byopDiscountAmount.toLocaleString('en-IN')}) • Taxes included`
                 : selectedAddonIds.length > 0
-                ? `Includes ${selectedAddonIds.length} add-ons • All taxes included`
-                : 'All taxes & sealed single-use kit included'}
+                ? `Includes ${selectedAddonIds.length} add-ons • Taxes and fees at checkout`
+                : 'Service price • Taxes and fees at checkout'}
             </span>
           </div>
 

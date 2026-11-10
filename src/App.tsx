@@ -206,7 +206,7 @@ export const App: React.FC = () => {
     setIsAuthModalOpen(true);
   };
 
-  // Dev state for Champagne Shimmer Skeletons
+  // Dev state for Sand Shimmer Skeletons
   const [isLoadingSkeletons, setIsLoadingSkeletons] = useState(false);
 
   // Search & Category Filters
@@ -384,25 +384,11 @@ export const App: React.FC = () => {
 
   // Hybrid Cart States with LocalStorage Persistence
   const [activeServiceCart, setActiveServiceCart] = useState<CartItemService | null>(() =>
-    loadServiceCart({
-      type: 'service',
-      artist: MOCK_ARTISTS[0],
-      package: MOCK_ARTISTS[0].packages[0],
-      date: defaultDates[1].fullDate,
-      timeSlot: '02:30 PM',
-      venueAddress: 'Sea View Penthouse, Bandra West, Mumbai',
-      venueType: 'Home / Venue',
-    })
+    loadServiceCart()
   );
 
   const [productCartItems, setProductCartItems] = useState<CartItemProduct[]>(() =>
-    loadProductCart([
-      {
-        type: 'product',
-        product: MOCK_PRODUCTS[0],
-        quantity: 1,
-      },
-    ])
+    loadProductCart()
   );
 
   useEffect(() => {
@@ -1027,6 +1013,7 @@ export const App: React.FC = () => {
                       <Suspense fallback={null}>
                         <MostBookedRail
                           services={marketplaceService.getMostBookedServices()}
+                          onOpenCart={() => setIsBookingDrawerOpen(true)}
                           cartQuantities={
                             activeServiceCart?.package.id ? { [activeServiceCart.package.id]: 1 } : {}
                           }
@@ -1093,6 +1080,7 @@ export const App: React.FC = () => {
                           onNavigatePortal={handleNavigatePortal}
                           onOpenSafetyPromise={() => setIsSafetyModalOpen(true)}
                           onOpenHelp={() => window.open('mailto:support@glamgo.in', '_blank')}
+                          onOpenPolicy={(tab) => { setProfileModalTab(tab); setIsProfileModalOpen(true); }}
                         />
                       </Suspense>
                     </div>

@@ -67,10 +67,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({
           type="button"
           whileTap={MOTION_GESTURES.tap}
           onClick={() => onOpenAuth('login')}
-          className="h-11 px-4 rounded-[14px] border-[1.5px] border-accent text-accent hover:bg-accent-soft font-semibold text-sm transition-colors cursor-pointer flex items-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label="Log in"
+          className="h-11 px-3 sm:px-4 rounded-[14px] border-[1.5px] border-accent text-accent hover:bg-accent-soft font-semibold text-sm transition-colors cursor-pointer flex items-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <UserIcon className="w-4 h-4" />
-          <span>Log in</span>
+          <span className="hidden sm:inline">Log in</span>
         </motion.button>
       </div>
     );

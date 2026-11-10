@@ -32,9 +32,20 @@ export const AudienceSwitcher: React.FC<AudienceSwitcherProps> = ({
             key={opt.id}
             role="radio"
             aria-checked={isSelected}
+            tabIndex={isSelected ? 0 : -1}
+            onKeyDown={(event) => {
+              const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
+              if (!keys.includes(event.key)) return;
+              event.preventDefault();
+              const index = AUDIENCE_OPTIONS.findIndex((item) => item.id === opt.id);
+              const next = event.key === 'Home' ? 0 : event.key === 'End' ? AUDIENCE_OPTIONS.length - 1
+                : (index + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + AUDIENCE_OPTIONS.length) % AUDIENCE_OPTIONS.length;
+              onChangeAudience(AUDIENCE_OPTIONS[next].id);
+              event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next]?.focus();
+            }}
             type="button"
             onClick={() => onChangeAudience(opt.id)}
-            className={`relative px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold tracking-tight transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
+            className={`relative px-3 sm:px-3.5 min-h-10 lg:min-h-9 py-1 rounded-full text-xs font-semibold tracking-tight transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
               isSelected ? 'text-white' : 'text-text-muted hover:text-text'
             }`}
           >

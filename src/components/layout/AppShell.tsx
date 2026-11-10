@@ -168,7 +168,8 @@ export const AppShell: React.FC<AppShellProps> = ({
 
       {/* 4. Main Content Area */}
       <div
-        className={`flex-1 transition-all duration-200 pt-20 sm:pt-[82px] ${
+        style={{ paddingTop: 'var(--customer-header-height, 144px)' }}
+        className={`flex-1 transition-all duration-200 ${
           // Padding left matches sidebar width on tablet & desktop
           isSidebarCollapsed ? 'sm:pl-[72px]' : 'sm:pl-[72px] lg:pl-[240px]'
         }`}
@@ -176,7 +177,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <main
           id="main-content"
           tabIndex={-1}
-          className="max-w-[1300px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 lg:pb-12 focus:outline-none"
+          className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 pb-36 lg:pb-12 focus:outline-none"
         >
           {children}
         </main>

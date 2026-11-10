@@ -31,7 +31,7 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
           id="first-time-offers-title"
           className="font-serif text-lg sm:text-xl font-bold text-text"
         >
-          Glamgo First-Time Privileges
+          Your first booking
         </h2>
         {onOpenOffers && (
           <button
@@ -46,11 +46,12 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
       </div>
 
       {/* 3 Small Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-3.5 sm:gap-4">
         {FIRST_TIME_OFFERS.map((offer) => {
           const Icon = getIcon(offer.iconName);
           return (
-            <div
+            <button
+              type="button"
               key={offer.id}
               onClick={() => {
                 if (offer.tag.includes('FIRST20') && onApplyCode) {
@@ -59,25 +60,25 @@ export const FirstTimeOfferStrip: React.FC<FirstTimeOfferStripProps> = ({
                   onOpenOffers();
                 }
               }}
-              className="p-4 sm:p-5 rounded-[18px] bg-card border border-border shadow-warm-card hover:border-accent/40 hover:shadow-warm-md transition-all flex items-start gap-3.5 cursor-pointer group"
+              className="p-4 sm:p-5 rounded-[18px] bg-card border border-border shadow-warm-card hover:border-accent/40 hover:shadow-warm-md transition-all text-left flex items-start gap-3.5 cursor-pointer group"
             >
               <div className="w-10 h-10 rounded-[14px] bg-fill flex items-center justify-center text-accent-pressed shrink-0 group-hover:scale-105 transition-transform">
                 <Icon className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-1">
+                <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-heading font-bold text-xs sm:text-sm text-text group-hover:text-accent transition-colors">
                     {offer.title}
                   </h3>
-                  <span className="text-[10px] font-bold text-accent-pressed bg-accent-soft px-2.5 py-0.5 rounded-full shrink-0 border border-accent/20">
+                  <span className="text-xs font-semibold text-accent-pressed bg-accent-soft px-2.5 py-0.5 rounded-full shrink-0 border border-accent/20">
                     {offer.tag}
                   </span>
                 </div>
-                <p className="text-[11px] text-text-muted mt-0.5 leading-snug">
+                <p className="text-sm text-text-muted mt-2 leading-relaxed">
                   {offer.subtitle}
                 </p>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

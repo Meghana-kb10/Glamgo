@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Sparkles, MapPin, ChevronRight } from 'lucide-react';
+import { Search, MapPin, ArrowRight } from 'lucide-react';
 import { StatStrip } from './StatStrip';
 import { LocationItem } from '../../services/marketplaceService';
 import { AudienceType } from '../../config/marketing';
@@ -13,160 +13,42 @@ interface HeroHomeProps {
 }
 
 export const HeroHome: React.FC<HeroHomeProps> = ({
-  currentLocation,
-  onOpenSearch,
-  onOpenLocationSheet,
-  onSelectCategory,
-  audience,
+  currentLocation, onOpenSearch, onOpenLocationSheet, onSelectCategory, audience,
 }) => {
-  const quickChips = [
-    { label: 'Facial', slug: 'skin' },
-    { label: 'Haircut', slug: 'hair' },
-    { label: 'Waxing', slug: 'waxing' },
-  ];
+  const quickChips = audience === 'kids'
+    ? [{ label: 'Haircuts', slug: 'hair' }, { label: 'Spa', slug: 'spa' }]
+    : [{ label: 'Facials', slug: 'skin' }, { label: 'Haircuts', slug: 'hair' }, { label: 'Spa', slug: 'spa' }];
 
   return (
-    <section
-      aria-label="Welcome hero banner"
-      className="relative overflow-hidden pt-2 pb-6 sm:py-8"
-    >
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* Left Column: Headlines, Search Bar & Quick Chips */}
-          <div className="lg:col-span-7 space-y-5">
-            {/* Location Pill Header */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-soft border border-accent/20 text-xs font-semibold text-accent">
-              <MapPin className="w-3.5 h-3.5 shrink-0" />
-              <span>Serving {currentLocation.name}, {currentLocation.city}</span>
-              <button
-                type="button"
-                onClick={onOpenLocationSheet}
-                className="underline hover:text-accent-pressed ml-1 cursor-pointer"
-              >
-                Change
-              </button>
-            </div>
-
-            {/* Headline & Subtext */}
-            <div className="space-y-2">
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text tracking-tight leading-[1.15]">
-                Beauty services at your doorstep
-              </h1>
-              <p className="text-sm sm:text-base text-text-muted max-w-xl font-normal leading-relaxed">
-                Certified salon, hair, skin &amp; bridal professionals delivering genuine mono-dose care in the comfort of your home.
-              </p>
-            </div>
-
-            {/* Search Bar Input (Triggers Search Modal) */}
-            <div className="max-w-xl">
-              <button
-                type="button"
-                onClick={onOpenSearch}
-                aria-label="Search for 'Facial', 'Blowdry', 'Waxing'..."
-                className="w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-3.5 rounded-[18px] bg-card border border-border shadow-warm-card hover:border-accent/50 hover:shadow-warm-md transition-all cursor-pointer group text-left"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-fill flex items-center justify-center text-accent-pressed shrink-0 group-hover:scale-105 transition-transform">
-                    <Search className="w-4 h-4" />
-                  </div>
-                  <div className="truncate">
-                    <span className="text-xs sm:text-sm font-normal text-text-muted">
-                      Search for &apos;Facial&apos;, &apos;Blowdry&apos;, &apos;Waxing&apos;...
-                    </span>
-                  </div>
-                </div>
-                <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-accent-pressed bg-fill border border-border px-3 py-1 rounded-full shrink-0">
-                  <span>Search</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </div>
-              </button>
-            </div>
-
-            {/* Quick Chips: Facial, Haircut, Waxing */}
-            <div className="flex items-center gap-2 pt-1 flex-wrap">
-              <span className="text-xs text-text-muted font-medium">Popular right now:</span>
-              {quickChips.map((chip) => (
-                <button
-                  key={chip.label}
-                  type="button"
-                  onClick={() => onSelectCategory(chip.slug)}
-                  className="px-3 py-1 rounded-full bg-card hover:bg-fill border border-border text-xs font-semibold text-text shadow-warm-sm hover:border-accent/40 transition-all cursor-pointer"
-                >
-                  {chip.label}
-                </button>
-              ))}
-            </div>
+    <section aria-labelledby="home-title" className="pb-5 sm:pb-6">
+      <div className="grid lg:grid-cols-2 items-center gap-7 lg:gap-10 rounded-3xl bg-bg-alt p-5 sm:p-8 lg:p-10">
+        <div>
+          <h1 id="home-title" className="font-heading text-[32px] sm:text-[40px] xl:text-[48px] font-semibold text-text tracking-tight leading-[1.12] max-w-xl">
+            Beauty, at your doorstep.
+          </h1>
+          <p className="mt-5 text-base text-text-muted leading-relaxed max-w-md">
+            Book salon, skin and spa care at home. Choose your service, professional and time.
+          </p>
+          <button type="button" onClick={onOpenLocationSheet} className="mt-4 min-h-11 flex items-center gap-2 text-sm text-text-muted text-left" aria-label={`Change service location, currently ${currentLocation.name}, ${currentLocation.city}`}>
+            <MapPin className="w-4 h-4 shrink-0" />
+            <span>{currentLocation.name}, {currentLocation.city}</span>
+            <span className="underline underline-offset-4 text-text shrink-0">Change</span>
+          </button>
+          <button type="button" onClick={onOpenSearch} className="mt-5 min-h-12 px-6 py-3 bg-accent text-white rounded-full inline-flex items-center justify-center gap-3 font-semibold text-sm hover:bg-accent-pressed w-full sm:w-auto">
+            <Search className="w-4 h-4" />
+            Find a service
+            <ArrowRight className="w-4 h-4" />
+          </button>
+          <div className="flex flex-wrap items-center gap-x-4 mt-4">
+            <span className="text-sm text-text-muted">Popular:</span>
+            {quickChips.map((chip) => <button key={chip.slug} type="button" onClick={() => onSelectCategory(chip.slug)} className="min-h-11 text-sm font-medium text-text underline decoration-border-field underline-offset-4 hover:decoration-text">{chip.label}</button>)}
           </div>
-
-          {/* Right Column: 3-Image Photo Collage */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full max-w-lg mx-auto">
-              
-              {/* Image 1: Main Large Canvas */}
-              <div
-                className="absolute inset-0 w-3/4 h-full rounded-[22px] overflow-hidden shadow-warm-lg border border-border bg-fill/30 z-10"
-              >
-                <img
-                  src="/images/hero-1.webp"
-                  alt="Professional hair and styling at home"
-                  width={360}
-                  height={270}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-text/35 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              {/* Image 2: Top Right Small Overlap */}
-              <div
-                className="absolute top-0 right-0 w-1/2 h-3/5 rounded-[18px] overflow-hidden shadow-warm-card border border-border bg-fill/20 z-20"
-              >
-                <img
-                  src="/images/hero-2.webp"
-                  alt="Hydra facial and skin therapy"
-                  width={180}
-                  height={135}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-text/30 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              {/* Image 3: Bottom Right Badge / Overlap */}
-              <div
-                className="absolute bottom-2 right-2 w-5/12 h-1/2 rounded-[18px] overflow-hidden shadow-warm-card border border-border bg-fill/20 z-20"
-              >
-                <img
-                  src="/images/hero-3.webp"
-                  alt="Spa and relaxation"
-                  width={150}
-                  height={112}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-text/30 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              {/* Trust Tag Float */}
-              <div className="absolute -bottom-2 -left-2 z-30 bg-card/95 backdrop-blur-md px-3.5 py-1.5 rounded-[14px] border border-border shadow-warm-card flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                <span className="text-[11px] font-bold text-text">500+ Verified Stylists Available</span>
-              </div>
-            </div>
-          </div>
-
         </div>
-
-        {/* Rating & Trust Stat Strip directly under Hero */}
-        <div className="mt-8">
-          <StatStrip />
+        <div className="relative w-full overflow-hidden rounded-2xl bg-fill aspect-[16/9] lg:aspect-[4/3]">
+          <img src="/images/hero-2.webp" alt="A professional applying a facial treatment" width={640} height={800} className="w-full h-full object-cover" loading="eager" decoding="async" />
         </div>
-
       </div>
+      <div className="mt-5"><StatStrip /></div>
     </section>
   );
 };
